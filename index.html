@@ -45,7 +45,7 @@ h2{font:800 clamp(1.5rem,4.5vw,2.3rem)/1.15 var(--head);margin:0 0 .4rem;letter-
 @keyframes gl2{0%,90%,100%{transform:none}91%{transform:translate(4px,-1px)}95%{transform:translate(-3px,1px)}}
 .type{font:600 1.15rem var(--head);color:var(--text);min-height:1.8em}
 .type::after{content:"▌";color:var(--c);animation:blink .8s steps(2) infinite}
-/* NHẠC - SỬA LỚN KHUNG YOUTUBE */
+/* NHẠC */
 .music{display:flex;flex-direction:column;gap:16px;margin-top:22px;border:1px solid var(--line);background:rgba(20,16,42,.82);border-radius:18px;padding:14px;backdrop-filter:blur(8px);position:relative;overflow:hidden}
 .music::before{content:"";position:absolute;inset:-2px;border-radius:20px;padding:2px;background:conic-gradient(from var(--a,0deg),var(--v),var(--c),var(--p),var(--v));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spin 6s linear infinite;pointer-events:none}
 @property --a{syntax:"<angle>";initial-value:0deg;inherits:false}
@@ -93,16 +93,21 @@ input{font:600 1rem var(--body);background:#0d0a20;color:var(--text);border:1px 
 .gpanel>div{overflow:hidden}
 .gh{margin:18px 0 12px;font:800 1.3rem var(--head);color:var(--c)}
 .gh small{color:var(--mute);font:600 .95rem var(--body)}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;padding-bottom:6px}
-.card{border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden;display:flex;flex-direction:column;animation:cin .6s cubic-bezier(.2,.7,.2,1) backwards;transition:transform .25s,border-color .25s,box-shadow .3s;transform-style:preserve-3d}
-@keyframes cin{from{opacity:0;transform:translateY(30px) scale(.95)}}
-.card:hover{border-color:var(--v);box-shadow:0 18px 40px -20px var(--v)}
-.card .im{aspect-ratio:16/10;overflow:hidden}
-.card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s}
-.card:hover img{transform:scale(1.1)}
-.card .bd{padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px;flex:1;justify-content:space-between}
-.card b{font-size:1.02rem;line-height:1.25}
-.card .btn{font-size:.9rem;padding:.45rem .9rem;justify-content:center}
+/* Danh sách link chi tiết */
+.item-list{display:flex;flex-direction:column;gap:10px;margin:16px 0 24px;padding-left:8px}
+.item-btn{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);transition:all .25s;cursor:pointer}
+.item-btn:hover{border-color:var(--c);transform:translateX(6px);box-shadow:0 8px 20px -10px var(--c)}
+.item-btn b{font-size:1rem}
+.item-btn span{color:var(--mute);font-size:.9rem}
+.link-list{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s ease}
+.link-list.on{grid-template-rows:1fr}
+.link-list>div{overflow:hidden;padding-left:12px;border-left:2px solid var(--v);margin:4px 0 4px 8px}
+.link-item{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:6px 0;border-radius:10px;background:rgba(139,92,255,.08);transition:all .2s}
+.link-item:hover{background:rgba(139,92,255,.18);transform:translateX(4px)}
+.link-item a{color:var(--c);font-weight:600;font-size:.95rem}
+.link-item .desc{color:var(--mute);font-size:.85rem;margin-left:auto}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;margin-bottom:14px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--mute);cursor:pointer;transition:all .2s}
+.back-btn:hover{border-color:var(--p);color:var(--p)}
 footer{padding:50px 0 40px;text-align:center;color:var(--mute);font-size:.95rem}
 @media (max-width:760px){.socials{justify-content:center}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.chip{opacity:1;transform:none}}
@@ -142,10 +147,10 @@ footer{padding:50px 0 40px;text-align:center;color:var(--mute);font-size:.95rem}
   </section>
   <!-- ============ GAME ============ -->
   <section class="sec" id="games">
-    <div class="rv"><span class="tag">// Game</span><h2>Kho game của tôi</h2><p style="color:var(--mute);margin:0">Bấm nút bên dưới để chọn game, rồi bấm vào game để xem ảnh và link.</p></div>
+    <div class="rv"><span class="tag">// Game</span><h2>Kho game của tôi</h2><p style="color:var(--mute);margin:0">Bấm chọn game → chọn mục → xem danh sách link tải.</p></div>
     <button class="btn open rv" id="open" type="button" aria-expanded="false" aria-controls="chips">🎮 Chọn game</button>
     <div class="chips" id="chips"><div id="chipbox" role="list"></div></div>
-    <div class="gpanel" id="gp"><div><div id="gcontent"></div></div></div>
+    <div class="gpanel" id="gp"><div id="gcontent"></div></div>
   </section>
 </main>
 <footer>© <span id="yr"></span> <span id="foot">Nam Hoàng</span> · Chúc bạn chơi game vui vẻ</footer>
@@ -170,24 +175,140 @@ var CFG={
     {id:"4xDzrJKXOOY",t:"Synthwave Radio"}
   ],
   games:[
-    {name:"Red Alert 2",note:"Mod, texture và map",items:[
-      {t:"Tải Game",l:"https://www.mediafire.com/file/pbq0u4hrjtk2l4f/Ra2+%26+Yuri+Nam+Ho%C3%A0ng+MOD.rar?action=check/mc-1",img:""},
-      {t:"Việt hóa đầy đủ",l:"https://example.com/mc-2",img:""},
-      {t:"Map sinh tồn",l:"https://example.com/mc-3",img:""}]},
-    {name:"Minecraft",note:"Mod, texture và map",items:[
-      {t:"Gói đồ họa Realistic 4K",l:"https://example.com/mc-1",img:""},
-      {t:"Việt hóa đầy đủ",l:"https://example.com/mc-2",img:""},
-      {t:"Map sinh tồn",l:"https://example.com/mc-3",img:""}]},
-    {name:"GTA V",note:"Xe, nhân vật, script",items:[
-      {t:"Xe Việt Nam Pack",l:"https://example.com/gta-1",img:""},
-      {t:"Menu mod",l:"https://example.com/gta-2",img:""}]},
-    {name:"Liên Quân",note:"Skin, hướng dẫn",items:[
-      {t:"Hướng dẫn lên rank",l:"https://example.com/lq-1",img:""},
-      {t:"Bảng ngọc mới nhất",l:"https://example.com/lq-2",img:""},
-      {t:"Cấu hình đồ họa mượt",l:"https://example.com/lq-3",img:""}]},
-    {name:"Valorant",note:"Setting, crosshair",items:[
-      {t:"Crosshair đẹp",l:"https://example.com/val-1",img:""},
-      {t:"Setting tối ưu FPS",l:"https://example.com/val-2",img:""}]}
+    {
+      name:"Red Alert 2",
+      note:"Mod, map, bản Việt hóa",
+      items:[
+        {
+          t:"Tải Game",
+          note:"Bản đầy đủ + Yuri",
+          links:[
+            {name:"Link 1 - MediaFire",url:"https://www.mediafire.com/file/pbq0u4hrjtk2l4f/Ra2+%26+Yuri+Nam+Ho%C3%A0ng+MOD.rar?action=check/mc-1",desc:"Tốc độ cao"},
+            {name:"Link 2 - Google Drive",url:"https://example.com/ra2-link2",desc:"Dự phòng"}
+          ]
+        },
+        {
+          t:"Việt hóa đầy đủ",
+          note:"Bản dịch hoàn chỉnh",
+          links:[
+            {name:"Link 1",url:"https://example.com/mc-2",desc:"Phiên bản mới nhất"},
+            {name:"Link 2",url:"https://example.com/vh-ra2-2",desc:"Dự phòng"}
+          ]
+        },
+        {
+          t:"Map sinh tồn",
+          note:"Bộ map nhiều người chơi",
+          links:[
+            {name:"Link 1",url:"https://example.com/mc-3",desc:"Bộ 10 map"},
+            {name:"Link 2",url:"https://example.com/map-ra2-2",desc:"Bộ map đặc biệt"}
+          ]
+        }
+      ]
+    },
+    {
+      name:"Minecraft",
+      note:"Mod, texture và map",
+      items:[
+        {
+          t:"Gói đồ họa Realistic 4K",
+          note:"Độ phân giải cao",
+          links:[
+            {name:"Link 1",url:"https://example.com/mc-1",desc:"Phiên bản 2.0"},
+            {name:"Link 2",url:"https://example.com/mc-1-2",desc:"Dự phòng"}
+          ]
+        },
+        {
+          t:"Việt hóa đầy đủ",
+          note:"Bản dịch hoàn chỉnh",
+          links:[
+            {name:"Link 1",url:"https://example.com/mc-2",desc:"Cho bản 1.20+"},
+            {name:"Link 2",url:"https://example.com/mc-2-2",desc:"Dự phòng"}
+          ]
+        },
+        {
+          t:"Map sinh tồn",
+          note:"Bản đồ sinh tồn cực hay",
+          links:[
+            {name:"Link 1",url:"https://example.com/mc-3",desc:"Bản đồ đảo nổi"},
+            {name:"Link 2",url:"https://example.com/mc-3-2",desc:"Bản đồ thành phố"}
+          ]
+        }
+      ]
+    },
+    {
+      name:"GTA V",
+      note:"Xe, nhân vật, script",
+      items:[
+        {
+          t:"Xe Việt Nam Pack",
+          note:"Bộ xe phổ biến VN",
+          links:[
+            {name:"Link 1",url:"https://example.com/gta-1",desc:"Bản đầy đủ"},
+            {name:"Link 2",url:"https://example.com/gta-1-2",desc:"Dự phòng"}
+          ]
+        },
+        {
+          t:"Menu mod",
+          note:"Công cụ tùy chỉnh trong game",
+          links:[
+            {name:"Link 1",url:"https://example.com/gta-2",desc:"Phiên bản mới"},
+            {name:"Link 2",url:"https://example.com/gta-2-2",desc:"Dự phòng"}
+          ]
+        }
+      ]
+    },
+    {
+      name:"Liên Quân",
+      note:"Skin, hướng dẫn",
+      items:[
+        {
+          t:"Hướng dẫn lên rank",
+          note:"Chiến thuật từng vị trí",
+          links:[
+            {name:"Link 1",url:"https://example.com/lq-1",desc:"Bản đầy đủ"},
+            {name:"Link 2",url:"https://example.com/lq-1-2",desc:"Tóm tắt nhanh"}
+          ]
+        },
+        {
+          t:"Bảng ngọc mới nhất",
+          note:"Cập nhật theo mùa giải",
+          links:[
+            {name:"Link 1",url:"https://example.com/lq-2",desc:"Tất cả tướng"},
+            {name:"Link 2",url:"https://example.com/lq-2-2",desc:"Top tướng mạnh"}
+          ]
+        },
+        {
+          t:"Cấu hình đồ họa mượt",
+          note:"Tối ưu cho máy yếu",
+          links:[
+            {name:"Link 1",url:"https://example.com/lq-3",desc:"Cấu hình chi tiết"},
+            {name:"Link 2",url:"https://example.com/lq-3-2",desc:"Công cụ tự động"}
+          ]
+        }
+      ]
+    },
+    {
+      name:"Valorant",
+      note:"Setting, crosshair",
+      items:[
+        {
+          t:"Crosshair đẹp",
+          note:"Bộ mẫu phổ biến pro player",
+          links:[
+            {name:"Link 1",url:"https://example.com/val-1",desc:"Bộ 50 mẫu"},
+            {name:"Link 2",url:"https://example.com/val-1-2",desc:"Tạo riêng"}
+          ]
+        },
+        {
+          t:"Setting tối ưu FPS",
+          note:"Cấu hình tăng khung hình",
+          links:[
+            {name:"Link 1",url:"https://example.com/val-2",desc:"Cài đặt hệ thống"},
+            {name:"Link 2",url:"https://example.com/val-2-2",desc:"Cấu hình trong game"}
+          ]
+        }
+      ]
+    }
   ]
 };
 /* ===================================================================== */
@@ -239,14 +360,37 @@ function art(t,i){var c=PAL[i%PAL.length];return"data:image/svg+xml;charset=utf-
 $("chipbox").innerHTML=CFG.games.map(function(g,i){return'<button class="chip" type="button" role="listitem" style="--i:'+i+'" data-g="'+i+'" aria-expanded="false">'+esc(g.name)+'</button>'}).join("");
 $("open").onclick=function(){var on=!$("chips").classList.contains("on");$("chips").classList.toggle("on",on);this.setAttribute("aria-expanded",on);this.textContent=on?"✕ Đóng danh sách":"🎮 Chọn game";
  if(!on){$("gp").classList.remove("on");document.querySelectorAll(".chip").forEach(function(c){c.setAttribute("aria-expanded","false")})}};
-var openG=-1;
+var openG=-1, openItem=-1;
+function renderGame(gIdx){
+  var g=CFG.games[gIdx];
+  var html='<button class="back-btn" id="backGame">← Quay lại danh sách game</button>';
+  html+='<div class="gh">'+esc(g.name)+' <small>· '+esc(g.note||"")+'</small></div>';
+  html+='<div class="item-list">';
+  g.items.forEach(function(item,i){
+    html+='<div><div class="item-btn" data-i="'+i+'"><b>'+esc(item.t)+'</b><span>'+esc(item.note||"")+'</span></div>';
+    html+='<div class="link-list" id="links-'+i+'"><div>';
+    item.links.forEach(function(lnk,j){
+      html+='<div class="link-item"><a href="'+esc(lnk.url)+'" target="_blank" rel="noopener">🔗 '+esc(lnk.name)+'</a><span class="desc">'+esc(lnk.desc||"")+'</span></div>';
+    });
+    html+='</div></div></div>';
+  });
+  html+='</div>';
+  $("gcontent").innerHTML=html;
+  $("gp").classList.add("on");
+  setTimeout(function(){$("gp").scrollIntoView({behavior:"smooth",block:"nearest"})},300);
+  // Nút quay lại
+  $("backGame").onclick=function(){$("gp").classList.remove("on");openG=-1;openItem=-1;document.querySelectorAll(".chip").forEach(function(c){c.setAttribute("aria-expanded","false")})};
+  // Mở/đóng danh sách link
+  document.querySelectorAll(".item-btn").forEach(function(btn){
+    btn.onclick=function(){var i=+this.dataset.i;var box=$("links-"+i);var isOn=box.classList.toggle("on");this.style.borderColor=isOn?"var(--c)":"";this.style.background=isOn?"rgba(139,92,255,.15)":"";
+     if(isOn){box.scrollIntoView({behavior:"smooth",block:"nearest"});openItem=i}else{openItem=-1}};
+  });
+}
 $("chipbox").addEventListener("click",function(e){var b=e.target.closest(".chip");if(!b)return;var i=+b.dataset.g;
  document.querySelectorAll(".chip").forEach(function(c){c.setAttribute("aria-expanded",c===b&&openG!==i)});
- if(openG===i){$("gp").classList.remove("on");openG=-1;return}
- openG=i;var g=CFG.games[i];
- $("gcontent").innerHTML='<div class="gh">'+esc(g.name)+' <small>· '+esc(g.note||"")+'</small></div><div class="cards">'+g.items.map(function(it,k){return'<article class="card" style="animation-delay:'+(k*90+200)+'ms"><div class="im"><img src="'+esc(it.img||art(it.t,i+k))+'" alt="'+esc(it.t)+'" loading="lazy"></div><div class="bd"><b>'+esc(it.t)+'</b><a class="btn" href="'+esc(it.l)+'" target="_blank" rel="noopener">Xem link ↗</a></div></article>'}).join("")+'</div>';
- $("gp").classList.add("on");
- setTimeout(function(){$("gp").scrollIntoView({behavior:"smooth",block:"nearest"})},300)});
+ if(openG===i){$("gp").classList.remove("on");openG=-1;openItem=-1;return}
+ openG=i;renderGame(i);
+});
 $("gcontent").addEventListener("pointermove",function(e){if(RM||e.pointerType!=="mouse")return;var c=e.target.closest(".card");if(!c)return;var r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform="perspective(700px) rotateY("+x*8+"deg) rotateX("+-y*8+"deg) translateY(-4px)"});
 $("gcontent").addEventListener("pointerout",function(e){var c=e.target.closest(".card");if(c)c.style.transform=""});
 var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.15});
