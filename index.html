@@ -108,6 +108,13 @@ input{font:600 1rem var(--body);background:#0d0a20;color:var(--text);border:1px 
 .link-item .desc{color:var(--mute);font-size:.85rem;margin-left:auto}
 .back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;margin-bottom:14px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--mute);cursor:pointer;transition:all .2s}
 .back-btn:hover{border-color:var(--p);color:var(--p)}
+/* DONATE */
+.donate-card{text-align:center;padding:32px 24px;border:1px solid var(--line);border-radius:20px;background:var(--panel);margin:20px 0}
+.donate-card h3{font:700 1.4rem var(--head);color:var(--p);margin:0 0 8px}
+.donate-card p{color:var(--mute);margin:0 0 24px;max-width:400px;margin-left:auto;margin-right:auto}
+.qr-wrap{width:min(280px,70%);margin:0 auto;border-radius:16px;overflow:hidden;border:3px solid var(--v);box-shadow:0 0 30px -8px var(--p)}
+.qr-wrap img{width:100%;height:auto;display:block}
+.qr-note{margin-top:16px;color:var(--mute);font-size:.9rem}
 footer{padding:50px 0 40px;text-align:center;color:var(--mute);font-size:.95rem}
 @media (max-width:760px){.socials{justify-content:center}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.chip{opacity:1;transform:none}}
@@ -152,6 +159,19 @@ footer{padding:50px 0 40px;text-align:center;color:var(--mute);font-size:.95rem}
     <div class="chips" id="chips"><div id="chipbox" role="list"></div></div>
     <div class="gpanel" id="gp"><div id="gcontent"></div></div>
   </section>
+  <!-- ============ DONATE ============ -->
+  <section class="sec rv" id="donate">
+    <span class="tag">// Hỗ trợ</span>
+    <h2>💖 Hỗ trợ tôi</h2>
+    <div class="donate-card">
+      <h3>Ủng hộ cà phê</h3>
+      <p>Nếu thấy chia sẻ hữu ích, bạn có thể ủng hộ mình qua mã QR bên dưới. Mình rất cảm kích! ❤️</p>
+      <div class="qr-wrap">
+        <img id="qr-img" src="images/qr.jpg" alt="Mã QR ủng hộ">
+      </div>
+      <p class="qr-note">Quét mã QR để ủng hộ</p>
+    </div>
+  </section>
 </main>
 <footer>© <span id="yr"></span> <span id="foot">Nam Hoàng</span> · Chúc bạn chơi game vui vẻ</footer>
 <script>
@@ -162,6 +182,7 @@ var CFG={
   name:"Nam Hoàng",
   bio:"Game thủ chính hiệu. Thích chơi game, nghe nhạc và chia sẻ mod, tips cho anh em.",
   avatar:"images/avatar.jpg",
+  qrImage:"images/qr.jpg",
   typing:["Chơi game mỗi ngày","Nghe nhạc cực chill","Chia sẻ mod và tips","Kết nối với tôi ở bên dưới"],
   socials:[
     {n:"Facebook",u:"https://www.facebook.com/kun.lee.3348/",i:"fb"},
@@ -319,6 +340,9 @@ document.title=CFG.name+" · Góc game";
 $("myname").textContent=CFG.name;$("mybio").textContent=CFG.bio;$("foot").textContent=CFG.name;$("yr").textContent=new Date().getFullYear();
 var av=$("av");av.src=CFG.avatar;
 av.onerror=function(){av.onerror=null;av.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cff"/><stop offset="1" stop-color="#ff3d81"/></linearGradient></defs><rect width="200" height="200" fill="url(#g)"/><text x="100" y="128" font-size="90" font-weight="800" font-family="sans-serif" text-anchor="middle" fill="#fff">N</text></svg>')};
+// Ảnh QR dự phòng nếu không tìm thấy
+var qrImg=$("qr-img");
+qrImg.onerror=function(){qrImg.onerror=null;qrImg.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cff"/><stop offset="1" stop-color="#ff3d81"/></linearGradient></defs><rect width="300" height="300" fill="url(#g)"/><text x="150" y="140" font-size="60" font-weight="800" font-family="sans-serif" text-anchor="middle" fill="#fff">QR</text><text x="150" y="190" font-size="18" font-family="sans-serif" text-anchor="middle" fill="#fff">Đặt ảnh qr.jpg vào thư mục images</text></svg>')};
 var DAYS=["Chủ nhật","Thứ hai","Thứ ba","Thứ tư","Thứ năm","Thứ sáu","Thứ bảy"];
 function p2(n){return n<10?"0"+n:""+n}
 function tick(){var d=new Date(),h=d.getHours();
