@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0816">
-<title>Trang game của tôi</title>
+<title>Nam Hoàng · Góc game</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -28,7 +28,6 @@ h2{font:800 clamp(1.5rem,4.5vw,2.3rem)/1.15 var(--head);margin:0 0 .4rem;letter-
 .btn:hover{transform:translateY(-3px);box-shadow:0 10px 28px -8px var(--p)}
 .btn.ghost{background:transparent;border:1px solid var(--line)}
 .btn.ghost:hover{border-color:var(--c);box-shadow:0 10px 28px -12px var(--c)}
-
 /* BANNER */
 .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:40px 0 30px;position:relative}
 .hello{color:var(--mute);letter-spacing:.2em;text-transform:uppercase;font-size:.95rem;margin:0}
@@ -46,13 +45,12 @@ h2{font:800 clamp(1.5rem,4.5vw,2.3rem)/1.15 var(--head);margin:0 0 .4rem;letter-
 @keyframes gl2{0%,90%,100%{transform:none}91%{transform:translate(4px,-1px)}95%{transform:translate(-3px,1px)}}
 .type{font:600 1.15rem var(--head);color:var(--text);min-height:1.8em}
 .type::after{content:"▌";color:var(--c);animation:blink .8s steps(2) infinite}
-
-/* NHẠC */
-.music{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-top:22px;border:1px solid var(--line);background:rgba(20,16,42,.82);border-radius:18px;padding:14px;backdrop-filter:blur(8px);position:relative;overflow:hidden}
+/* NHẠC - SỬA LỚN KHUNG YOUTUBE */
+.music{display:flex;flex-direction:column;gap:16px;margin-top:22px;border:1px solid var(--line);background:rgba(20,16,42,.82);border-radius:18px;padding:14px;backdrop-filter:blur(8px);position:relative;overflow:hidden}
 .music::before{content:"";position:absolute;inset:-2px;border-radius:20px;padding:2px;background:conic-gradient(from var(--a,0deg),var(--v),var(--c),var(--p),var(--v));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spin 6s linear infinite;pointer-events:none}
 @property --a{syntax:"<angle>";initial-value:0deg;inherits:false}
 @keyframes spin{to{--a:360deg}}
-.player{aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000}
+.player{width:100%;aspect-ratio:16/7;border-radius:12px;overflow:hidden;background:#000}
 .player iframe{width:100%;height:100%;border:0;display:block}
 .pl{display:flex;flex-direction:column;min-height:0}
 .pl h3{margin:0 0 8px;font:700 .95rem var(--head);color:var(--c)}
@@ -69,7 +67,6 @@ h2{font:800 clamp(1.5rem,4.5vw,2.3rem)/1.15 var(--head);margin:0 0 .4rem;letter-
 input{font:600 1rem var(--body);background:#0d0a20;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:.5rem .8rem;min-width:0;flex:1}
 .scroll{align-self:center;margin-top:26px;color:var(--mute);font:600 .8rem var(--head);letter-spacing:.3em;animation:bob 1.6s ease-in-out infinite}
 @keyframes bob{50%{transform:translateY(8px)}}
-
 /* HỒ SƠ */
 .me{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;margin-top:20px}
 .avatar{width:min(220px,40vw);aspect-ratio:1;border-radius:28% 72% 63% 37%/40% 40% 60% 60%;overflow:hidden;position:relative;animation:morph 8s ease-in-out infinite;box-shadow:0 0 0 3px var(--v),0 0 40px -4px var(--p)}
@@ -81,7 +78,6 @@ input{font:600 1rem var(--body);background:#0d0a20;color:var(--text);border:1px 
 .soc{display:flex;align-items:center;gap:8px;padding:.55rem 1rem;border-radius:12px;border:1px solid var(--line);background:var(--panel);transition:transform .25s,border-color .25s,box-shadow .25s;font-weight:700}
 .soc svg{width:20px;height:20px;fill:currentColor}
 .soc:hover{transform:translateY(-4px) rotate(-1.5deg);border-color:var(--c);box-shadow:0 12px 30px -14px var(--c);color:var(--c)}
-
 /* GAME */
 .open{margin-top:18px}
 .chips{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s cubic-bezier(.2,.7,.2,1)}
@@ -108,14 +104,13 @@ input{font:600 1rem var(--body);background:#0d0a20;color:var(--text);border:1px 
 .card b{font-size:1.02rem;line-height:1.25}
 .card .btn{font-size:.9rem;padding:.45rem .9rem;justify-content:center}
 footer{padding:50px 0 40px;text-align:center;color:var(--mute);font-size:.95rem}
-@media (max-width:760px){.music{grid-template-columns:1fr}.me{grid-template-columns:1fr;justify-items:center;text-align:center}.socials{justify-content:center}}
+@media (max-width:760px){.socials{justify-content:center}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.chip{opacity:1;transform:none}}
 </style>
 </head>
 <body>
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="glow" id="glow" aria-hidden="true"></div>
-
 <!-- ============ BANNER GIỜ + NHẠC ============ -->
 <header class="hero"><div class="wrap">
   <p class="hello" id="hello">Xin chào</p>
@@ -123,7 +118,6 @@ footer{padding:50px 0 40px;text-align:center;color:var(--mute);font-size:.95rem}
   <p class="date" id="date"></p>
   <h1 style="margin:0;font:800 clamp(1.4rem,4vw,2.2rem) var(--head)"><span class="glitch" data-t="CHÀO MỪNG ĐẾN GÓC GAME">CHÀO MỪNG ĐẾN GÓC GAME</span></h1>
   <div class="type" id="type"></div>
-
   <div class="music" id="music">
     <div class="player"><iframe id="yt" title="Trình phát nhạc YouTube" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
     <div class="pl">
@@ -134,20 +128,18 @@ footer{padding:50px 0 40px;text-align:center;color:var(--mute);font-size:.95rem}
   </div>
   <div class="scroll">CUỘN XUỐNG ↓</div>
 </div></header>
-
 <main class="wrap">
   <!-- ============ THÔNG TIN CỦA TÔI ============ -->
   <section class="sec" id="me">
-    <div class="rv"><span class="tag">// Player 01</span><h2>Thông tin của tôi</h2></div>
+    <div class="rv"><span class="tag">// Liên Hệ</span><h2>Thông tin của tôi</h2></div>
     <div class="me rv">
       <div class="avatar"><img id="av" alt="Ảnh đại diện" src="images/avatar.jpg"></div>
       <div>
-        <h3 id="myname"></h3><p id="mybio"></p>
+        <h3 id="myname">Nam Hoàng</h3><p id="mybio">Game thủ chính hiệu. Thích chơi game, nghe nhạc và chia sẻ mod, tips cho anh em.</p>
         <div class="socials" id="socials"></div>
       </div>
     </div>
   </section>
-
   <!-- ============ GAME ============ -->
   <section class="sec" id="games">
     <div class="rv"><span class="tag">// Game</span><h2>Kho game của tôi</h2><p style="color:var(--mute);margin:0">Bấm nút bên dưới để chọn game, rồi bấm vào game để xem ảnh và link.</p></div>
@@ -156,30 +148,27 @@ footer{padding:50px 0 40px;text-align:center;color:var(--mute);font-size:.95rem}
     <div class="gpanel" id="gp"><div><div id="gcontent"></div></div></div>
   </section>
 </main>
-<footer>© <span id="yr"></span> <span id="foot"></span> · Chúc bạn chơi game vui vẻ</footer>
-
+<footer>© <span id="yr"></span> <span id="foot">Nam Hoàng</span> · Chúc bạn chơi game vui vẻ</footer>
 <script>
 /* =====================================================================
    CẤU HÌNH – CHỈ CẦN SỬA PHẦN NÀY
    ===================================================================== */
 var CFG={
-  name:"Tên của bạn",
+  name:"Nam Hoàng",
   bio:"Game thủ chính hiệu. Thích chơi game, nghe nhạc và chia sẻ mod, tips cho anh em.",
-  avatar:"images/avatar.jpg",              /* ảnh của bạn, để trong thư mục images */
+  avatar:"images/avatar.jpg",
   typing:["Chơi game mỗi ngày","Nghe nhạc cực chill","Chia sẻ mod và tips","Kết nối với tôi ở bên dưới"],
-  socials:[                               /* sửa link, xóa dòng nào không dùng */
-    {n:"Facebook",u:"https://facebook.com/ten-cua-ban",i:"fb"},
+  socials:[
+    {n:"Facebook",u:"https://www.facebook.com/kun.lee.3348/",i:"fb"},
+    {n:"TikTok",u:"https://tiktok.com/@user6002956066196?lang=vi-VN",i:"tt"},
     {n:"Zalo",u:"https://zalo.me/0123456789",i:"zl"},
-    {n:"TikTok",u:"https://tiktok.com/@ten-cua-ban",i:"tt"},
     {n:"Discord",u:"https://discord.gg/ma-moi",i:"dc"}
   ],
-  /* Nhạc: dán ID hoặc cả link YouTube. Có thể thêm/xóa ngay trên trang (lưu trong trình duyệt) */
   music:[
     {id:"jfKfPfyJRdk",t:"Lofi chill để chơi game"},
     {id:"5qap5aO4i9A",t:"Lofi Hip Hop Radio"},
     {id:"4xDzrJKXOOY",t:"Synthwave Radio"}
   ],
-  /* Game: mỗi game có danh sách mục gồm tên, ảnh (tùy chọn) và link */
   games:[
     {name:"Minecraft",note:"Mod, texture và map",items:[
       {t:"Gói đồ họa Realistic 4K",l:"https://example.com/mc-1",img:""},
@@ -201,14 +190,10 @@ var CFG={
 var $=function(i){return document.getElementById(i)};
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 var RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-/* thông tin cơ bản */
 document.title=CFG.name+" · Góc game";
 $("myname").textContent=CFG.name;$("mybio").textContent=CFG.bio;$("foot").textContent=CFG.name;$("yr").textContent=new Date().getFullYear();
 var av=$("av");av.src=CFG.avatar;
-av.onerror=function(){av.onerror=null;av.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cff"/><stop offset="1" stop-color="#ff3d81"/></linearGradient></defs><rect width="200" height="200" fill="url(#g)"/><text x="100" y="128" font-size="90" font-weight="800" font-family="sans-serif" text-anchor="middle" fill="#fff">'+esc((CFG.name||"?").charAt(0).toUpperCase())+'</text></svg>')};
-
-/* đồng hồ */
+av.onerror=function(){av.onerror=null;av.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cff"/><stop offset="1" stop-color="#ff3d81"/></linearGradient></defs><rect width="200" height="200" fill="url(#g)"/><text x="100" y="128" font-size="90" font-weight="800" font-family="sans-serif" text-anchor="middle" fill="#fff">N</text></svg>')};
 var DAYS=["Chủ nhật","Thứ hai","Thứ ba","Thứ tư","Thứ năm","Thứ sáu","Thứ bảy"];
 function p2(n){return n<10?"0"+n:""+n}
 function tick(){var d=new Date(),h=d.getHours();
@@ -216,14 +201,10 @@ function tick(){var d=new Date(),h=d.getHours();
  $("date").textContent=DAYS[d.getDay()]+", ngày "+d.getDate()+" tháng "+(d.getMonth()+1)+" năm "+d.getFullYear();
  $("hello").textContent=h<5?"Khuya rồi, ngủ sớm nhé":h<11?"Chào buổi sáng":h<14?"Chào buổi trưa":h<18?"Chào buổi chiều":"Chào buổi tối"}
 tick();setInterval(tick,1000);
-
-/* chữ gõ */
 (function(){var i=0,j=0,del=false,el=$("type");if(RM){el.textContent=CFG.typing[0]||"";return}
  (function step(){var w=CFG.typing[i]||"";j+=del?-1:1;el.textContent=w.slice(0,j);var t=del?35:70;
   if(!del&&j===w.length){del=true;t=1400}else if(del&&j===0){del=false;i=(i+1)%CFG.typing.length;t=300}
   setTimeout(step,t)})()})();
-
-/* nhạc */
 function ytId(s){s=String(s).trim();var m=s.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/);if(m)return m[1];return/^[\w-]{11}$/.test(s)?s:null}
 var tracks=CFG.music.map(function(m){return{id:ytId(m.id),t:m.t}}).filter(function(m){return m.id});
 try{var sv=JSON.parse(localStorage.getItem("g_music")||"null");if(sv&&sv.length)tracks=sv}catch(e){}
@@ -243,16 +224,12 @@ function addTrack(){var id=ytId($("url").value);if(!id){$("url").style.borderCol
  play(tracks.length-1,true)}
 $("addbtn").onclick=addTrack;$("url").addEventListener("keydown",function(e){if(e.key==="Enter")addTrack()});
 play(0,false);
-
-/* mạng xã hội */
 var IC={
  fb:'<path d="M13.5 22v-8h2.7l.5-3.2h-3.2V8.7c0-.9.4-1.7 1.8-1.7h1.5V4.2S15.5 4 14.3 4C11.8 4 10.2 5.5 10.2 8.2v2.6H7.5V14h2.7v8z"/>',
- zl:'<path d="M12 3C6.8 3 3 6.6 3 11c0 2.4 1.1 4.5 2.9 6L5 21l3.7-1.9c1 .3 2.2.5 3.3.5 5.2 0 9-3.600 9-8.100S17.200 3 12 3zm-3 5.500h4.400v1L10.500 13H13.500v1.200H8.600v-1l2.900-3.500H9z"/>',
- tt:'<path d="M16.600 3c.3 2.300 1.600 3.700 3.900 3.900v3c-1.400.1-2.600-.3-3.900-1.100v5.700c0 7.200-7.800 9.400-10.900 4.300-2-3.400-.8-8.800 5.200-9v3.200c-.5.100-.9.200-1.400.4-1.300.5-2 1.500-1.800 3 .4 3 5.900 3.900 5.400-2V3z"/>',
- dc:'<path d="M19.300 5.300A17 17 0 0 0 15.100 4l-.5 1a15.800 15.800 0 0 0-5.200 0L9 4a17 17 0 0 0-4.300 1.300C2 9.400 1.300 13.400 1.600 17.300a17 17 0 0 0 5.200 2.600l1.100-1.800c-.6-.2-1.200-.5-1.700-.9l.4-.3a12 12 0 0 0 10.800 0l.4.300c-.5.400-1.100.7-1.700.9l1.100 1.800a17 17 0 0 0 5.200-2.600c.4-4.500-.7-8.500-3.100-12zM8.700 14.900c-1 0-1.800-.9-1.800-2s.8-2 1.800-2 1.800.9 1.800 2-.8 2-1.800 2zm6.600 0c-1 0-1.800-.9-1.800-2s.8-2 1.800-2 1.800.9 1.800 2-.8 2-1.800 2z"/>'};
+ zl:'<path d="M12 3C6.8 3 3 6.6 3 11c0 2.4 1.1 4.5 2.9 6L5 21l3.7-1.9c1 .3 2.2.5 3.3.5 5.2 0 9-3.6 9-8.1S17.2 3 12 3zm-3 5.5h4.4v1L10.5 13H13.5v1.2H8.6v-1l2.9-3.5H9z"/>',
+ tt:'<path d="M16.6 3c.3 2.3 1.6 3.7 3.9 3.9v3c-1.4.1-2.6-.3-3.9-1.1v5.7c0 7.2-7.8 9.4-10.9 4.3-2-3.4-.8-8.8 5.2-9v3.2c-.5.1-.9.2-1.4.4-1.3.5-2 1.5-1.8 3 .4 3 5.9 3.9 5.4-2V3z"/>',
+ dc:'<path d="M19.3 5.3A17 17 0 0 0 15.1 4l-.5 1a15.8 15.8 0 0 0-5.2 0L9 4a17 17 0 0 0-4.3 1.3C2 9.4 1.3 13.4 1.6 17.3a17 17 0 0 0 5.2 2.6l1.1-1.8c-.6-.2-1.2-.5-1.7-.9l.4-.3a12 12 0 0 0 10.8 0l.4.3c-.5.4-1.1.7-1.7.9l1.1 1.8a17 17 0 0 0 5.2-2.6c.4-4.5-.7-8.5-3.1-12zM8.7 14.9c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/>'};
 $("socials").innerHTML=CFG.socials.map(function(s){return'<a class="soc" href="'+esc(s.u)+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true">'+(IC[s.i]||IC.fb)+'</svg>'+esc(s.n)+'</a>'}).join("");
-
-/* game */
 var PAL=[["#8b5cff","#29f0ff"],["#ff3d81","#ffb23e"],["#29f0ff","#3ee08a"],["#ff3d81","#8b5cff"]];
 function art(t,i){var c=PAL[i%PAL.length];return"data:image/svg+xml;charset=utf-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200"><defs><linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+c[0]+'"/><stop offset="1" stop-color="'+c[1]+'"/></linearGradient></defs><rect width="320" height="200" fill="url(#a)"/><circle cx="262" cy="44" r="48" fill="#fff" opacity=".16"/><path d="M0 165 L70 105 L130 152 L205 85 L320 172 V200 H0Z" fill="#000" opacity=".25"/><text x="24" y="70" font-family="sans-serif" font-size="46" font-weight="800" fill="#fff">'+esc((t||"?").charAt(0).toUpperCase())+'</text></svg>')}
 $("chipbox").innerHTML=CFG.games.map(function(g,i){return'<button class="chip" type="button" role="listitem" style="--i:'+i+'" data-g="'+i+'" aria-expanded="false">'+esc(g.name)+'</button>'}).join("");
@@ -266,15 +243,10 @@ $("chipbox").addEventListener("click",function(e){var b=e.target.closest(".chip"
  $("gcontent").innerHTML='<div class="gh">'+esc(g.name)+' <small>· '+esc(g.note||"")+'</small></div><div class="cards">'+g.items.map(function(it,k){return'<article class="card" style="animation-delay:'+(k*90+200)+'ms"><div class="im"><img src="'+esc(it.img||art(it.t,i+k))+'" alt="'+esc(it.t)+'" loading="lazy"></div><div class="bd"><b>'+esc(it.t)+'</b><a class="btn" href="'+esc(it.l)+'" target="_blank" rel="noopener">Xem link ↗</a></div></article>'}).join("")+'</div>';
  $("gp").classList.add("on");
  setTimeout(function(){$("gp").scrollIntoView({behavior:"smooth",block:"nearest"})},300)});
-/* nghiêng 3D nhẹ cho thẻ */
 $("gcontent").addEventListener("pointermove",function(e){if(RM||e.pointerType!=="mouse")return;var c=e.target.closest(".card");if(!c)return;var r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform="perspective(700px) rotateY("+x*8+"deg) rotateX("+-y*8+"deg) translateY(-4px)"});
 $("gcontent").addEventListener("pointerout",function(e){var c=e.target.closest(".card");if(c)c.style.transform=""});
-
-/* hiện dần khi cuộn */
 var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.15});
 document.querySelectorAll(".rv").forEach(function(el){io.observe(el)});
-
-/* nền hạt + ánh sáng theo chuột */
 (function(){var cv=$("fx"),x=cv.getContext("2d"),W,H,P=[],gl=$("glow");
  function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;P=[];var n=Math.min(70,Math.floor(W*H/22000));for(var i=0;i<n;i++)P.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+.6,vx:(Math.random()-.5)*.35,vy:-Math.random()*.5-.1,c:["#8b5cff","#29f0ff","#ff3d81"][i%3]})}
  size();addEventListener("resize",size);
