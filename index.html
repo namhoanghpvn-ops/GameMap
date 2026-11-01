@@ -417,6 +417,23 @@ html.tfade,html.tfade *,html.tfade *::before,html.tfade *::after{transition:back
 .tbad{color:#ff5f86;margin-top:10px}
 @media(max-width:760px){.rbox{grid-template-columns:1fr}.tgrid{grid-template-columns:repeat(2,1fr);gap:10px}.tc{padding:14px 12px}.tc small{font-size:.8rem}.tp{padding:14px}.ttc img{width:80px;height:110px}}
 .rbox[hidden]{display:none}
+/* ===== DOLA AI ===== */
+.dl{position:relative;margin-top:22px;padding:22px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(160deg,rgba(41,240,255,.1),var(--panel) 55%)}
+.dl-top{display:flex;gap:16px;align-items:center}
+.dl-logo{flex:none;display:grid;place-items:center;width:64px;height:64px;border-radius:18px;font-size:2rem;background:linear-gradient(135deg,var(--c),var(--v));box-shadow:0 10px 26px -10px var(--c)}
+.dl-top h3{margin:0;font:800 1.35rem var(--head)}.dl-top p{margin:.2rem 0 0;color:var(--mute);font-size:.95rem}
+.dl-feats{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 0;padding:0;list-style:none}
+.dl-feats li{padding:.3rem .85rem;border-radius:999px;border:1px solid var(--line);background:rgba(139,92,255,.12);font-size:.9rem}
+.dl-steps{margin:16px 0 0}
+.dl-act{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.dl-act a.btn{text-decoration:none}
+.dl-frame{margin-top:18px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel);animation:tin .5s cubic-bezier(.2,.8,.2,1)}
+.dl-frame[hidden]{display:none}
+.dl-bar{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);font:700 .8rem var(--head);color:var(--mute)}
+.dl-bar span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dl-frame iframe{display:block;width:100%;height:min(78vh,720px);min-height:480px;border:0;background:#fff}
+.dl-help{margin:0;padding:10px 14px;border-top:1px solid var(--line);font-size:.85rem;color:var(--mute);line-height:1.5}
+@media(max-width:760px){.dl{padding:16px}.dl-logo{width:52px;height:52px;font-size:1.6rem}.dl-frame iframe{height:70vh;min-height:420px}}
 .tp input[type=checkbox]{width:auto;flex:none;margin:0;padding:0}
 .tp [hidden]{display:none!important}
 .tp input[type=color]{width:44px;height:34px;padding:2px;border:1px solid var(--line);border-radius:8px;background:transparent;cursor:pointer;flex:none}
@@ -432,7 +449,7 @@ html.tfade,html.tfade *,html.tfade *::before,html.tfade *::after{transition:back
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="glow" id="glow" aria-hidden="true"></div>
 <div id="prog" aria-hidden="true"></div>
-<nav class="topnav" id="topnav" aria-label="Menu chính"><div class="tn"><a class="brand" id="brand" href="#top">NAM HOÀNG</a><button class="burger" id="burger" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="nl">☰</button><ul id="nl"><li class="sli"><div class="sbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="gs" type="search" placeholder="Tìm kiếm… ( / )" autocomplete="off" aria-label="Tìm kiếm nội dung trang"><div class="sres" id="sres" role="listbox"></div></div></li><li><a class="nl" href="#top">Trang chủ</a></li><li><a class="nl" href="#me">Liên hệ</a></li><li><a class="nl" href="#games">Game</a></li><li><a class="nl" href="#tools">Công cụ</a></li><li><a class="nl" href="#donate">Hỗ trợ</a></li><li><button class="themebtn" id="theme" type="button" aria-label="Chuyển giao diện sáng hoặc tối" title="Sáng / Tối"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7L7 17M17 7l1.7-1.7"/></g></svg></button></li></ul></div></nav>
+<nav class="topnav" id="topnav" aria-label="Menu chính"><div class="tn"><a class="brand" id="brand" href="#top">NAM HOÀNG</a><button class="burger" id="burger" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="nl">☰</button><ul id="nl"><li class="sli"><div class="sbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="gs" type="search" placeholder="Tìm kiếm… ( / )" autocomplete="off" aria-label="Tìm kiếm nội dung trang"><div class="sres" id="sres" role="listbox"></div></div></li><li><a class="nl" href="#top">Trang chủ</a></li><li><a class="nl" href="#me">Liên hệ</a></li><li><a class="nl" href="#games">Game</a></li><li><a class="nl" href="#tools">Công cụ</a></li><li><a class="nl" href="#dola">Dola AI</a></li><li><a class="nl" href="#donate">Hỗ trợ</a></li><li><button class="themebtn" id="theme" type="button" aria-label="Chuyển giao diện sáng hoặc tối" title="Sáng / Tối"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7L7 17M17 7l1.7-1.7"/></g></svg></button></li></ul></div></nav>
 <button class="totop" id="totop" type="button" aria-label="Lên đầu trang">↑</button>
 <!-- ============ BANNER GIỜ + NHẠC ============ -->
 <header class="hero" id="top"><div class="wrap">
@@ -477,8 +494,32 @@ html.tfade,html.tfade *,html.tfade *::before,html.tfade *::after{transition:back
     <div class="tgrid rv" id="tgrid" role="list"></div>
     <div class="tpanel" id="tpanel" aria-live="polite"></div>
   </section>
+  <!-- ============ DOLA AI ============ -->
+  <section class="sec" id="dola" data-n="04">
+    <div class="rv"><span class="tag">// Trợ lý AI</span><h2>Dola AI</h2><p style="color:var(--mute);margin:0">Trợ lý AI miễn phí để hỏi đáp, viết nội dung, dịch thuật, học tập và tạo ảnh. Ai vào trang cũng dùng được, không cần cài đặt.</p></div>
+    <div class="dl rv">
+      <div class="dl-top">
+        <div class="dl-logo" aria-hidden="true">🤖</div>
+        <div><h3>Trò chuyện với Dola</h3><p>Bấm nút bên dưới để mở Dola ngay trong trang này.</p></div>
+      </div>
+      <ul class="dl-feats" aria-label="Dola làm được gì">
+        <li>💬 Hỏi đáp, trò chuyện</li><li>✍️ Viết &amp; chỉnh sửa nội dung</li><li>🌐 Dịch thuật</li><li>💻 Hỗ trợ lập trình</li><li>🎨 Tạo ảnh AI</li>
+      </ul>
+      <ol class="tsteps dl-steps"><li>Bấm “Dùng Dola ngay”</li><li>Gõ câu hỏi hoặc yêu cầu của bạn</li><li>Cần đủ tính năng thì đăng nhập tài khoản Dola</li></ol>
+      <div class="dl-act">
+        <button class="btn" id="dolaGo" type="button" aria-expanded="false" aria-controls="dolaBox">🤖 Dùng Dola ngay</button>
+        <a class="btn ghost" id="dolaTab" href="https://www.dola.com/chat" target="_blank" rel="noopener noreferrer">↗ Mở trong tab mới</a>
+      </div>
+      <div class="dl-frame" id="dolaBox" hidden>
+        <div class="dl-bar"><span>Dola AI · dola.com</span><button class="tbtn" id="dolaClose" type="button">✕ Thu gọn</button></div>
+        <iframe id="dolaFrame" title="Dola AI" referrerpolicy="no-referrer" allow="clipboard-write; microphone" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads"></iframe>
+        <p class="dl-help">Khung trống hoặc báo không kết nối được? Trình duyệt hoặc Dola đang chặn hiển thị trong trang khác. Bấm <b>“Mở trong tab mới”</b> ở trên để dùng bình thường.</p>
+      </div>
+      <p class="tnote">⚠️ Dola là dịch vụ của bên thứ ba (ByteDance), không thuộc trang này. Nội dung bạn nhập được gửi trực tiếp tới Dola, đừng nhập thông tin cá nhân hay mật khẩu. Một số khu vực có thể chưa dùng được.</p>
+    </div>
+  </section>
   <!-- ============ DONATE ============ -->
-  <section class="sec rv" id="donate" data-n="03">
+  <section class="sec rv" id="donate" data-n="05">
     <span class="tag">// Hỗ trợ</span>
     <h2>💖 Hỗ trợ tôi</h2>
     <div class="donate-card hud">
@@ -935,7 +976,7 @@ if(!RM){var io3=new IntersectionObserver(function(es){es.forEach(function(e){if(
 /* Hiệu ứng kéo trang */
 var prog=$("prog"),tt=$("totop"),hero=document.querySelector(".hero .wrap"),secs=Array.from(document.querySelectorAll(".sec")),decos=[];
 secs.forEach(function(s,k){for(var j=0;j<2;j++){var d=mk("i","deco",s);d.style.cssText="--s:"+(j?56:90)+"px;left:"+(j?8+k*9:72-k*8)+"%;top:"+(j?72:10)+"%";d.dataset.sp=j?-.12:.18;decos.push(d)}});
-var ids=[["top","Trang chủ"],["me","Liên hệ"],["games","Game"],["tools","Công cụ"],["donate","Hỗ trợ"]],nav=mk("nav","dots");nav.setAttribute("aria-label","Điều hướng nhanh");
+var ids=[["top","Trang chủ"],["me","Liên hệ"],["games","Game"],["tools","Công cụ"],["dola","Dola AI"],["donate","Hỗ trợ"]],nav=mk("nav","dots");nav.setAttribute("aria-label","Điều hướng nhanh");
 var dots=ids.map(function(x){var a=mk("a","dt",nav);a.href="#"+x[0];a.setAttribute("aria-label",x[1]);a.dataset.l=x[1];return a});
 var tick=0;
 function upd(){tick=0;var y=scrollY,H=document.documentElement.scrollHeight-innerHeight;
@@ -1034,6 +1075,17 @@ document.querySelectorAll(".sec h2").forEach(function(h){var c=h.querySelectorAl
 })();
 </script>
 <script>
+/* Dola AI: địa chỉ lấy từ nút "Mở trong tab mới" (#dolaTab). Muốn đổi link, chỉ cần sửa href của nút đó. */
+(function(){
+var go=document.getElementById("dolaGo"),tab=document.getElementById("dolaTab"),box=document.getElementById("dolaBox"),fr=document.getElementById("dolaFrame"),cl=document.getElementById("dolaClose");
+if(!go||!tab||!box||!fr)return;
+function show(){if(!fr.getAttribute("src"))fr.src=tab.href;box.hidden=false;go.setAttribute("aria-expanded","true");go.textContent="🤖 Dola đang mở";setTimeout(function(){box.scrollIntoView({behavior:"smooth",block:"nearest"})},60)}
+function hide(){box.hidden=true;go.setAttribute("aria-expanded","false");go.textContent="🤖 Dùng Dola ngay"}
+go.addEventListener("click",function(){box.hidden?show():box.scrollIntoView({behavior:"smooth",block:"nearest"})});
+cl.addEventListener("click",hide);
+})();
+</script>
+<script>
 (function(){
 var gs=$("gs"),res=$("sres"),list=[],act=-1;
 function norm(x){return String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[đĐ]/g,"d").toLowerCase()}
@@ -1045,6 +1097,7 @@ function build(){var L=[];
    (it.servers||[]).forEach(function(v){L.push({k:"Server",t:v.name,s:v.ip+" · "+v.ver,gi:gi,ii:ii,sel:".srv"})});
    (it.guide||[]).forEach(function(v,n){L.push({k:"Hướng dẫn",t:v.h,s:v.p,gi:gi,ii:ii,sel:'.gd[data-n="'+n+'"]'})})})});
  (window.TOOLS||[]).forEach(function(t){L.push({k:"Công cụ",t:t.n,s:t.d,tool:t.id})});
+ L.push({k:"Trợ lý AI",t:"Dola AI",s:"Trợ lý AI miễn phí: hỏi đáp, viết, dịch, lập trình, tạo ảnh",sec:"dola"});
  L.push({k:"Liên hệ",t:CFG.name,s:CFG.bio,sec:"me"});
  CFG.socials.forEach(function(x){L.push({k:"Liên hệ",t:x.n,s:x.u,sec:"me"})});
  tracks.forEach(function(t,i){L.push({k:"Nhạc",t:t.t,s:"",tr:i})});
