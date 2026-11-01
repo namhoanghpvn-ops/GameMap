@@ -418,6 +418,11 @@ html.tfade,html.tfade *,html.tfade *::before,html.tfade *::after{transition:back
 @media(max-width:760px){.rbox{grid-template-columns:1fr}.tgrid{grid-template-columns:repeat(2,1fr);gap:10px}.tc{padding:14px 12px}.tc small{font-size:.8rem}.tp{padding:14px}.ttc img{width:80px;height:110px}}
 .rbox[hidden]{display:none}
 .tp input[type=checkbox]{width:auto;flex:none;margin:0;padding:0}
+.tp [hidden]{display:none!important}
+.tp input[type=color]{width:44px;height:34px;padding:2px;border:1px solid var(--line);border-radius:8px;background:transparent;cursor:pointer;flex:none}
+.tp canvas{display:block}
+.tp .tres{margin-top:6px}
+.tp .tr>select{max-width:100%}
 .tp input[type=range]{min-width:0;padding:0;border:0;background:none}
 .tr label.ck{flex-direction:row}
 </style>
@@ -1097,6 +1102,7 @@ function dz(accept,multi,cb,label){
  return w}
 function row(o,name,size){var r=h('<div class="rw"><div><b></b><small></small></div><span class="rs">Đang xử lý…</span></div>'),s=r.querySelector(".rs"),sm=r.querySelector("small");r.querySelector("b").textContent=name;sm.textContent=size;o.appendChild(r);
  return{set:function(m,bad){s.className="rs"+(bad?" bad":"");s.textContent=m},note:function(m){sm.textContent=size+" · "+m},
+  btn:function(lb,fn){s.className="rs";s.textContent="";var a=h('<button class="tbtn p" type="button"></button>');a.textContent=lb;a.onclick=fn;s.appendChild(a)},
   ok:function(b,fn){s.className="rs";s.textContent="";var a=h('<button class="tbtn p" type="button"></button>');a.textContent="⬇ Tải "+fn+" ("+sz(b.size)+")";a.onclick=function(){save(b,fn)};s.appendChild(a)}}}
 /* ---------- âm thanh ---------- */
 function dec(f){return f.arrayBuffer().then(function(ab){var ac=new (window.AudioContext||window.webkitAudioContext)();return ac.decodeAudioData(ab).finally(function(){ac.close()})})}
@@ -1215,6 +1221,1651 @@ function rSys(el){var gl,gpu="Không xác định";try{gl=document.createElement
  R=[["CPU (số luồng)",navigator.hardwareConcurrency||"Không rõ"],["RAM (ước tính)",navigator.deviceMemory?"từ "+navigator.deviceMemory+" GB trở lên":"Trình duyệt không cung cấp"],["Card đồ họa (GPU)",gpu],["Độ phân giải màn hình",screen.width+"×"+screen.height+" (tỉ lệ x"+devicePixelRatio+")"],["Vùng hiển thị trình duyệt",innerWidth+"×"+innerHeight],["Hệ điều hành",os],["Trình duyệt",br],["Mạng",cn?(cn.effectiveType||"?")+" · ~"+(cn.downlink||"?")+" Mbps":"Không rõ"],["Màn hình cảm ứng",navigator.maxTouchPoints>0?"Có ("+navigator.maxTouchPoints+" điểm chạm)":"Không"]];
  el.innerHTML='<div class="sysg">'+R.map(function(r){return'<div class="sysi"><small>'+r[0]+'</small><b>'+esc(String(r[1]))+'</b></div>'}).join("")+'</div><div class="tr"><button class="tbtn p" id="sc" type="button">📋 Sao chép thông tin</button></div><p class="tnote">Dùng để đối chiếu cấu hình yêu cầu của game. RAM chỉ là ước tính tối đa 8 GB theo quy định của trình duyệt.</p>';
  el.querySelector("#sc").onclick=function(){var b=this,t=R.map(function(r){return r[0]+": "+r[1]}).join("\n");try{navigator.clipboard.writeText(t).then(function(){b.textContent="Đã chép ✓";setTimeout(function(){b.textContent="📋 Sao chép thông tin"},1300)})}catch(e){}}}
+/* ===================== CÔNG CỤ MỚI: tiện ích chung ===================== */
+var JD="https://cdn.jsdelivr.net/npm/",CD="https://cdnjs.cloudflare.com/ajax/libs/",
+LIBS={jszip:{u:[CD+"jszip/3.10.1/jszip.min.js",JD+"jszip@3.10.1/dist/jszip.min.js"],ok:function(){return window.JSZip}},
+ pdflib:{u:[CD+"pdf-lib/1.17.1/pdf-lib.min.js",JD+"pdf-lib@1.17.1/dist/pdf-lib.min.js"],ok:function(){return window.PDFLib}},
+ pdfjs:{u:[CD+"pdf.js/3.11.174/pdf.min.js",JD+"pdfjs-dist@3.11.174/build/pdf.min.js"],ok:function(){return window.pdfjsLib}},
+ xlsx:{u:[CD+"xlsx/0.18.5/xlsx.full.min.js",JD+"xlsx@0.18.5/dist/xlsx.full.min.js"],ok:function(){return window.XLSX}},
+ mammoth:{u:[CD+"mammoth/1.6.0/mammoth.browser.min.js",JD+"mammoth@1.6.0/mammoth.browser.min.js"],ok:function(){return window.mammoth}}},
+PJW=[CD+"pdf.js/3.11.174/pdf.worker.min.js",JD+"pdfjs-dist@3.11.174/build/pdf.worker.min.js"];
+function lib1(u){return new Promise(function(ok,no){var s=document.createElement("script");s.src=u;s.onload=ok;s.onerror=function(){s.remove();no(new Error("load"))};document.head.appendChild(s)})}
+function need(k){var L=LIBS[k];if(L.ok())return Promise.resolve();
+ return L.p||(L.p=L.u.reduce(function(p,u){return p.catch(function(){return lib1(u).then(function(){if(!L.ok())throw new Error("x")})})},Promise.reject()).catch(function(){L.p=null;throw new Error("Không tải được thư viện cần thiết — hãy kiểm tra kết nối mạng rồi thử lại")}))}
+function pdfjs(){return need("pdfjs").then(function(){if(pdfjsLib.GlobalWorkerOptions.workerSrc)return;
+ return PJW.reduce(function(p,u){return p.catch(function(){return fetch(u).then(function(r){if(!r.ok)throw 0;return r.text()})})},Promise.reject()).then(function(t){pdfjsLib.GlobalWorkerOptions.workerSrc=URL.createObjectURL(new Blob([t],{type:"text/javascript"}))},function(){throw new Error("Không tải được bộ đọc PDF — hãy kiểm tra kết nối mạng")})})}
+function cb(c,t,q){return new Promise(function(ok){c.toBlob(ok,t,q)})}
+function tick(){return new Promise(function(ok){setTimeout(ok,0)})}
+/* danh sách file có thể sắp xếp */
+function flist(box,L,after){
+ function draw(){box.innerHTML="";L.forEach(function(f,i){var r=h('<div class="rw"><div><b></b><small></small></div><span class="rs"><button class="tbtn" data-a="u" type="button" aria-label="Lên">↑</button> <button class="tbtn" data-a="d" type="button" aria-label="Xuống">↓</button> <button class="tbtn" data-a="x" type="button" aria-label="Bỏ">✕</button></span></div>');
+  r.querySelector("b").textContent=(i+1)+". "+f.name;r.querySelector("small").textContent=sz(f.size);
+  r.querySelector(".rs").onclick=function(e){var a=e.target.dataset&&e.target.dataset.a;if(!a)return;
+   if(a==="u"&&i>0)L.splice(i-1,2,L[i],L[i-1]);else if(a==="d"&&i<L.length-1)L.splice(i,2,L[i+1],L[i]);else if(a==="x")L.splice(i,1);else return;draw()};
+  box.appendChild(r)});if(after)after()}
+ return draw}
+function fitDraw(x,im,dx,dy,dw,dh,mode){var iw=im.naturalWidth,ih=im.naturalHeight,s,w,hh;
+ if(mode==="cover"){s=Math.max(dw/iw,dh/ih);var sw=dw/s,sh=dh/s;x.drawImage(im,(iw-sw)/2,(ih-sh)/2,sw,sh,dx,dy,dw,dh)}
+ else{s=Math.min(dw/iw,dh/ih);w=iw*s;hh=ih*s;x.drawImage(im,dx+(dw-w)/2,dy+(dh-hh)/2,w,hh)}}
+/* ---------- bộ mã hóa GIF (tự viết, không cần thư viện) ---------- */
+function quant(px,n){var H=new Uint32Array(32768),i,k;
+ for(i=0;i<n;i++){k=((px[i*4]>>3)<<10)|((px[i*4+1]>>3)<<5)|(px[i*4+2]>>3);H[k]++}
+ var cols=[];for(k=0;k<32768;k++)if(H[k])cols.push(k);
+ var boxes=[cols];function ch(k,a){return a===0?k>>10:a===1?(k>>5)&31:k&31}
+ while(boxes.length<256){var bi=-1,bs=1;for(i=0;i<boxes.length;i++)if(boxes[i].length>bs){bs=boxes[i].length;bi=i}
+  if(bi<0)break;var b=boxes[bi],mn=[31,31,31],mx=[0,0,0],a,ax=0,best=-1;
+  for(i=0;i<b.length;i++)for(a=0;a<3;a++){var v=ch(b[i],a);if(v<mn[a])mn[a]=v;if(v>mx[a])mx[a]=v}
+  for(a=0;a<3;a++)if(mx[a]-mn[a]>best){best=mx[a]-mn[a];ax=a}
+  b.sort(function(p,q){return ch(p,ax)-ch(q,ax)});
+  var tot=0,acc=0,s;for(i=0;i<b.length;i++)tot+=H[b[i]];
+  for(s=0;s<b.length-1;s++){acc+=H[b[s]];if(acc>=tot/2)break}
+  if(s>=b.length-1)s=b.length-2;
+  boxes.splice(bi,1,b.slice(0,s+1),b.slice(s+1))}
+ var pal=new Uint8Array(768),lut=new Uint8Array(32768);
+ boxes.forEach(function(b,j){var r=0,g=0,bl=0,t=0;b.forEach(function(k){var c=H[k];r+=(k>>10)*c;g+=((k>>5)&31)*c;bl+=(k&31)*c;t+=c;lut[k]=j});
+  if(t){pal[j*3]=Math.min(255,Math.round(r/t)*8+4);pal[j*3+1]=Math.min(255,Math.round(g/t)*8+4);pal[j*3+2]=Math.min(255,Math.round(bl/t)*8+4)}});
+ var idx=new Uint8Array(n);for(i=0;i<n;i++)idx[i]=lut[((px[i*4]>>3)<<10)|((px[i*4+1]>>3)<<5)|(px[i*4+2]>>3)];
+ return{pal:pal,idx:idx}}
+function lzw(idx,mcs){var clear=1<<mcs,eoi=clear+1,out=[],cur=0,sh=0,size=mcs+1,next=eoi+1,dict=new Map();
+ function put(c){cur|=c<<sh;sh+=size;while(sh>=8){out.push(cur&255);cur>>>=8;sh-=8}}
+ put(clear);var ib=idx[0];
+ for(var i=1;i<idx.length;i++){var k=idx[i],key=ib*256+k,v=dict.get(key);
+  if(v===undefined){put(ib);
+   if(next===4096){put(clear);next=eoi+1;size=mcs+1;dict.clear()}
+   else{if(next>=(1<<size))size++;dict.set(key,next++)}
+   ib=k}else ib=v}
+ put(ib);put(eoi);if(sh>0)out.push(cur&255);return out}
+function gifNew(w,hh,delay){var out=[];function w16(v){out.push(v&255,(v>>8)&255)}
+ out.push(71,73,70,56,57,97);w16(w);w16(hh);out.push(0,0,0);
+ out.push(0x21,0xFF,0x0B,78,69,84,83,67,65,80,69,50,46,48,3,1,0,0,0);
+ return{add:function(px){var q=quant(px,w*hh),i;
+  out.push(0x21,0xF9,4,0);w16(Math.max(2,Math.round(delay/10)));out.push(0,0);
+  out.push(0x2C);w16(0);w16(0);w16(w);w16(hh);out.push(0x87);
+  for(i=0;i<768;i++)out.push(q.pal[i]);
+  out.push(8);var d=lzw(q.idx,8);for(var p=0;p<d.length;p+=255){var n=Math.min(255,d.length-p);out.push(n);for(var k=0;k<n;k++)out.push(d[p+k])}out.push(0)},
+  end:function(){out.push(0x3B);return new Blob([new Uint8Array(out)],{type:"image/gif"})}}}
+/* ---------- 9. ghép ảnh / tạo GIF ---------- */
+function rCollage(el){var L=[],busy=0,
+ ui=h('<div><div class="tr"><label>Kiểu</label><select id="km"><option value="grid">🧩 Ghép nhiều ảnh thành một ảnh</option><option value="gif">🎞️ Tạo ảnh động GIF</option></select></div>'+
+ '<div id="og" class="tr"><label>Số cột</label><input id="gc" type="number" min="1" max="10" value="2"><label>Cỡ mỗi ô</label><select id="gs"><option value="400">400 px</option><option value="600" selected>600 px</option><option value="900">900 px</option></select><label>Khoảng cách</label><input id="gg" type="number" min="0" max="80" value="8"><label>Màu nền</label><input id="gk" type="color" value="#ffffff"><label>Cách vừa ô</label><select id="gf"><option value="cover">Cắt vừa ô</option><option value="contain">Giữ đủ ảnh</option></select></div>'+
+ '<div id="oa" class="tr" hidden><label>Rộng</label><select id="aw"><option value="320">320 px (nhẹ)</option><option value="480" selected>480 px</option><option value="640">640 px</option></select><label>Mỗi ảnh hiện</label><input id="ad" type="number" min="100" max="5000" step="50" value="600"><label>ms</label><label>Cách vừa khung</label><select id="af"><option value="cover">Cắt vừa khung</option><option value="contain">Giữ đủ ảnh</option></select></div>'+
+ '<div id="ol"></div><div class="tr"><button class="btn" id="go" type="button">▶ Tạo ngay</button></div><div class="bar2"><i id="gb"></i></div><div id="or"></div></div>'),
+ q=function(s){return ui.querySelector(s)},draw;
+ function mode(){var g=q("#km").value==="grid";q("#og").hidden=!g;q("#oa").hidden=g}
+ q("#km").onchange=mode;
+ el.appendChild(dz("image/*",true,function(fs){fs.forEach(function(f){if(/^image\//.test(f.type))L.push(f)});draw()},"Chọn các ảnh cần ghép (chọn nhiều ảnh)"));
+ el.appendChild(ui);
+ draw=flist(q("#ol"),L,function(){q("#go").disabled=!L.length});
+ draw();
+ q("#go").onclick=function(){if(busy||!L.length)return;busy=1;var out=q("#or"),bar=q("#gb"),g=q("#km").value==="grid";out.innerHTML="";bar.style.width="0";this.disabled=true;var go=this;
+  Promise.all(L.map(img)).then(function(ims){
+   if(g){var n=ims.length,cols=Math.max(1,Math.min(n,+q("#gc").value||2)),rows=Math.ceil(n/cols),cell=+q("#gs").value,gap=Math.max(0,+q("#gg").value||0),
+    mx=Math.max(cols,rows);while(cell*mx+gap*(mx+1)>8000&&cell>50)cell-=50;
+    var c=document.createElement("canvas");c.width=cell*cols+gap*(cols+1);c.height=cell*rows+gap*(rows+1);var x=c.getContext("2d");x.fillStyle=q("#gk").value;x.fillRect(0,0,c.width,c.height);x.imageSmoothingQuality="high";
+    ims.forEach(function(im,i){fitDraw(x,im,gap+(i%cols)*(cell+gap),gap+Math.floor(i/cols)*(cell+gap),cell,cell,q("#gf").value)});bar.style.width="100%";
+    return cb(c,"image/png").then(function(b){return{b:b,n:"ghep-anh.png",t:"Ảnh ghép "+c.width+"×"+c.height}})}
+   var W=+q("#aw").value,H=Math.max(2,Math.round(W*ims[0].naturalHeight/ims[0].naturalWidth)),c2=document.createElement("canvas");c2.width=W;c2.height=H;var x2=c2.getContext("2d",{willReadFrequently:true}),gf=gifNew(W,H,+q("#ad").value||600),i=0;
+   return(function step(){if(i>=ims.length){bar.style.width="100%";return{b:gf.end(),n:"anh-dong.gif",t:"GIF "+W+"×"+H+" · "+ims.length+" khung"}}
+    x2.fillStyle="#fff";x2.fillRect(0,0,W,H);fitDraw(x2,ims[i],0,0,W,H,q("#af").value);gf.add(x2.getImageData(0,0,W,H).data);i++;bar.style.width=Math.round(i/ims.length*100)+"%";return tick().then(step)})()})
+  .then(function(r){out.innerHTML='<div class="rbox" style="grid-template-columns:1fr"><img alt="Kết quả" src="'+URL.createObjectURL(r.b)+'"></div><p class="tnote">'+r.t+' · '+sz(r.b.size)+'</p>';var bt=h('<button class="tbtn p" type="button">⬇ Tải '+r.n+'</button>');bt.onclick=function(){save(r.b,r.n)};out.appendChild(bt)})
+  .catch(function(e){out.innerHTML='<p class="tbad">Lỗi: '+esc(e.message||"không tạo được")+'</p>'})
+  .finally(function(){busy=0;go.disabled=!L.length})};
+ el.appendChild(h('<p class="tnote">Dùng ↑ ↓ để sắp xếp thứ tự ảnh. GIF nên dùng 3–30 ảnh, rộng 480 px để file nhẹ, dễ đăng mạng xã hội.</p>'))}
+/* ---------- 10. chỉnh sửa ảnh cơ bản ---------- */
+function rEdit(el){var im,f0,S,PRE={bw:"grayscale(1)",sepia:"sepia(.85) contrast(1.05)",warm:"sepia(.3) saturate(1.5) brightness(1.03)",cool:"sepia(.3) hue-rotate(160deg) saturate(1.2)",invert:"invert(1)",vivid:"contrast(1.2) saturate(1.5)",fade:"contrast(.85) brightness(1.1) saturate(.8)"},
+ def=function(){return{br:100,ct:100,sa:100,bl:0,pre:"",rot:0,flip:0,txt:"",ts:7,tc:"#ffffff",tp:"bottom",fw:0,fc:"#ffffff",fs:"simple"}};S=def();
+ function sl(id,lb,mn,mx,v){return'<div class="tr"><label>'+lb+' <b id="'+id+'v">'+v+'</b></label><input id="'+id+'" type="range" min="'+mn+'" max="'+mx+'" value="'+v+'"></div>'}
+ var box=h('<div class="rbox" hidden><div><canvas id="ec" style="width:100%;max-height:420px;object-fit:contain;border-radius:12px;background:rgba(0,0,0,.35)"></canvas><small class="tnote" id="ei"></small></div><div>'+
+ sl("br","Độ sáng",30,200,100)+sl("ct","Tương phản",30,200,100)+sl("sa","Độ đậm màu",0,250,100)+sl("bl","Làm mờ",0,20,0)+
+ '<div class="tr"><label>Bộ lọc</label><select id="pre"><option value="">Gốc</option><option value="bw">Đen trắng</option><option value="sepia">Hoài cổ</option><option value="warm">Ấm</option><option value="cool">Lạnh</option><option value="vivid">Rực rỡ</option><option value="fade">Nhạt (film)</option><option value="invert">Đảo màu</option></select></div>'+
+ '<div class="tr"><button class="tbtn" id="rl" type="button">↺ Xoay trái</button><button class="tbtn" id="rr" type="button">↻ Xoay phải</button><button class="tbtn" id="fh" type="button">⇋ Lật ngang</button></div>'+
+ '<div class="tr"><label>Chữ</label><input id="tx" type="text" placeholder="Nhập chữ muốn chèn…" style="flex:1 1 180px;padding:.5rem .8rem;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--text);font:600 .95rem var(--body)"><input id="tc" type="color" value="#ffffff"><select id="tp"><option value="top">Trên</option><option value="mid">Giữa</option><option value="bottom" selected>Dưới</option></select></div>'+
+ sl("ts","Cỡ chữ",2,20,7)+
+ '<div class="tr"><label>Khung</label><select id="fs"><option value="simple">Viền đơn</option><option value="polaroid">Polaroid</option></select><input id="fc" type="color" value="#ffffff"></div>'+sl("fw","Độ dày khung",0,14,0)+
+ '<div class="tr"><label>Xuất ra</label><select id="of"><option value="image/png">PNG</option><option value="image/jpeg">JPG</option><option value="image/webp">WEBP</option></select><button class="btn" id="dl" type="button">⬇ Tải ảnh</button><button class="tbtn" id="rs" type="button">↩ Đặt lại</button></div><p class="tbad" id="ew" hidden></p></div></div>'),
+ q=function(s){return box.querySelector(s)},cv=q("#ec"),pend=0,HAS=("filter" in CanvasRenderingContext2D.prototype);
+ function filt(le){var f=[];if(S.br!=100)f.push("brightness("+S.br+"%)");if(S.ct!=100)f.push("contrast("+S.ct+"%)");if(S.sa!=100)f.push("saturate("+S.sa+"%)");if(S.bl>0)f.push("blur("+(S.bl/1000*le).toFixed(2)+"px)");if(PRE[S.pre])f.push(PRE[S.pre]);return f.join(" ")}
+ function lum(hx){var n=parseInt(hx.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255}
+ function draw(c,maxDim,bg){var rot=(S.rot%360+360)%360,sw=im.naturalWidth,sh=im.naturalHeight,sc=Math.min(1,maxDim/Math.max(sw,sh)),w=Math.round(sw*sc),hh=Math.round(sh*sc),sp=rot===90||rot===270,bw=sp?hh:w,bh=sp?w:hh,
+  pad=Math.round(Math.min(bw,bh)*S.fw/100),ext=(S.fs==="polaroid"&&pad)?Math.round(pad*2.2):0;
+  c.width=bw+2*pad;c.height=bh+2*pad+ext;var x=c.getContext("2d");
+  if(pad>0){x.fillStyle=S.fc;x.fillRect(0,0,c.width,c.height)}else if(bg){x.fillStyle=bg;x.fillRect(0,0,c.width,c.height)}
+  var fl=HAS?filt(Math.max(bw,bh)):"";
+  x.save();x.translate(pad+bw/2,pad+bh/2);x.rotate(rot*Math.PI/180);if(S.flip)x.scale(-1,1);if(fl)x.filter=fl;x.imageSmoothingQuality="high";x.drawImage(im,-w/2,-hh/2,w,hh);x.restore();
+  if(S.txt){var fs=Math.max(8,Math.round(bw*S.ts/100)),fnt=function(n){return'800 '+n+'px "Segoe UI",Roboto,Arial,sans-serif'};x.font=fnt(fs);
+   while(x.measureText(S.txt).width>bw*.92&&fs>8){fs-=2;x.font=fnt(fs)}
+   x.textAlign="center";x.textBaseline="middle";x.lineJoin="round";x.lineWidth=Math.max(2,fs/7);x.strokeStyle=lum(S.tc)>.55?"#000":"#fff";
+   var ty=S.tp==="top"?pad+fs*.9:S.tp==="mid"?pad+bh/2:pad+bh-fs*.9,tx=pad+bw/2;x.strokeText(S.txt,tx,ty);x.fillStyle=S.tc;x.fillText(S.txt,tx,ty)}}
+ function read(){S.br=+q("#br").value;S.ct=+q("#ct").value;S.sa=+q("#sa").value;S.bl=+q("#bl").value;S.pre=q("#pre").value;S.txt=q("#tx").value;S.tc=q("#tc").value;S.tp=q("#tp").value;S.ts=+q("#ts").value;S.fw=+q("#fw").value;S.fc=q("#fc").value;S.fs=q("#fs").value;
+  ["br","ct","sa","bl","ts","fw"].forEach(function(k){q("#"+k+"v").textContent=S[k]})}
+ function paint(){if(pend||!im)return;pend=1;requestAnimationFrame(function(){pend=0;draw(cv,960)})}
+ box.addEventListener("input",function(){read();paint()});box.addEventListener("change",function(){read();paint()});
+ q("#rl").onclick=function(){S.rot-=90;paint()};q("#rr").onclick=function(){S.rot+=90;paint()};q("#fh").onclick=function(){S.flip=S.flip?0:1;paint()};
+ q("#rs").onclick=function(){var r=S.rot,fp=S.flip;S=def();["br","ct","sa","bl","ts","fw"].forEach(function(k){q("#"+k).value=S[k]});q("#pre").value="";q("#tx").value="";q("#tc").value="#ffffff";q("#fc").value="#ffffff";q("#tp").value="bottom";q("#fs").value="simple";read();paint()};
+ q("#dl").onclick=function(){if(!im)return;var t=q("#of").value,c=document.createElement("canvas");draw(c,8000,"#ffffff");
+  cb(c,t,.92).then(function(b){if(!b||b.type!==t){q("#ew").hidden=false;q("#ew").textContent="Trình duyệt không hỗ trợ định dạng này, hãy chọn PNG hoặc JPG.";return}q("#ew").hidden=true;save(b,base(f0.name)+"-sua."+(t==="image/jpeg"?"jpg":t.split("/")[1]))})};
+ el.appendChild(dz("image/*",false,function(fs){f0=fs[0];img(f0).then(function(i){im=i;S=def();["br","ct","sa","bl","ts","fw"].forEach(function(k){q("#"+k).value=S[k]});q("#pre").value="";q("#tx").value="";q("#tc").value="#ffffff";q("#fc").value="#ffffff";q("#tp").value="bottom";q("#fs").value="simple";read();
+  q("#ei").textContent=f0.name+" · "+i.naturalWidth+"×"+i.naturalHeight+" · "+sz(f0.size);box.hidden=false;draw(cv,960)},function(e){q("#ei").textContent=e.message;box.hidden=false})},"Chọn ảnh cần chỉnh sửa"));
+ el.appendChild(box);
+ if(!HAS)el.appendChild(h('<p class="tbad">Trình duyệt của bạn chưa hỗ trợ bộ lọc ảnh (độ sáng, tương phản, màu…). Hãy dùng Chrome, Edge hoặc Firefox bản mới để dùng đủ tính năng; chữ, khung, xoay vẫn hoạt động.</p>'));
+ el.appendChild(h('<p class="tnote">Ảnh được xử lý ngay trên máy bạn. Khi tải về, ảnh giữ nguyên độ phân giải gốc (tối đa 8000 px).</p>'))}
+
+/* ---------- ghi nối nhiều video (dùng chung cho ghép + nén video) ---------- */
+function recClips(files,o){return new Promise(function(ok,no){
+ var urls=files.map(function(f){return URL.createObjectURL(f)}),ac,rec,chunks=[],raf=0,stopped=0,done=0,idx=0,cur=null,ma=null;
+ function cleanup(){stopped=1;cancelAnimationFrame(raf);urls.forEach(function(u){URL.revokeObjectURL(u)});try{ma&&ma.pause()}catch(e){}try{ac&&ac.close()}catch(e){}}
+ function fail(e){if(done)return;done=1;try{rec&&rec.state!=="inactive"&&rec.stop()}catch(x){}cleanup();no(e instanceof Error?e:new Error("Trình duyệt không phát được video này"))}
+ if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){fail(new Error("Trình duyệt chưa hỗ trợ. Hãy dùng Chrome, Edge hoặc Firefox bản mới."));return}
+ var probe=document.createElement("video");probe.preload="metadata";probe.muted=true;probe.src=urls[0];
+ once(probe,"loadedmetadata").then(function(){
+  var vw=probe.videoWidth,vh=probe.videoHeight;if(!vw||!vh)throw new Error("Không đọc được kích thước video");
+  var s=Math.min(1,o.maxLong/Math.max(vw,vh)),W=Math.max(2,Math.round(vw*s/2)*2),H=Math.max(2,Math.round(vh*s/2)*2),
+  c=document.createElement("canvas");c.width=W;c.height=H;var x=c.getContext("2d");
+  ac=new (window.AudioContext||window.webkitAudioContext)();var dst=ac.createMediaStreamDestination();
+  if(o.music){ma=new Audio();ma.src=URL.createObjectURL(o.music);ma.loop=true;var ms=ac.createMediaElementSource(ma),g=ac.createGain();g.gain.value=o.musicVol;ms.connect(g);g.connect(dst)}
+  var cs=c.captureStream(30),mt=["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm","video/mp4"].filter(function(m){return MediaRecorder.isTypeSupported(m)})[0];
+  rec=new MediaRecorder(new MediaStream(cs.getVideoTracks().concat(dst.stream.getAudioTracks())),mt?{mimeType:mt,videoBitsPerSecond:o.bps}:{videoBitsPerSecond:o.bps});
+  rec.ondataavailable=function(e){if(e.data&&e.data.size)chunks.push(e.data)};
+  rec.onstop=function(){if(done&&!chunks.length)return;var ty=rec.mimeType||"video/webm";if(!done){done=1;cleanup();ok({blob:new Blob(chunks,{type:ty}),ext:/mp4/.test(ty)?"mp4":"webm",w:W,h:H})}};
+  function draw(){if(cur&&cur.readyState>=2&&cur.videoWidth){x.fillStyle="#000";x.fillRect(0,0,W,H);var k=Math.min(W/cur.videoWidth,H/cur.videoHeight),dw=cur.videoWidth*k,dh=cur.videoHeight*k;x.drawImage(cur,(W-dw)/2,(H-dh)/2,dw,dh)}if(!stopped)raf=requestAnimationFrame(draw)}
+  function next(){if(idx>=files.length){stopped=1;try{ma&&ma.pause()}catch(e){}rec.stop();return}
+   var w=document.createElement("video"),src=null;w.playsInline=true;w.preload="auto";w.src=urls[idx];
+   if(!o.keepAudio)w.muted=true;
+   w.onerror=function(){fail(new Error("Không đọc được video: "+files[idx].name))};
+   w.onloadedmetadata=function(){if(o.keepAudio){try{src=ac.createMediaElementSource(w);src.connect(dst)}catch(e){}}cur=w;var p=w.play();if(p&&p.catch)p.catch(fail)};
+   w.ontimeupdate=function(){if(o.onProg)o.onProg((idx+(w.currentTime/(w.duration||1)))/files.length,idx)};
+   w.onended=function(){try{src&&src.disconnect()}catch(e){}idx++;next()}}
+  return ac.resume().then(function(){rec.start(500);if(ma){var p=ma.play();if(p&&p.catch)p.catch(function(){})}draw();next()})
+ }).catch(fail)})}
+/* ---------- 11. ghép / nối video ---------- */
+function rVjoin(el){var L=[],music=null,busy=0,
+ ui=h('<div><div id="vl"></div><div class="tr"><label>Chất lượng xuất</label><select id="vq"><option value="854|2000000">SD 480p (nhẹ)</option><option value="1280|4000000" selected>HD 720p</option><option value="1920|8000000">Full HD 1080p</option></select><label class="ck"><input id="vk" type="checkbox" checked> Giữ âm thanh gốc</label></div>'+
+ '<div id="vm"></div><div class="tr"><label>Âm lượng nhạc nền <b id="vvv">40</b>%</label><input id="vv" type="range" min="0" max="100" value="40"></div>'+
+ '<div class="tr"><button class="btn" id="go" type="button">🎞️ Ghép video</button></div><div class="bar2"><i id="vb"></i></div><p class="tnote" id="vs"></p><div id="vr"></div></div>'),
+ q=function(s){return ui.querySelector(s)},draw,dm;
+ q("#vv").oninput=function(){q("#vvv").textContent=this.value};
+ dm=dz("audio/*",false,function(fs){music=fs[0];showM()},"🎵 Chọn nhạc nền (không bắt buộc)");
+ function showM(){var m=q("#vm");m.innerHTML="";if(music){var r=h('<div class="rw"><div><b></b><small>Nhạc nền, tự lặp lại đến hết video</small></div><span class="rs"><button class="tbtn" type="button">✕ Bỏ</button></span></div>');r.querySelector("b").textContent="🎵 "+music.name;r.querySelector("button").onclick=function(){music=null;showM()};m.appendChild(r)}else m.appendChild(dm)}
+ el.appendChild(dz("video/*",true,function(fs){fs.forEach(function(f){L.push(f)});draw()},"Chọn các đoạn video cần nối (chọn nhiều file)"));
+ el.appendChild(ui);showM();
+ draw=flist(q("#vl"),L,function(){q("#go").disabled=!L.length});draw();
+ q("#go").onclick=function(){if(busy||!L.length)return;busy=1;var go=this,r=q("#vr"),bar=q("#vb"),st=q("#vs"),qq=q("#vq").value.split("|");go.disabled=true;r.innerHTML="";bar.style.width="0";st.textContent="Đang ghép… hãy giữ tab này mở và không chuyển sang ứng dụng khác.";
+  recClips(L.slice(),{maxLong:+qq[0],bps:+qq[1],keepAudio:q("#vk").checked,music:music,musicVol:q("#vv").value/100,onProg:function(p,i){bar.style.width=Math.round(p*100)+"%";st.textContent="Đang ghép đoạn "+(i+1)+"/"+L.length+" ("+Math.round(p*100)+"%)… giữ tab này mở."}})
+  .then(function(res){bar.style.width="100%";st.textContent="Xong! Kích thước "+res.w+"×"+res.h+" · "+sz(res.blob.size)+" · định dạng ."+res.ext;
+   r.innerHTML='<video controls playsinline src="'+URL.createObjectURL(res.blob)+'" style="width:100%;margin-top:12px;border-radius:12px;max-height:300px"></video>';
+   var bt=h('<button class="tbtn p" type="button">⬇ Tải video đã ghép (.'+res.ext+')</button>');bt.onclick=function(){save(res.blob,"video-ghep."+res.ext)};r.appendChild(bt)})
+  .catch(function(e){st.textContent="";r.innerHTML='<p class="tbad">Không ghép được: '+esc(e.message||"lỗi không xác định")+'</p>'})
+  .finally(function(){busy=0;go.disabled=!L.length})};
+ el.appendChild(h('<p class="tnote">Các đoạn được ghép lần lượt theo thứ tự trên danh sách và quay lại theo thời gian thực nên thời gian xuất bằng tổng thời lượng video. Các đoạn khác tỉ lệ sẽ được đặt vừa khung của đoạn đầu tiên (có viền đen). File xuất ra dạng WEBM (hoặc MP4 nếu trình duyệt hỗ trợ).</p>'))}
+/* ---------- 12. phụ đề tự động (Whisper chạy trong trình duyệt) ---------- */
+function to16k(f){return f.arrayBuffer().then(function(ab){var ac=new (window.AudioContext||window.webkitAudioContext)();return ac.decodeAudioData(ab).finally(function(){ac.close()})}).then(function(b){var oc=new OfflineAudioContext(1,Math.max(1,Math.ceil(b.duration*16000)),16000),s=oc.createBufferSource();s.buffer=b;s.connect(oc.destination);s.start();return oc.startRendering()}).then(function(r){return r.getChannelData(0)})}
+function stamp(t,dot){var ms=Math.round(Math.max(0,t)*1000),hh=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),s=Math.floor(ms%60000/1000),z=function(n,l){return String(n).padStart(l||2,"0")};return z(hh)+":"+z(m)+":"+z(s)+(dot?".":",")+z(ms%1000,3)}
+var WH=null;
+function rSub(el){var f0,busy=0,
+ ui=h('<div><div class="tr"><label>Ngôn ngữ nói</label><select id="sl"><option value="vietnamese">Tiếng Việt</option><option value="english">Tiếng Anh</option><option value="japanese">Tiếng Nhật</option><option value="korean">Tiếng Hàn</option><option value="chinese">Tiếng Trung</option><option value="">Tự nhận diện</option></select><label>Độ chính xác</label><select id="sm"><option value="Xenova/whisper-tiny">Nhanh (~40 MB)</option><option value="Xenova/whisper-base" selected>Cân bằng (~80 MB)</option><option value="Xenova/whisper-small">Chính xác nhất (~250 MB)</option></select></div><div class="tr"><button class="btn" id="go" type="button" disabled>💬 Tạo phụ đề</button></div><div class="bar2"><i id="sb"></i></div><p class="tnote" id="ss"></p><div id="sr"></div></div>'),
+ q=function(s){return ui.querySelector(s)};
+ el.appendChild(dz("video/*,audio/*",false,function(fs){f0=fs[0];q("#go").disabled=false;q("#ss").textContent="Đã chọn: "+f0.name+" ("+sz(f0.size)+")";q("#sr").innerHTML=""},"Chọn video hoặc file âm thanh cần tạo phụ đề"));
+ el.appendChild(ui);
+ q("#go").onclick=function(){if(busy||!f0)return;busy=1;var go=this,st=q("#ss"),bar=q("#sb"),r=q("#sr"),model=q("#sm").value,lang=q("#sl").value,isV=/^video\//.test(f0.type)||/\.(mp4|webm|mov|mkv)$/i.test(f0.name);go.disabled=true;r.innerHTML="";bar.style.width="0";
+  st.textContent="Đang đọc âm thanh…";
+  var pa=to16k(f0).catch(function(){throw new Error("Trình duyệt không đọc được âm thanh của file này (hãy thử MP4, WEBM, MP3, WAV, OGG)")});
+  var pm=WH&&WH.m===model?Promise.resolve(WH.p):import("https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2").then(function(T){T.env.allowLocalModels=false;
+   return T.pipeline("automatic-speech-recognition",model,{progress_callback:function(p){if(p&&p.status==="progress"&&p.progress!=null){bar.style.width=Math.round(p.progress)+"%";st.textContent="Đang tải mô hình nhận diện giọng nói… "+Math.round(p.progress)+"% (chỉ tải lần đầu, sau đó được lưu trong trình duyệt)"}}})}).then(function(p){WH={m:model,p:p};return p},function(){throw new Error("Không tải được mô hình nhận diện giọng nói — hãy kiểm tra kết nối mạng")});
+  Promise.all([pa,pm]).then(function(a){bar.style.width="100%";st.textContent="Đang nhận diện giọng nói… với file dài có thể mất vài phút và trang sẽ hơi khựng, vui lòng chờ.";
+   var op={chunk_length_s:30,stride_length_s:5,return_timestamps:true,task:"transcribe"};if(lang)op.language=lang;
+   return tick().then(function(){return a[1](a[0],op)})})
+  .then(function(res){var ch=(res.chunks&&res.chunks.length?res.chunks:[{text:res.text,timestamp:[0,5]}]).filter(function(c){return c.text&&c.text.trim()}),n=1,srt="";
+   if(!ch.length)throw new Error("Không nhận diện được lời nói trong file này");
+   ch.forEach(function(c,i){var s=c.timestamp[0]||0,e=c.timestamp[1];if(e==null||e<=s)e=(ch[i+1]&&ch[i+1].timestamp[0])||s+3;srt+=(n++)+"\n"+stamp(s)+" --> "+stamp(e)+"\n"+c.text.trim()+"\n\n"});
+   var vtt=function(t){return"WEBVTT\n\n"+t.replace(/(\d\d:\d\d:\d\d),(\d{3})/g,"$1.$2")},nm=base(f0.name);
+   r.innerHTML='<label class="tnote">Bạn có thể sửa lỗi chính tả trực tiếp trong khung dưới đây trước khi tải về:</label><textarea rows="10" id="st" style="font-family:ui-monospace,Consolas,monospace"></textarea><div class="tr"><button class="tbtn p" id="d1" type="button">⬇ Tải .SRT</button><button class="tbtn" id="d2" type="button">⬇ Tải .VTT</button><button class="tbtn" id="d3" type="button">⬇ Tải .TXT (chỉ lời)</button></div>';
+   var ta=r.querySelector("#st");ta.value=srt.trim()+"\n";
+   r.querySelector("#d1").onclick=function(){save(new Blob([ta.value],{type:"text/plain;charset=utf-8"}),nm+".srt")};
+   r.querySelector("#d2").onclick=function(){save(new Blob([vtt(ta.value)],{type:"text/vtt;charset=utf-8"}),nm+".vtt")};
+   r.querySelector("#d3").onclick=function(){save(new Blob([ta.value.split(/\n\n+/).map(function(b){return b.split("\n").slice(2).join(" ")}).filter(Boolean).join("\n")],{type:"text/plain;charset=utf-8"}),nm+".txt")};
+   if(isV){var pv=h('<video controls playsinline style="width:100%;margin-top:12px;border-radius:12px;max-height:300px"></video>');pv.src=URL.createObjectURL(f0);var tk=document.createElement("track");tk.kind="subtitles";tk.label="Phụ đề";tk.default=true;tk.src=URL.createObjectURL(new Blob([vtt(srt)],{type:"text/vtt"}));pv.appendChild(tk);r.insertBefore(pv,r.firstChild)}
+   st.textContent="Xong! Đã tạo "+ch.length+" dòng phụ đề."})
+  .catch(function(e){st.textContent="";r.innerHTML='<p class="tbad">Không tạo được phụ đề: '+esc(e.message||"lỗi không xác định")+'</p>'})
+  .finally(function(){busy=0;go.disabled=false})};
+ el.appendChild(h('<p class="tnote">Giọng nói được nhận diện bằng mô hình AI Whisper chạy ngay trong trình duyệt, âm thanh của bạn không bị gửi đi đâu. Lần đầu cần mạng để tải mô hình (sau đó dùng lại được). Giọng rõ, ít tạp âm cho kết quả tốt nhất; nên đọc lại và sửa lỗi trước khi dùng.</p>'))}
+/* ---------- 13. nén tệp ---------- */
+function compImg(f,lv,p2j){var Q=[.85,.72,.55][lv],cap=[4096,2560,1600][lv];
+ return img(f).then(function(im){var s=Math.min(1,cap/Math.max(im.naturalWidth,im.naturalHeight)),w=Math.max(1,Math.round(im.naturalWidth*s)),hh=Math.max(1,Math.round(im.naturalHeight*s)),c=document.createElement("canvas");c.width=w;c.height=hh;var x=c.getContext("2d"),
+  t=(/png/.test(f.type)&&!p2j)?"image/png":/webp/.test(f.type)?"image/webp":"image/jpeg";if(t==="image/jpeg"){x.fillStyle="#fff";x.fillRect(0,0,w,hh)}x.imageSmoothingQuality="high";x.drawImage(im,0,0,w,hh);
+  return cb(c,t,Q).then(function(b){if(!b)throw new Error("Trình duyệt không xuất được định dạng này");return{b:b,ext:t==="image/jpeg"?"jpg":t.split("/")[1]}})})}
+function compPdf(f,lv,r){var S=[2,1.5,1.1][lv],Q=[.82,.68,.5][lv];
+ return Promise.all([pdfjs(),need("pdflib")]).then(function(){return f.arrayBuffer()}).then(function(ab){return pdfjsLib.getDocument({data:ab}).promise}).then(function(pdf){
+  var out=null,i=1;return PDFLib.PDFDocument.create().then(function(d){out=d;return(function step(){if(i>pdf.numPages)return out.save();r.set("Đang nén trang "+i+"/"+pdf.numPages+"…");
+   return pdf.getPage(i).then(function(pg){var v1=pg.getViewport({scale:1}),v=pg.getViewport({scale:S}),c=document.createElement("canvas");c.width=Math.round(v.width);c.height=Math.round(v.height);
+    return pg.render({canvasContext:c.getContext("2d"),viewport:v}).promise.then(function(){return cb(c,"image/jpeg",Q)}).then(function(b){return b.arrayBuffer()}).then(function(ab2){return out.embedJpg(ab2)}).then(function(im){var p=out.addPage([v1.width,v1.height]);p.drawImage(im,{x:0,y:0,width:v1.width,height:v1.height});pg.cleanup();i++})}).then(step)})()})}).then(function(u8){return new Blob([u8],{type:"application/pdf"})})}
+function compOffice(f,lv,r){var Q=[.85,.72,.55][lv],cap=[3000,2000,1400][lv];
+ return need("jszip").then(function(){return JSZip.loadAsync(f)}).then(function(z){var names=Object.keys(z.files).filter(function(n){return/\.(jpe?g)$/i.test(n)&&/media|Pictures|images/i.test(n)&&!z.files[n].dir}),i=0;
+  return(function step(){if(i>=names.length)return z.generateAsync({type:"blob",compression:"DEFLATE",compressionOptions:{level:9},mimeType:f.type||"application/zip"});
+   var n=names[i++];r.set("Đang tối ưu ảnh bên trong "+i+"/"+names.length+"…");
+   return z.file(n).async("blob").then(function(bl){return img(bl).then(function(im){var s=Math.min(1,cap/Math.max(im.naturalWidth,im.naturalHeight)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(im.naturalWidth*s));c.height=Math.max(1,Math.round(im.naturalHeight*s));var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);
+    return cb(c,"image/jpeg",Q)}).then(function(nb){if(nb&&nb.size<bl.size)z.file(n,nb)},function(){})}).then(step)})()})}
+function rComp(el){var o=h('<div class="tres"></div>'),
+ ui=h('<div><div class="tr"><label>Mức nén</label><select id="cl"><option value="0">Nhẹ — giữ chất lượng gần như nguyên</option><option value="1" selected>Cân bằng — khuyên dùng</option><option value="2">Mạnh — file nhỏ nhất</option></select><label class="ck"><input id="cj" type="checkbox"> Đổi ảnh PNG sang JPG (nhẹ hơn nhiều)</label></div></div>'),
+ q=function(s){return ui.querySelector(s)};
+ el.appendChild(ui);
+ el.appendChild(dz("image/*,video/*,.pdf,.docx,.xlsx,.pptx,.zip",true,function(fs){
+  fs.reduce(function(p,f){return p.then(function(){var lv=+q("#cl").value,r=row(o,f.name,sz(f.size)),e=(f.name.split(".").pop()||"").toLowerCase(),job;
+   if(/^image\//.test(f.type))job=compImg(f,lv,q("#cj").checked).then(function(x){return{b:x.b,ext:x.ext}});
+   else if(/^video\//.test(f.type)){r.set("Đang nén video… (xử lý theo thời gian thực, giữ tab này mở)");job=recClips([f],{maxLong:[1920,1280,854][lv],bps:[5e6,2.5e6,1.2e6][lv],keepAudio:true,onProg:function(p){r.set("Đang nén video… "+Math.round(p*100)+"%")}}).then(function(x){return{b:x.blob,ext:x.ext}})}
+   else if(e==="pdf")job=compPdf(f,lv,r).then(function(b){return{b:b,ext:"pdf"}});
+   else if(/^(docx|xlsx|pptx|zip)$/.test(e))job=compOffice(f,lv,r).then(function(b){return{b:b,ext:e}});
+   else{r.set("Định dạng này chưa được hỗ trợ",1);return}
+   r.set("Đang xử lý…");
+   return job.then(function(x){var d=Math.round((1-x.b.size/f.size)*100);
+    if(x.b.size>=f.size){r.set("File này đã được tối ưu sẵn, nén thêm không nhỏ hơn bản gốc ("+sz(x.b.size)+" so với "+sz(f.size)+"). Hãy thử mức nén mạnh hơn.",1);return}
+    r.ok(x.b,base(f.name)+"-nen."+x.ext);r.note("giảm "+d+"%")}).catch(function(e2){r.set("Lỗi: "+(e2.message||"không nén được"),1)})})},Promise.resolve())},"Chọn ảnh, video, PDF hoặc tài liệu cần nén (được chọn nhiều file)"));
+ el.appendChild(o);
+ el.appendChild(h('<p class="tnote">Ảnh: giảm chất lượng và kích thước điểm ảnh vừa phải. Video: mã hóa lại với tốc độ bit thấp hơn (xuất .webm). PDF: mỗi trang được nén thành ảnh nên chữ trong file nén sẽ không chọn/sao chép được — chỉ nên dùng cho PDF dạng ảnh/scan. Word, Excel, PowerPoint: nén lại bên trong và tối ưu ảnh JPG nhúng, chữ giữ nguyên.</p>'))}
+
+/* ---- Bộ mã hóa mã QR: QRCode for JavaScript, (c) 2009 Kazuhiko Arase, giấy phép MIT
+   http://www.opensource.org/licenses/mit-license.php · "QR Code" là nhãn hiệu đã đăng ký của DENSO WAVE INCORPORATED ---- */
+var QRN=(function(){var C={},F={};
+F["QRMode"]=function(module,exports,require){
+module.exports = {
+    MODE_NUMBER :       1 << 0,
+    MODE_ALPHA_NUM :    1 << 1,
+    MODE_8BIT_BYTE :    1 << 2,
+    MODE_KANJI :        1 << 3
+};
+
+};
+F["QRMaskPattern"]=function(module,exports,require){
+module.exports = {
+	PATTERN000 : 0,
+	PATTERN001 : 1,
+	PATTERN010 : 2,
+	PATTERN011 : 3,
+	PATTERN100 : 4,
+	PATTERN101 : 5,
+	PATTERN110 : 6,
+	PATTERN111 : 7
+};
+
+};
+F["QRMath"]=function(module,exports,require){
+var QRMath = {
+
+	glog : function(n) {
+	
+		if (n < 1) {
+			throw new Error("glog(" + n + ")");
+		}
+		
+		return QRMath.LOG_TABLE[n];
+	},
+	
+	gexp : function(n) {
+	
+		while (n < 0) {
+			n += 255;
+		}
+	
+		while (n >= 256) {
+			n -= 255;
+		}
+	
+		return QRMath.EXP_TABLE[n];
+	},
+	
+	EXP_TABLE : new Array(256),
+	
+	LOG_TABLE : new Array(256)
+
+};
+	
+for (var i = 0; i < 8; i++) {
+	QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+		^ QRMath.EXP_TABLE[i - 5]
+		^ QRMath.EXP_TABLE[i - 6]
+		^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+
+module.exports = QRMath;
+
+};
+F["QRPolynomial"]=function(module,exports,require){
+var QRMath = require('./QRMath');
+
+function QRPolynomial(num, shift) {
+	if (num.length === undefined) {
+		throw new Error(num.length + "/" + shift);
+	}
+
+	var offset = 0;
+
+	while (offset < num.length && num[offset] === 0) {
+		offset++;
+	}
+
+	this.num = new Array(num.length - offset + shift);
+	for (var i = 0; i < num.length - offset; i++) {
+		this.num[i] = num[i + offset];
+	}
+}
+
+QRPolynomial.prototype = {
+
+	get : function(index) {
+		return this.num[index];
+	},
+	
+	getLength : function() {
+		return this.num.length;
+	},
+	
+	multiply : function(e) {
+	
+		var num = new Array(this.getLength() + e.getLength() - 1);
+	
+		for (var i = 0; i < this.getLength(); i++) {
+			for (var j = 0; j < e.getLength(); j++) {
+				num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
+			}
+		}
+	
+		return new QRPolynomial(num, 0);
+	},
+	
+	mod : function(e) {
+	
+		if (this.getLength() - e.getLength() < 0) {
+			return this;
+		}
+	
+		var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
+	
+		var num = new Array(this.getLength() );
+		
+		for (var i = 0; i < this.getLength(); i++) {
+			num[i] = this.get(i);
+		}
+		
+		for (var x = 0; x < e.getLength(); x++) {
+			num[x] ^= QRMath.gexp(QRMath.glog(e.get(x) ) + ratio);
+		}
+	
+		// recursive call
+		return new QRPolynomial(num, 0).mod(e);
+	}
+};
+
+module.exports = QRPolynomial;
+
+};
+F["QRErrorCorrectLevel"]=function(module,exports,require){
+module.exports = {
+	L : 1,
+	M : 0,
+	Q : 3,
+	H : 2
+};
+
+
+};
+F["QRRSBlock"]=function(module,exports,require){
+var QRErrorCorrectLevel = require('./QRErrorCorrectLevel');
+
+function QRRSBlock(totalCount, dataCount) {
+	this.totalCount = totalCount;
+	this.dataCount  = dataCount;
+}
+
+QRRSBlock.RS_BLOCK_TABLE = [
+
+	// L
+	// M
+	// Q
+	// H
+
+	// 1
+	[1, 26, 19],
+	[1, 26, 16],
+	[1, 26, 13],
+	[1, 26, 9],
+	
+	// 2
+	[1, 44, 34],
+	[1, 44, 28],
+	[1, 44, 22],
+	[1, 44, 16],
+
+	// 3
+	[1, 70, 55],
+	[1, 70, 44],
+	[2, 35, 17],
+	[2, 35, 13],
+
+	// 4		
+	[1, 100, 80],
+	[2, 50, 32],
+	[2, 50, 24],
+	[4, 25, 9],
+	
+	// 5
+	[1, 134, 108],
+	[2, 67, 43],
+	[2, 33, 15, 2, 34, 16],
+	[2, 33, 11, 2, 34, 12],
+	
+	// 6
+	[2, 86, 68],
+	[4, 43, 27],
+	[4, 43, 19],
+	[4, 43, 15],
+	
+	// 7		
+	[2, 98, 78],
+	[4, 49, 31],
+	[2, 32, 14, 4, 33, 15],
+	[4, 39, 13, 1, 40, 14],
+	
+	// 8
+	[2, 121, 97],
+	[2, 60, 38, 2, 61, 39],
+	[4, 40, 18, 2, 41, 19],
+	[4, 40, 14, 2, 41, 15],
+	
+	// 9
+	[2, 146, 116],
+	[3, 58, 36, 2, 59, 37],
+	[4, 36, 16, 4, 37, 17],
+	[4, 36, 12, 4, 37, 13],
+	
+	// 10		
+	[2, 86, 68, 2, 87, 69],
+	[4, 69, 43, 1, 70, 44],
+	[6, 43, 19, 2, 44, 20],
+	[6, 43, 15, 2, 44, 16],
+
+	// 11
+	[4, 101, 81],
+	[1, 80, 50, 4, 81, 51],
+	[4, 50, 22, 4, 51, 23],
+	[3, 36, 12, 8, 37, 13],
+
+	// 12
+	[2, 116, 92, 2, 117, 93],
+	[6, 58, 36, 2, 59, 37],
+	[4, 46, 20, 6, 47, 21],
+	[7, 42, 14, 4, 43, 15],
+
+	// 13
+	[4, 133, 107],
+	[8, 59, 37, 1, 60, 38],
+	[8, 44, 20, 4, 45, 21],
+	[12, 33, 11, 4, 34, 12],
+
+	// 14
+	[3, 145, 115, 1, 146, 116],
+	[4, 64, 40, 5, 65, 41],
+	[11, 36, 16, 5, 37, 17],
+	[11, 36, 12, 5, 37, 13],
+
+	// 15
+	[5, 109, 87, 1, 110, 88],
+	[5, 65, 41, 5, 66, 42],
+	[5, 54, 24, 7, 55, 25],
+	[11, 36, 12],
+
+	// 16
+	[5, 122, 98, 1, 123, 99],
+	[7, 73, 45, 3, 74, 46],
+	[15, 43, 19, 2, 44, 20],
+	[3, 45, 15, 13, 46, 16],
+
+	// 17
+	[1, 135, 107, 5, 136, 108],
+	[10, 74, 46, 1, 75, 47],
+	[1, 50, 22, 15, 51, 23],
+	[2, 42, 14, 17, 43, 15],
+
+	// 18
+	[5, 150, 120, 1, 151, 121],
+	[9, 69, 43, 4, 70, 44],
+	[17, 50, 22, 1, 51, 23],
+	[2, 42, 14, 19, 43, 15],
+
+	// 19
+	[3, 141, 113, 4, 142, 114],
+	[3, 70, 44, 11, 71, 45],
+	[17, 47, 21, 4, 48, 22],
+	[9, 39, 13, 16, 40, 14],
+
+	// 20
+	[3, 135, 107, 5, 136, 108],
+	[3, 67, 41, 13, 68, 42],
+	[15, 54, 24, 5, 55, 25],
+	[15, 43, 15, 10, 44, 16],
+
+	// 21
+	[4, 144, 116, 4, 145, 117],
+	[17, 68, 42],
+	[17, 50, 22, 6, 51, 23],
+	[19, 46, 16, 6, 47, 17],
+
+	// 22
+	[2, 139, 111, 7, 140, 112],
+	[17, 74, 46],
+	[7, 54, 24, 16, 55, 25],
+	[34, 37, 13],
+
+	// 23
+	[4, 151, 121, 5, 152, 122],
+	[4, 75, 47, 14, 76, 48],
+	[11, 54, 24, 14, 55, 25],
+	[16, 45, 15, 14, 46, 16],
+
+	// 24
+	[6, 147, 117, 4, 148, 118],
+	[6, 73, 45, 14, 74, 46],
+	[11, 54, 24, 16, 55, 25],
+	[30, 46, 16, 2, 47, 17],
+
+	// 25
+	[8, 132, 106, 4, 133, 107],
+	[8, 75, 47, 13, 76, 48],
+	[7, 54, 24, 22, 55, 25],
+	[22, 45, 15, 13, 46, 16],
+
+	// 26
+	[10, 142, 114, 2, 143, 115],
+	[19, 74, 46, 4, 75, 47],
+	[28, 50, 22, 6, 51, 23],
+	[33, 46, 16, 4, 47, 17],
+
+	// 27
+	[8, 152, 122, 4, 153, 123],
+	[22, 73, 45, 3, 74, 46],
+	[8, 53, 23, 26, 54, 24],
+	[12, 45, 15, 28, 46, 16],
+
+	// 28
+	[3, 147, 117, 10, 148, 118],
+	[3, 73, 45, 23, 74, 46],
+	[4, 54, 24, 31, 55, 25],
+	[11, 45, 15, 31, 46, 16],
+
+	// 29
+	[7, 146, 116, 7, 147, 117],
+	[21, 73, 45, 7, 74, 46],
+	[1, 53, 23, 37, 54, 24],
+	[19, 45, 15, 26, 46, 16],
+
+	// 30
+	[5, 145, 115, 10, 146, 116],
+	[19, 75, 47, 10, 76, 48],
+	[15, 54, 24, 25, 55, 25],
+	[23, 45, 15, 25, 46, 16],
+
+	// 31
+	[13, 145, 115, 3, 146, 116],
+	[2, 74, 46, 29, 75, 47],
+	[42, 54, 24, 1, 55, 25],
+	[23, 45, 15, 28, 46, 16],
+
+	// 32
+	[17, 145, 115],
+	[10, 74, 46, 23, 75, 47],
+	[10, 54, 24, 35, 55, 25],
+	[19, 45, 15, 35, 46, 16],
+
+	// 33
+	[17, 145, 115, 1, 146, 116],
+	[14, 74, 46, 21, 75, 47],
+	[29, 54, 24, 19, 55, 25],
+	[11, 45, 15, 46, 46, 16],
+
+	// 34
+	[13, 145, 115, 6, 146, 116],
+	[14, 74, 46, 23, 75, 47],
+	[44, 54, 24, 7, 55, 25],
+	[59, 46, 16, 1, 47, 17],
+
+	// 35
+	[12, 151, 121, 7, 152, 122],
+	[12, 75, 47, 26, 76, 48],
+	[39, 54, 24, 14, 55, 25],
+	[22, 45, 15, 41, 46, 16],
+
+	// 36
+	[6, 151, 121, 14, 152, 122],
+	[6, 75, 47, 34, 76, 48],
+	[46, 54, 24, 10, 55, 25],
+	[2, 45, 15, 64, 46, 16],
+
+	// 37
+	[17, 152, 122, 4, 153, 123],
+	[29, 74, 46, 14, 75, 47],
+	[49, 54, 24, 10, 55, 25],
+	[24, 45, 15, 46, 46, 16],
+
+	// 38
+	[4, 152, 122, 18, 153, 123],
+	[13, 74, 46, 32, 75, 47],
+	[48, 54, 24, 14, 55, 25],
+	[42, 45, 15, 32, 46, 16],
+
+	// 39
+	[20, 147, 117, 4, 148, 118],
+	[40, 75, 47, 7, 76, 48],
+	[43, 54, 24, 22, 55, 25],
+	[10, 45, 15, 67, 46, 16],
+
+	// 40
+	[19, 148, 118, 6, 149, 119],
+	[18, 75, 47, 31, 76, 48],
+	[34, 54, 24, 34, 55, 25],
+	[20, 45, 15, 61, 46, 16]
+];
+
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+	
+	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+	
+	if (rsBlock === undefined) {
+		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+	}
+
+	var length = rsBlock.length / 3;
+	
+	var list = [];
+	
+	for (var i = 0; i < length; i++) {
+
+		var count = rsBlock[i * 3 + 0];
+		var totalCount = rsBlock[i * 3 + 1];
+		var dataCount  = rsBlock[i * 3 + 2];
+
+		for (var j = 0; j < count; j++) {
+			list.push(new QRRSBlock(totalCount, dataCount) );	
+		}
+	}
+	
+	return list;
+};
+
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+
+	switch(errorCorrectLevel) {
+	case QRErrorCorrectLevel.L :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+	case QRErrorCorrectLevel.M :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+	case QRErrorCorrectLevel.Q :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+	case QRErrorCorrectLevel.H :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+	default :
+		return undefined;
+	}
+};
+
+module.exports = QRRSBlock;
+
+};
+F["QRUtil"]=function(module,exports,require){
+var QRMode = require('./QRMode');
+var QRPolynomial = require('./QRPolynomial');
+var QRMath = require('./QRMath');
+var QRMaskPattern = require('./QRMaskPattern');
+
+var QRUtil = {
+
+    PATTERN_POSITION_TABLE : [
+        [],
+        [6, 18],
+        [6, 22],
+        [6, 26],
+        [6, 30],
+        [6, 34],
+        [6, 22, 38],
+        [6, 24, 42],
+        [6, 26, 46],
+        [6, 28, 50],
+        [6, 30, 54],        
+        [6, 32, 58],
+        [6, 34, 62],
+        [6, 26, 46, 66],
+        [6, 26, 48, 70],
+        [6, 26, 50, 74],
+        [6, 30, 54, 78],
+        [6, 30, 56, 82],
+        [6, 30, 58, 86],
+        [6, 34, 62, 90],
+        [6, 28, 50, 72, 94],
+        [6, 26, 50, 74, 98],
+        [6, 30, 54, 78, 102],
+        [6, 28, 54, 80, 106],
+        [6, 32, 58, 84, 110],
+        [6, 30, 58, 86, 114],
+        [6, 34, 62, 90, 118],
+        [6, 26, 50, 74, 98, 122],
+        [6, 30, 54, 78, 102, 126],
+        [6, 26, 52, 78, 104, 130],
+        [6, 30, 56, 82, 108, 134],
+        [6, 34, 60, 86, 112, 138],
+        [6, 30, 58, 86, 114, 142],
+        [6, 34, 62, 90, 118, 146],
+        [6, 30, 54, 78, 102, 126, 150],
+        [6, 24, 50, 76, 102, 128, 154],
+        [6, 28, 54, 80, 106, 132, 158],
+        [6, 32, 58, 84, 110, 136, 162],
+        [6, 26, 54, 82, 110, 138, 166],
+        [6, 30, 58, 86, 114, 142, 170]
+    ],
+
+    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)    | (1 << 4) | (1 << 1),
+
+    getBCHTypeInfo : function(data) {
+        var d = data << 10;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+            d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) );    
+        }
+        return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+    },
+
+    getBCHTypeNumber : function(data) {
+        var d = data << 12;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+            d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) );    
+        }
+        return (data << 12) | d;
+    },
+
+    getBCHDigit : function(data) {
+
+        var digit = 0;
+
+        while (data !== 0) {
+            digit++;
+            data >>>= 1;
+        }
+
+        return digit;
+    },
+
+    getPatternPosition : function(typeNumber) {
+        return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+    },
+
+    getMask : function(maskPattern, i, j) {
+        
+        switch (maskPattern) {
+            
+        case QRMaskPattern.PATTERN000 : return (i + j) % 2 === 0;
+        case QRMaskPattern.PATTERN001 : return i % 2 === 0;
+        case QRMaskPattern.PATTERN010 : return j % 3 === 0;
+        case QRMaskPattern.PATTERN011 : return (i + j) % 3 === 0;
+        case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 === 0;
+        case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 === 0;
+        case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 === 0;
+        case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 === 0;
+
+        default :
+            throw new Error("bad maskPattern:" + maskPattern);
+        }
+    },
+
+    getErrorCorrectPolynomial : function(errorCorrectLength) {
+
+        var a = new QRPolynomial([1], 0);
+
+        for (var i = 0; i < errorCorrectLength; i++) {
+            a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
+        }
+
+        return a;
+    },
+
+    getLengthInBits : function(mode, type) {
+
+        if (1 <= type && type < 10) {
+
+            // 1 - 9
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 10;
+            case QRMode.MODE_ALPHA_NUM  : return 9;
+            case QRMode.MODE_8BIT_BYTE  : return 8;
+            case QRMode.MODE_KANJI      : return 8;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 27) {
+
+            // 10 - 26
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 12;
+            case QRMode.MODE_ALPHA_NUM  : return 11;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 10;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 41) {
+
+            // 27 - 40
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 14;
+            case QRMode.MODE_ALPHA_NUM  : return 13;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 12;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else {
+            throw new Error("type:" + type);
+        }
+    },
+
+    getLostPoint : function(qrCode) {
+        
+        var moduleCount = qrCode.getModuleCount();
+        var lostPoint = 0;
+        var row = 0; 
+        var col = 0;
+
+        
+        // LEVEL1
+        
+        for (row = 0; row < moduleCount; row++) {
+
+            for (col = 0; col < moduleCount; col++) {
+
+                var sameCount = 0;
+                var dark = qrCode.isDark(row, col);
+
+                for (var r = -1; r <= 1; r++) {
+
+                    if (row + r < 0 || moduleCount <= row + r) {
+                        continue;
+                    }
+
+                    for (var c = -1; c <= 1; c++) {
+
+                        if (col + c < 0 || moduleCount <= col + c) {
+                            continue;
+                        }
+
+                        if (r === 0 && c === 0) {
+                            continue;
+                        }
+
+                        if (dark === qrCode.isDark(row + r, col + c) ) {
+                            sameCount++;
+                        }
+                    }
+                }
+
+                if (sameCount > 5) {
+                    lostPoint += (3 + sameCount - 5);
+                }
+            }
+        }
+
+        // LEVEL2
+
+        for (row = 0; row < moduleCount - 1; row++) {
+            for (col = 0; col < moduleCount - 1; col++) {
+                var count = 0;
+                if (qrCode.isDark(row,     col    ) ) count++;
+                if (qrCode.isDark(row + 1, col    ) ) count++;
+                if (qrCode.isDark(row,     col + 1) ) count++;
+                if (qrCode.isDark(row + 1, col + 1) ) count++;
+                if (count === 0 || count === 4) {
+                    lostPoint += 3;
+                }
+            }
+        }
+
+        // LEVEL3
+
+        for (row = 0; row < moduleCount; row++) {
+            for (col = 0; col < moduleCount - 6; col++) {
+                if (qrCode.isDark(row, col) && 
+                        !qrCode.isDark(row, col + 1) && 
+                         qrCode.isDark(row, col + 2) && 
+                         qrCode.isDark(row, col + 3) && 
+                         qrCode.isDark(row, col + 4) && 
+                        !qrCode.isDark(row, col + 5) && 
+                         qrCode.isDark(row, col + 6) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount - 6; row++) {
+                if (qrCode.isDark(row, col) &&
+                        !qrCode.isDark(row + 1, col) &&
+                         qrCode.isDark(row + 2, col) &&
+                         qrCode.isDark(row + 3, col) &&
+                         qrCode.isDark(row + 4, col) &&
+                        !qrCode.isDark(row + 5, col) &&
+                         qrCode.isDark(row + 6, col) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        // LEVEL4
+        
+        var darkCount = 0;
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount; row++) {
+                if (qrCode.isDark(row, col) ) {
+                    darkCount++;
+                }
+            }
+        }
+        
+        var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+        lostPoint += ratio * 10;
+
+        return lostPoint;       
+    }
+
+};
+
+module.exports = QRUtil;
+
+};
+F["QRBitBuffer"]=function(module,exports,require){
+function QRBitBuffer() {
+	this.buffer = [];
+	this.length = 0;
+}
+
+QRBitBuffer.prototype = {
+
+	get : function(index) {
+		var bufIndex = Math.floor(index / 8);
+		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+	},
+	
+	put : function(num, length) {
+		for (var i = 0; i < length; i++) {
+			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+		}
+	},
+	
+	getLengthInBits : function() {
+		return this.length;
+	},
+	
+	putBit : function(bit) {
+	
+		var bufIndex = Math.floor(this.length / 8);
+		if (this.buffer.length <= bufIndex) {
+			this.buffer.push(0);
+		}
+	
+		if (bit) {
+			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+		}
+	
+		this.length++;
+	}
+};
+
+module.exports = QRBitBuffer;
+
+};
+F["QR8bitByte"]=function(module,exports,require){
+var QRMode = require('./QRMode');
+
+function QR8bitByte(data) {
+	this.mode = QRMode.MODE_8BIT_BYTE;
+	this.data = data;
+}
+
+QR8bitByte.prototype = {
+
+	getLength : function() {
+		return this.data.length;
+	},
+	
+	write : function(buffer) {
+		for (var i = 0; i < this.data.length; i++) {
+			// not JIS ...
+			buffer.put(this.data.charCodeAt(i), 8);
+		}
+	}
+};
+
+module.exports = QR8bitByte;
+
+};
+F["index"]=function(module,exports,require){
+// Modified to work in node for this project (and some refactoring)
+//---------------------------------------------------------------------
+
+var QR8bitByte = require('./QR8bitByte');
+var QRUtil = require('./QRUtil');
+var QRPolynomial = require('./QRPolynomial');
+var QRRSBlock = require('./QRRSBlock');
+var QRBitBuffer = require('./QRBitBuffer');
+
+function QRCode(typeNumber, errorCorrectLevel) {
+	this.typeNumber = typeNumber;
+	this.errorCorrectLevel = errorCorrectLevel;
+	this.modules = null;
+	this.moduleCount = 0;
+	this.dataCache = null;
+	this.dataList = [];
+}
+
+QRCode.prototype = {
+	
+	addData : function(data) {
+		var newData = new QR8bitByte(data);
+		this.dataList.push(newData);
+		this.dataCache = null;
+	},
+	
+	isDark : function(row, col) {
+		if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+			throw new Error(row + "," + col);
+		}
+		return this.modules[row][col];
+	},
+
+	getModuleCount : function() {
+		return this.moduleCount;
+	},
+	
+	make : function() {
+		// Calculate automatically typeNumber if provided is < 1
+		if (this.typeNumber < 1 ){
+			var typeNumber = 1;
+			for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+				var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+
+				var buffer = new QRBitBuffer();
+				var totalDataCount = 0;
+				for (var i = 0; i < rsBlocks.length; i++) {
+					totalDataCount += rsBlocks[i].dataCount;
+				}
+
+				for (var x = 0; x < this.dataList.length; x++) {
+					var data = this.dataList[x];
+					buffer.put(data.mode, 4);
+					buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+					data.write(buffer);
+				}
+				if (buffer.getLengthInBits() <= totalDataCount * 8)
+					break;
+			}
+			this.typeNumber = typeNumber;
+		}
+		this.makeImpl(false, this.getBestMaskPattern() );
+	},
+	
+	makeImpl : function(test, maskPattern) {
+		
+		this.moduleCount = this.typeNumber * 4 + 17;
+		this.modules = new Array(this.moduleCount);
+		
+		for (var row = 0; row < this.moduleCount; row++) {
+			
+			this.modules[row] = new Array(this.moduleCount);
+			
+			for (var col = 0; col < this.moduleCount; col++) {
+				this.modules[row][col] = null;//(col + row) % 3;
+			}
+		}
+	
+		this.setupPositionProbePattern(0, 0);
+		this.setupPositionProbePattern(this.moduleCount - 7, 0);
+		this.setupPositionProbePattern(0, this.moduleCount - 7);
+		this.setupPositionAdjustPattern();
+		this.setupTimingPattern();
+		this.setupTypeInfo(test, maskPattern);
+		
+		if (this.typeNumber >= 7) {
+			this.setupTypeNumber(test);
+		}
+	
+		if (this.dataCache === null) {
+			this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+		}
+	
+		this.mapData(this.dataCache, maskPattern);
+	},
+
+	setupPositionProbePattern : function(row, col)  {
+		
+		for (var r = -1; r <= 7; r++) {
+			
+			if (row + r <= -1 || this.moduleCount <= row + r) continue;
+			
+			for (var c = -1; c <= 7; c++) {
+				
+				if (col + c <= -1 || this.moduleCount <= col + c) continue;
+				
+				if ( (0 <= r && r <= 6 && (c === 0 || c === 6) ) || 
+                     (0 <= c && c <= 6 && (r === 0 || r === 6) ) || 
+                     (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+					this.modules[row + r][col + c] = true;
+				} else {
+					this.modules[row + r][col + c] = false;
+				}
+			}		
+		}		
+	},
+	
+	getBestMaskPattern : function() {
+	
+		var minLostPoint = 0;
+		var pattern = 0;
+	
+		for (var i = 0; i < 8; i++) {
+			
+			this.makeImpl(true, i);
+	
+			var lostPoint = QRUtil.getLostPoint(this);
+	
+			if (i === 0 || minLostPoint >  lostPoint) {
+				minLostPoint = lostPoint;
+				pattern = i;
+			}
+		}
+	
+		return pattern;
+	},
+	
+	createMovieClip : function(target_mc, instance_name, depth) {
+	
+		var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+		var cs = 1;
+	
+		this.make();
+
+		for (var row = 0; row < this.modules.length; row++) {
+			
+			var y = row * cs;
+			
+			for (var col = 0; col < this.modules[row].length; col++) {
+	
+				var x = col * cs;
+				var dark = this.modules[row][col];
+			
+				if (dark) {
+					qr_mc.beginFill(0, 100);
+					qr_mc.moveTo(x, y);
+					qr_mc.lineTo(x + cs, y);
+					qr_mc.lineTo(x + cs, y + cs);
+					qr_mc.lineTo(x, y + cs);
+					qr_mc.endFill();
+				}
+			}
+		}
+		
+		return qr_mc;
+	},
+
+	setupTimingPattern : function() {
+		
+		for (var r = 8; r < this.moduleCount - 8; r++) {
+			if (this.modules[r][6] !== null) {
+				continue;
+			}
+			this.modules[r][6] = (r % 2 === 0);
+		}
+	
+		for (var c = 8; c < this.moduleCount - 8; c++) {
+			if (this.modules[6][c] !== null) {
+				continue;
+			}
+			this.modules[6][c] = (c % 2 === 0);
+		}
+	},
+	
+	setupPositionAdjustPattern : function() {
+	
+		var pos = QRUtil.getPatternPosition(this.typeNumber);
+		
+		for (var i = 0; i < pos.length; i++) {
+		
+			for (var j = 0; j < pos.length; j++) {
+			
+				var row = pos[i];
+				var col = pos[j];
+				
+				if (this.modules[row][col] !== null) {
+					continue;
+				}
+				
+				for (var r = -2; r <= 2; r++) {
+				
+					for (var c = -2; c <= 2; c++) {
+					
+						if (Math.abs(r) === 2 || 
+                            Math.abs(c) === 2 ||
+                            (r === 0 && c === 0) ) {
+							this.modules[row + r][col + c] = true;
+						} else {
+							this.modules[row + r][col + c] = false;
+						}
+					}
+				}
+			}
+		}
+	},
+	
+	setupTypeNumber : function(test) {
+	
+		var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+        var mod;
+	
+		for (var i = 0; i < 18; i++) {
+			mod = (!test && ( (bits >> i) & 1) === 1);
+			this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+		}
+	
+		for (var x = 0; x < 18; x++) {
+			mod = (!test && ( (bits >> x) & 1) === 1);
+			this.modules[x % 3 + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
+		}
+	},
+	
+	setupTypeInfo : function(test, maskPattern) {
+	
+		var data = (this.errorCorrectLevel << 3) | maskPattern;
+		var bits = QRUtil.getBCHTypeInfo(data);
+        var mod;
+	
+		// vertical		
+		for (var v = 0; v < 15; v++) {
+	
+			mod = (!test && ( (bits >> v) & 1) === 1);
+	
+			if (v < 6) {
+				this.modules[v][8] = mod;
+			} else if (v < 8) {
+				this.modules[v + 1][8] = mod;
+			} else {
+				this.modules[this.moduleCount - 15 + v][8] = mod;
+			}
+		}
+	
+		// horizontal
+		for (var h = 0; h < 15; h++) {
+	
+			mod = (!test && ( (bits >> h) & 1) === 1);
+			
+			if (h < 8) {
+				this.modules[8][this.moduleCount - h - 1] = mod;
+			} else if (h < 9) {
+				this.modules[8][15 - h - 1 + 1] = mod;
+			} else {
+				this.modules[8][15 - h - 1] = mod;
+			}
+		}
+	
+		// fixed module
+		this.modules[this.moduleCount - 8][8] = (!test);
+	
+	},
+	
+	mapData : function(data, maskPattern) {
+		
+		var inc = -1;
+		var row = this.moduleCount - 1;
+		var bitIndex = 7;
+		var byteIndex = 0;
+		
+		for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+	
+			if (col === 6) col--;
+	
+			while (true) {
+	
+				for (var c = 0; c < 2; c++) {
+					
+					if (this.modules[row][col - c] === null) {
+						
+						var dark = false;
+	
+						if (byteIndex < data.length) {
+							dark = ( ( (data[byteIndex] >>> bitIndex) & 1) === 1);
+						}
+	
+						var mask = QRUtil.getMask(maskPattern, row, col - c);
+	
+						if (mask) {
+							dark = !dark;
+						}
+						
+						this.modules[row][col - c] = dark;
+						bitIndex--;
+	
+						if (bitIndex === -1) {
+							byteIndex++;
+							bitIndex = 7;
+						}
+					}
+				}
+								
+				row += inc;
+	
+				if (row < 0 || this.moduleCount <= row) {
+					row -= inc;
+					inc = -inc;
+					break;
+				}
+			}
+		}
+		
+	}
+
+};
+
+QRCode.PAD0 = 0xEC;
+QRCode.PAD1 = 0x11;
+
+QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
+	
+	var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+	
+	var buffer = new QRBitBuffer();
+	
+	for (var i = 0; i < dataList.length; i++) {
+		var data = dataList[i];
+		buffer.put(data.mode, 4);
+		buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+		data.write(buffer);
+	}
+
+	// calc num max data.
+	var totalDataCount = 0;
+	for (var x = 0; x < rsBlocks.length; x++) {
+		totalDataCount += rsBlocks[x].dataCount;
+	}
+
+	if (buffer.getLengthInBits() > totalDataCount * 8) {
+		throw new Error("code length overflow. (" + 
+            buffer.getLengthInBits() + 
+            ">" +  
+            totalDataCount * 8 + 
+            ")");
+	}
+
+	// end code
+	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+		buffer.put(0, 4);
+	}
+
+	// padding
+	while (buffer.getLengthInBits() % 8 !== 0) {
+		buffer.putBit(false);
+	}
+
+	// padding
+	while (true) {
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD0, 8);
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD1, 8);
+	}
+
+	return QRCode.createBytes(buffer, rsBlocks);
+};
+
+QRCode.createBytes = function(buffer, rsBlocks) {
+
+	var offset = 0;
+	
+	var maxDcCount = 0;
+	var maxEcCount = 0;
+	
+	var dcdata = new Array(rsBlocks.length);
+	var ecdata = new Array(rsBlocks.length);
+	
+	for (var r = 0; r < rsBlocks.length; r++) {
+
+		var dcCount = rsBlocks[r].dataCount;
+		var ecCount = rsBlocks[r].totalCount - dcCount;
+
+		maxDcCount = Math.max(maxDcCount, dcCount);
+		maxEcCount = Math.max(maxEcCount, ecCount);
+		
+		dcdata[r] = new Array(dcCount);
+		
+		for (var i = 0; i < dcdata[r].length; i++) {
+			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+		}
+		offset += dcCount;
+		
+		var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+		var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+		var modPoly = rawPoly.mod(rsPoly);
+		ecdata[r] = new Array(rsPoly.getLength() - 1);
+		for (var x = 0; x < ecdata[r].length; x++) {
+            var modIndex = x + modPoly.getLength() - ecdata[r].length;
+			ecdata[r][x] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+		}
+
+	}
+	
+	var totalCodeCount = 0;
+	for (var y = 0; y < rsBlocks.length; y++) {
+		totalCodeCount += rsBlocks[y].totalCount;
+	}
+
+	var data = new Array(totalCodeCount);
+	var index = 0;
+
+	for (var z = 0; z < maxDcCount; z++) {
+		for (var s = 0; s < rsBlocks.length; s++) {
+			if (z < dcdata[s].length) {
+				data[index++] = dcdata[s][z];
+			}
+		}
+	}
+
+	for (var xx = 0; xx < maxEcCount; xx++) {
+		for (var t = 0; t < rsBlocks.length; t++) {
+			if (xx < ecdata[t].length) {
+				data[index++] = ecdata[t][xx];
+			}
+		}
+	}
+
+	return data;
+
+};
+
+module.exports = QRCode;
+
+};
+function R(n){if(!C[n]){var m={exports:{}};C[n]=m;F[n](m,m.exports,function(p){return R(p.replace(/^.*\//,""))})}return C[n].exports}
+return{QRCode:R("index"),EC:R("QRErrorCorrectLevel")}})();
+
+/* ---------- đọc chữ từ PDF, tạo .docx, in ra PDF (dùng chung) ---------- */
+function pdfOpen(f){return pdfjs().then(function(){return f.arrayBuffer()}).then(function(ab){return pdfjsLib.getDocument({data:ab}).promise})}
+function pdfLines(pg){return pg.getTextContent().then(function(tc){var L=[],cur=null;
+ tc.items.forEach(function(it){if(typeof it.str!=="string"||!it.transform)return;var y=it.transform[5];
+  if(!cur||Math.abs(y-cur.y)>Math.max(2,(it.height||10)*.5)){cur={y:y,it:[]};L.push(cur)}
+  cur.it.push({s:it.str,x:it.transform[4],w:it.width||0})});
+ L.forEach(function(l){l.it.sort(function(a,b){return a.x-b.x})});return L})}
+function lineText(l){var t="",pe=null;l.it.forEach(function(i){if(pe!==null&&i.x-pe>1.5&&!/\s$/.test(t)&&!/^\s/.test(i.s))t+=" ";t+=i.s;pe=i.x+i.w});return t.trim()}
+function lineCells(l){var cs=[],cur="",pe=null;l.it.forEach(function(i){if(pe!==null&&i.x-pe>9){cs.push(cur.trim());cur=""}else if(pe!==null&&i.x-pe>1.5&&!/\s$/.test(cur)&&!/^\s/.test(i.s))cur+=" ";cur+=i.s;pe=i.x+i.w});cs.push(cur.trim());return cs}
+function pdfAll(f,fn,r){return pdfOpen(f).then(function(pdf){var res=[],i=1;return(function step(){if(i>pdf.numPages)return res;if(r)r.set("Đang đọc trang "+i+"/"+pdf.numPages+"…");
+ return pdf.getPage(i).then(function(pg){return pdfLines(pg)}).then(function(L){res.push(fn(L));i++}).then(step)})()})}
+var PB="\u0001PB";
+function xe(s){return String(s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFE\uFFFF]/g,"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function mkDocx(paras){return need("jszip").then(function(){var z=new JSZip(),H='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+ z.file("[Content_Types].xml",H+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+ z.file("_rels/.rels",H+'<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
+ var rp='<w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/><w:sz w:val="24"/></w:rPr>',
+ body=paras.map(function(p){return p===PB?'<w:p><w:r><w:br w:type="page"/></w:r></w:p>':'<w:p><w:r>'+rp+'<w:t xml:space="preserve">'+xe(p)+'</w:t></w:r></w:p>'}).join("");
+ z.file("word/document.xml",H+'<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+body+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>');
+ return z.generateAsync({type:"blob",mimeType:"application/vnd.openxmlformats-officedocument.wordprocessingml.document",compression:"DEFLATE"})})}
+function cleanHtml(s){var d=new DOMParser().parseFromString(s,"text/html");d.querySelectorAll("script,iframe,object,embed,link,base,meta[http-equiv]").forEach(function(n){n.remove()});
+ d.querySelectorAll("*").forEach(function(n){[].slice.call(n.attributes).forEach(function(a){if(/^on/i.test(a.name)||/^\s*javascript:/i.test(a.value))n.removeAttribute(a.name)})});return d.body.innerHTML}
+function htmlPage(title,body,printIt){return'<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(title)+'</title><style>body{font:15px/1.6 Arial,"Segoe UI",sans-serif;margin:24px;color:#111}table{border-collapse:collapse;margin:10px 0}td,th{border:1px solid #888;padding:4px 8px;vertical-align:top}img{max-width:100%}pre{white-space:pre-wrap;font:inherit}h2.sh{font-size:1.1rem;margin:18px 0 4px}@page{margin:14mm}</style></head><body>'+body+(printIt?'<script>addEventListener("load",function(){setTimeout(function(){print()},500)})<\/script>':'')+'</body></html>'}
+function printHtml(title,body){var w=window.open(URL.createObjectURL(new Blob([htmlPage(title,cleanHtml(body),true)],{type:"text/html"})),"_blank");if(!w)alert("Trình duyệt đã chặn cửa sổ mới. Hãy cho phép cửa sổ bật lên (pop-up) cho trang này rồi bấm lại.")}
+function html2text(s){var d=new DOMParser().parseFromString(s,"text/html");d.querySelectorAll("script,style").forEach(function(n){n.remove()});
+ d.body.querySelectorAll("br").forEach(function(n){n.replaceWith("\n")});d.body.querySelectorAll("p,div,h1,h2,h3,h4,h5,h6,li,tr,pre,blockquote").forEach(function(n){n.append("\n")});
+ return(d.body.textContent||"").replace(/[ \t]+\n/g,"\n").replace(/\n{3,}/g,"\n\n").trim()}
+function txtBlob(t,ty){return new Blob(["\uFEFF"+t],{type:(ty||"text/plain")+";charset=utf-8"})}
+/* ---------- đổi định dạng: dùng chung cho tool PDF + tool tài liệu ---------- */
+function kindOf(f){var e=(f.name.split(".").pop()||"").toLowerCase();return e==="docx"?"docx":/^(txt|md|text)$/.test(e)?"txt":/^(html?|xhtml)$/.test(e)?"html":e==="pdf"?"pdf":/^(xlsx|xls|csv|tsv|ods)$/.test(e)?"sheet":""}
+var KMAP={docx:["txt","html","pdf"],txt:["docx","html","pdf"],html:["docx","txt","pdf"],pdf:["txt","docx"],sheet:["csv","xlsx","json","html","pdf"]},
+KNAME={txt:"TXT",html:"HTML",docx:"Word (.docx)",pdf:"PDF",csv:"CSV",xlsx:"Excel (.xlsx)",json:"JSON"};
+function readSheet(f){return need("xlsx").then(function(){return/\.(csv|tsv)$/i.test(f.name)?f.text().then(function(t){return XLSX.read(t,{type:"string"})}):f.arrayBuffer().then(function(ab){return XLSX.read(ab,{type:"array"})})})}
+function docConv(f,t,r){var k=kindOf(f),nm=base(f.name);
+ if(!k)return Promise.resolve(r.set("Chưa hỗ trợ định dạng này (hỗ trợ: DOCX, TXT, HTML, PDF, XLSX, CSV…). File Word cũ .doc hãy lưu lại thành .docx trước.",1));
+ if(KMAP[k].indexOf(t)<0)return Promise.resolve(r.set("Không đổi được "+k.toUpperCase()+" sang "+KNAME[t]+". Có thể đổi sang: "+KMAP[k].map(function(x){return KNAME[x]}).join(", "),1));
+ r.set("Đang chuyển đổi…");
+ var P;
+ if(k==="docx")P=need("mammoth").then(function(){return f.arrayBuffer()}).then(function(ab){return t==="txt"?mammoth.extractRawText({arrayBuffer:ab}).then(function(x){r.ok(txtBlob(x.value),nm+".txt")}):mammoth.convertToHtml({arrayBuffer:ab}).then(function(x){
+   if(t==="html")r.ok(new Blob([htmlPage(nm,x.value,false)],{type:"text/html"}),nm+".html");else r.btn("🖨️ Mở bản in → Lưu thành PDF",function(){printHtml(nm,x.value)})})});
+ else if(k==="txt")P=f.text().then(function(s){if(t==="docx")return mkDocx(s.replace(/\r\n?/g,"\n").split("\n")).then(function(b){r.ok(b,nm+".docx")});
+   var b="<pre>"+esc(s)+"</pre>";if(t==="html")r.ok(new Blob([htmlPage(nm,b,false)],{type:"text/html"}),nm+".html");else r.btn("🖨️ Mở bản in → Lưu thành PDF",function(){printHtml(nm,b)})});
+ else if(k==="html")P=f.text().then(function(s){if(t==="txt")r.ok(txtBlob(html2text(s)),nm+".txt");else if(t==="docx")return mkDocx(html2text(s).split("\n")).then(function(b){r.ok(b,nm+".docx")});else r.btn("🖨️ Mở bản in → Lưu thành PDF",function(){printHtml(nm,s)})});
+ else if(k==="pdf")P=pdfAll(f,function(L){return L.map(lineText).filter(Boolean)},r).then(function(pg){var all=[];pg.forEach(function(p,i){if(i)all.push(t==="docx"?PB:"");all=all.concat(p)});
+   if(!pg.some(function(p){return p.length}))throw new Error("PDF này không có lớp chữ (có thể là ảnh scan), nên không trích xuất được văn bản");
+   if(t==="txt")r.ok(txtBlob(all.filter(function(x){return x!==PB}).join("\n")),nm+".txt");else return mkDocx(all).then(function(b){r.ok(b,nm+".docx")})});
+ else P=readSheet(f).then(function(wb){var ws=wb.Sheets[wb.SheetNames[0]];
+   if(t==="csv")r.ok(txtBlob(XLSX.utils.sheet_to_csv(ws),"text/csv"),nm+".csv");
+   else if(t==="json")r.ok(txtBlob(JSON.stringify(XLSX.utils.sheet_to_json(ws,{defval:""}),null,2),"application/json"),nm+".json");
+   else if(t==="xlsx")r.ok(new Blob([XLSX.write(wb,{bookType:"xlsx",type:"array"})],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}),nm+".xlsx");
+   else{var b=wb.SheetNames.map(function(n){return(wb.SheetNames.length>1?'<h2 class="sh">'+esc(n)+'</h2>':"")+XLSX.utils.sheet_to_html(wb.Sheets[n],{header:"",footer:""}).replace(/^[\s\S]*?<body>|<\/body>[\s\S]*$/gi,"")}).join("");
+    if(t==="html")r.ok(new Blob([htmlPage(nm,b,false)],{type:"text/html"}),nm+".html");else r.btn("🖨️ Mở bản in → Lưu thành PDF",function(){printHtml(nm,b)})}});
+ return P.catch(function(e){r.set("Lỗi: "+(e.message||"không chuyển đổi được"),1)})}
+/* ---------- 14. chuyển đổi PDF ---------- */
+function parseRange(s,n){var set=[],seen={};s=(s||"").trim();if(!s||/^(all|tat ca|tất cả)$/i.test(s)){for(var i=1;i<=n;i++)set.push(i);return set}
+ s.split(/[,;\s]+/).forEach(function(p){var m=p.match(/^(\d*)-(\d*)$/),a,b;if(m){a=m[1]?+m[1]:1;b=m[2]?+m[2]:n}else if(/^\d+$/.test(p)){a=b=+p}else return;if(a>b){var t=a;a=b;b=t}
+  for(var i=Math.max(1,a);i<=Math.min(n,b);i++)if(!seen[i]){seen[i]=1;set.push(i)}});return set}
+function rPdf(el){var L=[],busy=0,o=h('<div class="tres"></div>'),
+ MODES={merge:["🔗 Hợp nhất nhiều PDF thành một","application/pdf,.pdf",true,"Chọn các file PDF cần hợp nhất"],split:["✂️ Tách / trích trang từ PDF","application/pdf,.pdf",false,"Chọn file PDF cần tách"],
+ p2j:["🖼️ PDF → ảnh JPG","application/pdf,.pdf",false,"Chọn file PDF cần đổi sang ảnh"],j2p:["📄 Ảnh (JPG, PNG…) → PDF","image/*",true,"Chọn các ảnh cần ghép thành PDF"],
+ p2w:["📝 PDF → Word (.docx)","application/pdf,.pdf",false,"Chọn file PDF cần đổi sang Word"],p2x:["📊 PDF → Excel (.xlsx)","application/pdf,.pdf",false,"Chọn file PDF có bảng cần đổi sang Excel"],
+ w2p:["📘 Word (.docx) → PDF",".docx",false,"Chọn file Word cần đổi sang PDF"],x2p:["📗 Excel / CSV → PDF",".xlsx,.xls,.csv",false,"Chọn file Excel cần đổi sang PDF"]},
+ ui=h('<div><div class="tr"><label>Bạn muốn</label><select id="pm">'+Object.keys(MODES).map(function(k){return'<option value="'+k+'">'+MODES[k][0]+'</option>'}).join("")+'</select></div><div id="pz"></div><div id="pl"></div><div id="po2" class="tr"></div><div class="tr"><button class="btn" id="go" type="button">▶ Thực hiện</button></div></div>'),
+ q=function(s){return ui.querySelector(s)},draw,zone=null;
+ function opts(){var m=q("#pm").value,e=q("#po2");e.innerHTML="";
+  if(m==="split")e.innerHTML='<label>Trang cần lấy</label><input id="pr" type="text" placeholder="VD: 1-3,5,8-" style="padding:.5rem .8rem;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--text);font:600 .95rem var(--body);width:180px"><label>Xuất</label><select id="ps"><option value="one">Một file PDF mới</option><option value="each">Mỗi trang một file (ZIP)</option></select>';
+  if(m==="p2j")e.innerHTML='<label>Độ nét</label><select id="pq"><option value="1.5">Vừa (đủ xem)</option><option value="2" selected>Nét (khuyên dùng)</option><option value="3">Rất nét (file nặng)</option></select>';
+  if(m==="j2p")e.innerHTML='<label>Khổ trang</label><select id="pp"><option value="a4">A4 (có lề)</option><option value="img">Đúng cỡ từng ảnh</option></select>'}
+ function setMode(){var m=q("#pm").value,M=MODES[m];L.length=0;o.innerHTML="";var nz=dz(M[1],M[2],function(fs){if(M[2])fs.forEach(function(f){L.push(f)});else{L.length=0;L.push(fs[0])}draw()},M[3]);if(zone)zone.replaceWith(nz);else q("#pz").appendChild(nz);zone=nz;opts();draw()}
+ q("#pm").onchange=setMode;
+ el.appendChild(ui);el.appendChild(o);
+ draw=flist(q("#pl"),L,function(){q("#go").disabled=!L.length});
+ setMode();
+ q("#go").onclick=function(){if(busy||!L.length)return;busy=1;var go=this,m=q("#pm").value,f=L[0];go.disabled=true;o.innerHTML="";var done=function(){busy=0;go.disabled=!L.length};
+  var r=row(o,m==="merge"||m==="j2p"?L.length+" file":f.name,m==="merge"||m==="j2p"?"":sz(f.size)),P;
+  r.set("Đang xử lý…");
+  if(m==="merge")P=need("pdflib").then(function(){return PDFLib.PDFDocument.create()}).then(function(d){return L.reduce(function(p,x,i){return p.then(function(){r.set("Đang ghép file "+(i+1)+"/"+L.length+"…");return x.arrayBuffer().then(function(ab){return PDFLib.PDFDocument.load(ab,{ignoreEncryption:true})}).then(function(s){return d.copyPages(s,s.getPageIndices())}).then(function(pg){pg.forEach(function(p2){d.addPage(p2)})})})},Promise.resolve()).then(function(){return d.save()})}).then(function(u8){r.ok(new Blob([u8],{type:"application/pdf"}),"pdf-hop-nhat.pdf")});
+  else if(m==="split")P=need("pdflib").then(function(){return f.arrayBuffer()}).then(function(ab){return PDFLib.PDFDocument.load(ab,{ignoreEncryption:true})}).then(function(src){var pages=parseRange(q("#pr").value,src.getPageCount());if(!pages.length)throw new Error("Số trang không hợp lệ (file có "+src.getPageCount()+" trang)");
+    if(q("#ps").value==="one")return PDFLib.PDFDocument.create().then(function(d){return d.copyPages(src,pages.map(function(x){return x-1})).then(function(pg){pg.forEach(function(p){d.addPage(p)});return d.save()})}).then(function(u8){r.ok(new Blob([u8],{type:"application/pdf"}),base(f.name)+"-trich-"+pages.length+"trang.pdf")});
+    return need("jszip").then(function(){var z=new JSZip();return pages.reduce(function(p,n){return p.then(function(){return PDFLib.PDFDocument.create().then(function(d){return d.copyPages(src,[n-1]).then(function(pg){d.addPage(pg[0]);return d.save()})}).then(function(u8){z.file(base(f.name)+"-trang-"+n+".pdf",u8)})})},Promise.resolve()).then(function(){return z.generateAsync({type:"blob"})})}).then(function(b){r.ok(b,base(f.name)+"-tach.zip")})});
+  else if(m==="p2j")P=Promise.all([pdfjs(),need("jszip")]).then(function(){return pdfOpen(f)}).then(function(pdf){var z=new JSZip(),i=1,S=+q("#pq").value,pad=String(pdf.numPages).length;return(function step(){if(i>pdf.numPages)return z.generateAsync({type:"blob"}).then(function(b){r.ok(b,base(f.name)+"-anh.zip");r.note(pdf.numPages+" ảnh JPG trong file ZIP")});
+    r.set("Đang xuất trang "+i+"/"+pdf.numPages+"…");return pdf.getPage(i).then(function(pg){var v=pg.getViewport({scale:S}),c=document.createElement("canvas");c.width=Math.round(v.width);c.height=Math.round(v.height);var x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);
+     return pg.render({canvasContext:x,viewport:v}).promise.then(function(){return cb(c,"image/jpeg",.92)}).then(function(b){z.file(base(f.name)+"-trang-"+String(i).padStart(pad,"0")+".jpg",b);pg.cleanup();i++})}).then(step)})()});
+  else if(m==="j2p")P=need("pdflib").then(function(){return PDFLib.PDFDocument.create()}).then(function(d){var A4=q("#pp").value==="a4";return L.reduce(function(p,x,i){return p.then(function(){r.set("Đang xử lý ảnh "+(i+1)+"/"+L.length+"…");
+    var asJpg=/jpe?g/.test(x.type),asPng=/png/.test(x.type),get=(asJpg||asPng)?x.arrayBuffer():img(x).then(function(im){var c=document.createElement("canvas");c.width=im.naturalWidth;c.height=im.naturalHeight;var cx=c.getContext("2d");cx.fillStyle="#fff";cx.fillRect(0,0,c.width,c.height);cx.drawImage(im,0,0);return cb(c,"image/png")}).then(function(b){return b.arrayBuffer()});
+    return get.then(function(ab){return asJpg?d.embedJpg(ab):d.embedPng(ab)}).then(function(im){var W=im.width,Hh=im.height,pw=A4?595:W,ph=A4?842:Hh,pg=d.addPage([pw,ph]);if(A4){var mg=28,s=Math.min((pw-2*mg)/W,(ph-2*mg)/Hh),w=W*s,hh=Hh*s;pg.drawImage(im,{x:(pw-w)/2,y:(ph-hh)/2,width:w,height:hh})}else pg.drawImage(im,{x:0,y:0,width:W,height:Hh})})})},Promise.resolve()).then(function(){return d.save()})}).then(function(u8){r.ok(new Blob([u8],{type:"application/pdf"}),"anh-sang-pdf.pdf")});
+  else if(m==="p2w")P=docConv(f,"docx",r);
+  else if(m==="p2x")P=pdfAll(f,function(Ls){return Ls.map(lineCells).filter(function(c){return c.join("")})},r).then(function(pg){var rows=[];pg.forEach(function(p){rows=rows.concat(p)});if(!rows.length)throw new Error("PDF này không có lớp chữ (có thể là ảnh scan), nên không đọc được bảng");
+    return need("xlsx").then(function(){var ws=XLSX.utils.aoa_to_sheet(rows),wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Sheet1");r.ok(new Blob([XLSX.write(wb,{bookType:"xlsx",type:"array"})],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}),base(f.name)+".xlsx")})});
+  else P=docConv(f,"pdf",r);
+  P.catch(function(e){r.set("Lỗi: "+(e.message||"không thực hiện được"),1)}).then(done,done)};
+ el.appendChild(h('<p class="tnote">Hợp nhất / tách / đổi sang ảnh chạy hoàn toàn trên máy bạn. “PDF → Word/Excel” chỉ lấy được chữ và bảng đơn giản (không giữ nguyên bố cục, hình ảnh); PDF dạng ảnh scan không có chữ nên không đổi được. “Word/Excel → PDF” sẽ mở bản in, bạn chọn <b>Lưu thành PDF</b> ở hộp thoại in.</p>'))}
+/* ---------- 15. đổi định dạng tài liệu ---------- */
+function rDoc(el){var o=h('<div class="tres"></div>');
+ el.innerHTML='<div class="tr"><label>Đổi sang</label><select id="dt"><option value="docx">Word (.docx)</option><option value="pdf">PDF</option><option value="txt">TXT (văn bản thuần)</option><option value="html">HTML (trang web)</option><option value="xlsx">Excel (.xlsx)</option><option value="csv">CSV</option><option value="json">JSON</option></select></div>';
+ var dt=el.querySelector("#dt");
+ el.appendChild(dz(".docx,.txt,.md,.html,.htm,.pdf,.xlsx,.xls,.csv,.tsv,.ods",true,function(fs){fs.reduce(function(p,f){return p.then(function(){return docConv(f,dt.value,row(o,f.name,sz(f.size)))})},Promise.resolve())},"Chọn tài liệu cần đổi định dạng (được chọn nhiều file)"));
+ el.appendChild(o);
+ el.appendChild(h('<p class="tnote"><b>Đổi được:</b> Word → TXT / HTML / PDF · TXT / HTML → Word / PDF · PDF → TXT / Word · Excel / CSV → CSV / Excel / JSON / HTML / PDF. Công cụ giữ nội dung chữ và bảng, không giữ nguyên mọi định dạng phức tạp. Chuyển sang PDF sẽ mở bản in để bạn chọn <b>Lưu thành PDF</b>.</p>'))}
+/* ---------- 16. tạo mã QR ---------- */
+function rQR(el){var T={url:"🔗 Liên kết (link)",phone:"📞 Số điện thoại",text:"📝 Nội dung văn bản",email:"✉️ Email",sms:"💬 Tin nhắn SMS",wifi:"📶 Wi-Fi"},
+ inp='style="flex:1 1 220px;padding:.5rem .8rem;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--text);font:600 .95rem var(--body)"',
+ ui=h('<div><div class="tr"><label>Loại mã</label><select id="qt">'+Object.keys(T).map(function(k){return'<option value="'+k+'">'+T[k]+'</option>'}).join("")+'</select></div><div id="qf"></div>'+
+ '<div class="tr"><label>Kích thước</label><select id="qz"><option value="256">256 px</option><option value="512" selected>512 px</option><option value="1024">1024 px (in ấn)</option></select><label>Độ chịu lỗi</label><select id="qe"><option value="L">Thấp</option><option value="M" selected>Vừa</option><option value="Q">Khá</option><option value="H">Cao</option></select><label>Màu mã</label><input id="qc" type="color" value="#000000"><label>Màu nền</label><input id="qb" type="color" value="#ffffff"></div>'+
+ '<div class="rbox" style="grid-template-columns:minmax(0,260px) 1fr;align-items:center"><div><canvas id="qv" width="260" height="260" style="width:100%;border-radius:12px;background:#fff"></canvas></div><div><p class="tnote" id="qs">Nhập nội dung, mã QR sẽ hiện ngay.</p><div class="tr"><button class="tbtn p" id="d1" type="button" disabled>⬇ Tải PNG</button><button class="tbtn" id="d2" type="button" disabled>⬇ Tải SVG (in sắc nét)</button></div></div></div></div>'),
+ q=function(s){return ui.querySelector(s)},cur=null;
+ function fields(){var t=q("#qt").value,f=q("#qf"),F={
+  url:'<div class="tr"><input id="a1" type="url" placeholder="https://… hoặc tên-trang.com" '+inp+'></div>',
+  phone:'<div class="tr"><input id="a1" type="tel" placeholder="VD: 0912 345 678" '+inp+'></div>',
+  text:'<textarea id="a1" rows="4" placeholder="Nhập nội dung bất kỳ…"></textarea>',
+  email:'<div class="tr"><input id="a1" type="email" placeholder="Địa chỉ email nhận" '+inp+'></div><div class="tr"><input id="a2" type="text" placeholder="Tiêu đề (không bắt buộc)" '+inp+'></div><textarea id="a3" rows="2" placeholder="Nội dung thư (không bắt buộc)"></textarea>',
+  sms:'<div class="tr"><input id="a1" type="tel" placeholder="Số điện thoại nhận" '+inp+'></div><textarea id="a2" rows="2" placeholder="Nội dung tin nhắn"></textarea>',
+  wifi:'<div class="tr"><input id="a1" type="text" placeholder="Tên Wi-Fi (SSID)" '+inp+'></div><div class="tr"><input id="a2" type="text" placeholder="Mật khẩu Wi-Fi" '+inp+'><select id="a3"><option value="WPA">WPA/WPA2/WPA3</option><option value="WEP">WEP</option><option value="nopass">Không mật khẩu</option></select></div>'};f.innerHTML=F[t];make()}
+ function val(id){var e=q("#"+id);return e?e.value.trim():""}
+ function payload(){var t=q("#qt").value,a=val("a1"),b=val("a2"),c=val("a3"),w=function(s){return s.replace(/([\\;,:"])/g,"\\$1")};
+  if(!a)return"";
+  if(t==="url")return/^[a-z][a-z0-9+.-]*:/i.test(a)?a:"https://"+a;
+  if(t==="phone")return"tel:"+a.replace(/[\s.\-()]/g,"");
+  if(t==="text")return q("#a1").value;
+  if(t==="email")return"mailto:"+a+((b||c)?"?"+[b?"subject="+encodeURIComponent(b):"",c?"body="+encodeURIComponent(c):""].filter(Boolean).join("&"):"");
+  if(t==="sms")return"SMSTO:"+a.replace(/[\s.\-()]/g,"")+":"+q("#a2").value;
+  if(t==="wifi")return"WIFI:T:"+c+";S:"+w(a)+";"+(c==="nopass"?"":"P:"+w(b)+";")+";"}
+ function make(){var txt=payload(),s=q("#qs"),cv=q("#qv");cur=null;q("#d1").disabled=q("#d2").disabled=true;
+  if(!txt){cv.getContext("2d").clearRect(0,0,cv.width,cv.height);s.className="tnote";s.textContent="Nhập nội dung, mã QR sẽ hiện ngay.";return}
+  try{var qr=new QRN.QRCode(-1,QRN.EC[q("#qe").value]);qr.addData(String.fromCharCode.apply(null,new TextEncoder().encode(txt)));qr.make();
+   var n=qr.getModuleCount(),m=4,tot=n+2*m,size=+q("#qz").value,cell=Math.max(1,Math.floor(size/tot)),S=cell*tot,fg=q("#qc").value,bg=q("#qb").value;
+   var c=document.createElement("canvas");c.width=c.height=S;var x=c.getContext("2d");x.fillStyle=bg;x.fillRect(0,0,S,S);x.fillStyle=fg;var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+tot+' '+tot+'" width="'+S+'" height="'+S+'" shape-rendering="crispEdges"><rect width="'+tot+'" height="'+tot+'" fill="'+bg+'"/><path fill="'+fg+'" d="';
+   for(var r=0;r<n;r++)for(var k=0;k<n;k++)if(qr.isDark(r,k)){x.fillRect((k+m)*cell,(r+m)*cell,cell,cell);svg+="M"+(k+m)+" "+(r+m)+"h1v1h-1z"}
+   svg+='"/></svg>';cv.width=cv.height=S;cv.getContext("2d").drawImage(c,0,0);cur={c:c,svg:svg};q("#d1").disabled=q("#d2").disabled=false;s.className="tnote";s.textContent="Mã QR "+S+"×"+S+" px · hãy quét thử bằng điện thoại trước khi in hoặc đăng."}
+  catch(e){s.className="tbad";s.textContent="Nội dung quá dài để tạo mã QR. Hãy rút gọn hoặc giảm độ chịu lỗi."}}
+ ui.addEventListener("input",function(e){if(e.target.id!=="qt")make()});ui.addEventListener("change",function(e){if(e.target.id==="qt")fields();else make()});
+ q("#d1").onclick=function(){if(cur)cb(cur.c,"image/png").then(function(b){save(b,"ma-qr.png")})};
+ q("#d2").onclick=function(){if(cur)save(new Blob([cur.svg],{type:"image/svg+xml"}),"ma-qr.svg")};
+ el.appendChild(ui);fields();
+ el.appendChild(h('<p class="tnote">Mã QR tạo ngay trên máy bạn, nội dung không gửi đi đâu. Tiếng Việt có dấu được hỗ trợ. Nên chọn màu mã tối trên nền sáng để dễ quét.</p>'))}
+/* ---------- 17. mã hóa / giải mã tệp ---------- */
+function rEnc(el){var o=h('<div class="tres"></div>'),MG=[78,72,69,78,67,49],
+ ui=h('<div><div class="tr"><label>Chế độ</label><select id="em"><option value="e">🔒 Mã hóa (khóa file)</option><option value="d">🔓 Giải mã (mở khóa file)</option></select></div>'+
+ '<div class="tr"><label>Mật khẩu</label><div class="pwo" style="flex:1 1 280px"><input id="ep" type="password" autocomplete="off" placeholder="Nhập mật khẩu…"><button class="tbtn" id="es" type="button" aria-label="Hiện/ẩn mật khẩu">👁</button></div></div>'+
+ '<div class="tr" id="ec"><label>Nhập lại</label><div class="pwo" style="flex:1 1 280px"><input id="ep2" type="password" autocomplete="off" placeholder="Nhập lại mật khẩu…"></div></div></div>'),
+ q=function(s){return ui.querySelector(s)};
+ function key(pw,salt){return crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]).then(function(k){return crypto.subtle.deriveKey({name:"PBKDF2",salt:salt,iterations:250000,hash:"SHA-256"},k,{name:"AES-GCM",length:256},false,["encrypt","decrypt"])})}
+ function enc(f,pw,r){var salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+  return Promise.all([f.arrayBuffer(),key(pw,salt)]).then(function(a){var nb=new TextEncoder().encode(f.name),d=new Uint8Array(a[0]),p=new Uint8Array(4+nb.length+d.length);new DataView(p.buffer).setUint32(0,nb.length);p.set(nb,4);p.set(d,4+nb.length);
+   return crypto.subtle.encrypt({name:"AES-GCM",iv:iv},a[1],p)}).then(function(ct){var c=new Uint8Array(ct),out=new Uint8Array(34+c.length);out.set(MG,0);out.set(salt,6);out.set(iv,22);out.set(c,34);r.ok(new Blob([out],{type:"application/octet-stream"}),f.name+".nhenc");r.note("đã khóa bằng AES-256")})}
+ function dec(f,pw,r){return f.arrayBuffer().then(function(ab){var u=new Uint8Array(ab);if(u.length<51||MG.some(function(v,i){return u[i]!==v}))throw new Error("Đây không phải file đã mã hóa bằng công cụ này (đuôi .nhenc)");
+  return key(pw,u.slice(6,22)).then(function(k){return crypto.subtle.decrypt({name:"AES-GCM",iv:u.slice(22,34)},k,u.slice(34))}).then(function(pt){var p=new Uint8Array(pt),nl=new DataView(p.buffer).getUint32(0),name=new TextDecoder().decode(p.slice(4,4+nl));r.ok(new Blob([p.slice(4+nl)]),name||base(f.name));r.note("đã giải mã")},function(){throw new Error("Sai mật khẩu hoặc file bị hỏng")})})}
+ function mode(){q("#ec").hidden=q("#em").value==="d"}
+ q("#em").onchange=mode;q("#es").onclick=function(){var t=q("#ep").type==="password"?"text":"password";q("#ep").type=t;q("#ep2").type=t};
+ el.appendChild(ui);
+ el.appendChild(dz("*/*",true,function(fs){var m=q("#em").value,pw=q("#ep").value;o.innerHTML="";
+  if(!window.crypto||!crypto.subtle){o.innerHTML='<p class="tbad">Trình duyệt chỉ cho phép mã hóa khi trang chạy qua HTTPS. Hãy mở trang bằng địa chỉ https://.</p>';return}
+  if(pw.length<6){o.innerHTML='<p class="tbad">Hãy nhập mật khẩu (ít nhất 6 ký tự) trước khi chọn file.</p>';return}
+  if(m==="e"&&pw!==q("#ep2").value){o.innerHTML='<p class="tbad">Hai lần nhập mật khẩu chưa giống nhau.</p>';return}
+  fs.reduce(function(p,f){return p.then(function(){var r=row(o,f.name,sz(f.size));r.set(m==="e"?"Đang mã hóa…":"Đang giải mã…");return(m==="e"?enc(f,pw,r):dec(f,pw,r)).catch(function(e){r.set("Lỗi: "+(e.message||"không xử lý được"),1)})})},Promise.resolve())},"Chọn file cần mã hóa / giải mã (được chọn nhiều file)"));
+ el.appendChild(o);
+ el.appendChild(h('<p class="tnote">⚠️ <b>Hãy nhớ kỹ mật khẩu:</b> mất mật khẩu thì không ai khôi phục được file, kể cả mình. Dùng mã hóa AES-256-GCM, mật khẩu được làm khó đoán bằng PBKDF2; mọi thứ xử lý ngay trên máy bạn. Nên chọn mật khẩu dài, có thể tạo bằng công cụ “Tạo mật khẩu mạnh”. Nên dùng file dưới ~500 MB. Tên file gốc được giấu bên trong và tự khôi phục khi giải mã. Gửi file .nhenc cho người nhận, họ dùng công cụ này để mở.</p>'))}
+
 /* ---------- danh sách + khung hiển thị ---------- */
 var TOOLS=[
  {id:"conv",ic:"🔄",n:"Đổi đuôi file",d:"Ảnh sang PNG/JPG/WEBP, video/nhạc sang MP3/WAV",u:["Chọn file","Chọn định dạng","Tải về"],r:rConv},
@@ -1224,7 +2875,16 @@ var TOOLS=[
  {id:"tt",ic:"🎵",n:"Tải video TikTok",d:"Không dính logo, kèm tải riêng nhạc nền",net:1,u:["Dán link TikTok","Bấm lấy link","Chọn bản muốn tải"],r:rTT},
  {id:"pw",ic:"🔐",n:"Tạo mật khẩu mạnh",d:"Ngẫu nhiên, an toàn, sao chép một chạm",u:["Chọn độ dài","Chọn loại ký tự","Sao chép"],r:rPw},
  {id:"rnd",ic:"🎲",n:"Hôm nay chơi gì?",d:"Quay ngẫu nhiên để chọn game cần chơi",u:["Sửa danh sách","Bấm quay","Chơi thôi!"],r:rRnd},
- {id:"sys",ic:"💻",n:"Kiểm tra cấu hình máy",d:"CPU, RAM, card đồ họa và màn hình của bạn",u:["Xem thông số","Đối chiếu yêu cầu game"],r:rSys}
+ {id:"sys",ic:"💻",n:"Kiểm tra cấu hình máy",d:"CPU, RAM, card đồ họa và màn hình của bạn",u:["Xem thông số","Đối chiếu yêu cầu game"],r:rSys},
+ {id:"collage",ic:"🧩",n:"Ghép ảnh / tạo ảnh GIF",d:"Kết hợp nhiều ảnh, tạo ảnh động cho MXH",u:["Chọn nhiều ảnh","Sắp xếp thứ tự","Chọn ghép hay GIF","Tạo và tải về"],r:rCollage},
+ {id:"edit",ic:"🎨",n:"Chỉnh sửa ảnh cơ bản",d:"Độ sáng, tương phản, lọc, chữ, khung ảnh",u:["Chọn ảnh","Kéo thanh chỉnh","Thêm chữ, khung","Tải ảnh về"],r:rEdit},
+ {id:"vjoin",ic:"🎞️",n:"Ghép / nối video",d:"Kết hợp nhiều đoạn thành 1, thêm nhạc nền",u:["Chọn các đoạn video","Sắp xếp, chọn nhạc nền","Ghép và tải về"],r:rVjoin},
+ {id:"sub",ic:"💬",n:"Tạo phụ đề tự động",d:"Nhận diện lời nói tạo phụ đề cho video",net:1,u:["Chọn video / âm thanh","Chọn ngôn ngữ","Sửa và tải file .SRT"],r:rSub},
+ {id:"zip",ic:"🗜️",n:"Nén tệp",d:"Nén ảnh, video, PDF, tài liệu mà giảm ít chất lượng",u:["Chọn file","Chọn mức nén","Tải file đã nén"],r:rComp},
+ {id:"pdf",ic:"📄",n:"Chuyển đổi PDF",d:"PDF ↔ Word/Excel/JPG, hợp nhất/tách PDF",u:["Chọn việc cần làm","Chọn file","Thực hiện và tải về"],r:rPdf},
+ {id:"doc",ic:"📝",n:"Đổi định dạng tài liệu",d:"Word/PDF ↔ nhiều định dạng khác",u:["Chọn định dạng đích","Chọn tài liệu","Tải về"],r:rDoc},
+ {id:"qr",ic:"🔳",n:"Tạo mã QR",d:"Từ link, số điện thoại, nội dung",u:["Chọn loại mã","Nhập nội dung","Tải PNG / SVG"],r:rQR},
+ {id:"enc",ic:"🛡️",n:"Mã hóa / Giải mã tệp",d:"Bảo mật tệp riêng trước khi gửi",u:["Chọn mã hóa hay giải mã","Nhập mật khẩu","Chọn file"],r:rEnc}
 ],grid=$("tgrid"),panel=$("tpanel"),cur=null;
 grid.innerHTML=TOOLS.map(function(t,i){return'<button class="tc" type="button" role="listitem" style="--n:'+i+'" data-t="'+t.id+'"><span class="ti">'+t.ic+'</span><b>'+t.n+'</b><small>'+t.d+'</small><em'+(t.net?' class="net"':'')+'>'+(t.net?"Cần kết nối mạng":"Chạy trên máy bạn")+'</em></button>'}).join("");
 function closeT(){cur=null;panel.innerHTML="";[].forEach.call(grid.children,function(c){c.classList.remove("on")})}
