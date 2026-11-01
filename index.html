@@ -264,7 +264,8 @@ html{overflow-x:hidden}
 :root[data-theme=light] .cover span{color:#c9c0f2}
 :root[data-theme=light] .glow{opacity:.55}
 :root[data-theme=light] .sec::before{-webkit-text-stroke:1px rgba(109,59,255,.2)}
-::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.9s;animation-timing-function:ease-in-out}
+html.tfade,html.tfade *,html.tfade *::before,html.tfade *::after{transition:background-color .8s,color .8s,border-color .8s,box-shadow .8s,fill .8s!important}
 .themebtn{width:40px;height:40px;margin-left:6px;padding:0;display:grid;place-items:center;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--c);cursor:pointer;position:relative;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s}
 .themebtn:hover{border-color:var(--c);box-shadow:0 0 18px -4px var(--c);transform:rotate(-12deg) scale(1.08)}
 .themebtn svg{grid-area:1/1;width:21px;height:21px;transition:transform .6s cubic-bezier(.2,1.2,.3,1),opacity .4s}
@@ -303,13 +304,34 @@ html{overflow-x:hidden}
 .rv.in[data-a]{opacity:1;transform:none;filter:none}
 .rv.in .soc{animation:pop .55s cubic-bezier(.2,1.3,.4,1) backwards;animation-delay:calc(var(--n)*90ms + .3s)}
 @keyframes pop{from{opacity:0;transform:translateY(16px) scale(.8)}}
-main{will-change:transform}
 /* mục hỗ trợ nhỏ gọn */
 #donate{padding-top:36px}
 .donate-card{max-width:360px;margin:12px auto;padding:18px 16px;border-radius:16px}
 .donate-card h3{font-size:1.1rem}.donate-card p{font-size:.95rem;margin:.3rem 0 .8rem}
 .qr-wrap{width:min(150px,55%);border-width:2px}.qr-note{margin-top:8px;font-size:.8rem}
 @media(max-width:760px){.themebtn{width:100%;margin:6px 0 0}}
+/* dòng chữ chạy ngang */
+.mqb{width:100vw;margin:34px 0 0 calc(50% - 50vw);overflow:hidden;padding:14px 0;border-block:1px solid var(--line);background:linear-gradient(90deg,rgba(139,92,255,.12),rgba(255,61,129,.1),rgba(41,240,255,.12));position:relative;z-index:1}
+.mqt{display:flex;width:max-content;animation:mqm 30s linear infinite}
+.mqb:hover .mqt{animation-play-state:paused}
+.mqt span.t{font:800 clamp(1.1rem,3.4vw,1.7rem) var(--head);letter-spacing:.08em;white-space:nowrap;text-transform:uppercase;background-image:var(--rb);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:flow 6s linear infinite}
+.mqt span.msep{margin:0 1.4rem;color:var(--c);font-size:1.1rem;align-self:center;animation:spin 6s linear infinite}
+@keyframes mqm{to{transform:translateX(-25%)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* server minecraft */
+.srvs{display:grid;gap:12px;margin:8px 0 4px}
+.srv{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:linear-gradient(160deg,rgba(62,224,138,.1),var(--panel))}
+.srv-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.srv-h b{font:800 1.1rem var(--head);color:var(--text)}
+.ver{margin-left:auto;font:700 .8rem var(--head);padding:.15rem .65rem;border-radius:999px;background:rgba(41,240,255,.15);color:var(--c)}
+.live{width:10px;height:10px;border-radius:50%;background:#3ee08a;animation:livep 1.6s infinite}
+@keyframes livep{0%{box-shadow:0 0 0 0 rgba(62,224,138,.7)}70%,100%{box-shadow:0 0 0 10px rgba(62,224,138,0)}}
+.srv-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px}
+.srv-r small{min-width:62px;color:var(--mute);font:700 .8rem var(--head);text-transform:uppercase;letter-spacing:.06em}
+.srv-r code{font:700 1rem ui-monospace,Consolas,monospace;padding:.2rem .6rem;border-radius:8px;background:rgba(139,92,255,.14);color:var(--text);overflow-wrap:anywhere}
+.srv-r a{color:var(--c);font-weight:700}.nomod{color:var(--mute)}
+.cpip{font:700 .85rem var(--body);padding:.3rem .8rem;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);cursor:pointer;transition:border-color .2s,transform .2s}
+.cpip:hover{border-color:var(--c);transform:translateY(-2px)}
 </style>
 </head>
 <body>
@@ -348,6 +370,7 @@ main{will-change:transform}
       </div>
     </div>
   </section>
+  <div class="mqb" id="mqb" aria-hidden="true"><div class="mqt" id="mqt"></div></div>
   <!-- ============ GAME ============ -->
   <section class="sec" id="games" data-n="02">
     <div class="rv"><span class="tag">// Game</span><h2>Kho game của tôi</h2><p style="color:var(--mute);margin:0">Bấm chọn game → chọn mục → xem danh sách link tải.</p></div>
@@ -469,6 +492,8 @@ var CFG={
   avatar:"images/avatar.jpg",
   qrImage:"images/qr.jpg",
   typing:["Chơi game mỗi ngày","Nghe nhạc cực chill","Chia sẻ mod và tips","Kết nối với tôi ở bên dưới"],
+  /* Dòng chữ chạy ngang giữa mục Thông tin và Kho game: sửa/thêm/bớt câu tùy ý */
+  marquee:["Chào mừng đến góc game của Nam Hoàng","Chia sẻ mod, map và tips mỗi ngày","Nghe nhạc cực chill khi chơi game","Đừng quên ghé ủng hộ cà phê nhé"],
   socials:[
     {n:"Facebook",u:"https://www.facebook.com/kun.lee.3348/",i:"fb"},
     {n:"TikTok",u:"https://tiktok.com/@user6002956066196?lang=vi-VN",i:"tt"},
@@ -549,6 +574,16 @@ var CFG={
           links:[
             {name:"Link 1",url:"https://example.com/mc-3",desc:"Bản đồ đảo nổi"},
             {name:"Link 2",url:"https://example.com/mc-3-2",desc:"Bản đồ thành phố"}
+          ]
+        },
+        {
+          t:"Server đang hoạt động",
+          note:"Danh sách server Minecraft đang chạy",
+          links:[],
+          /* THÊM SERVER: copy 1 dòng. name=Tên server, ip=IP server, ver=Phiên bản, mod=Link mod (để "" nếu không có) */
+          servers:[
+            {name:"Survival Việt Nam",ip:"play.example.com",ver:"1.20.4",mod:""},
+            {name:"Modpack Server",ip:"mod.example.com:25565",ver:"1.20.1 Forge",mod:"https://example.com/modpack"}
           ]
         }
       ]
@@ -704,6 +739,7 @@ $("chipbox").innerHTML=CFG.games.map(function(g,i){return'<button class="chip" t
 $("open").onclick=function(){var on=!$("chips").classList.contains("on");$("chips").classList.toggle("on",on);this.setAttribute("aria-expanded",on);this.textContent=on?"✕ Đóng danh sách":"🎮 Chọn game";
  if(!on){$("gp").classList.remove("on");document.querySelectorAll(".chip").forEach(function(c){c.setAttribute("aria-expanded","false")})}};
 var openG=-1, openItem=-1;
+function srvHtml(a){return'<div class="srvs">'+a.map(function(v){return'<div class="srv"><div class="srv-h"><span class="live" title="Đang hoạt động"></span><b>'+esc(v.name)+'</b><span class="ver">'+esc(v.ver)+'</span></div><div class="srv-r"><small>IP</small><code>'+esc(v.ip)+'</code><button type="button" class="cpip" data-ip="'+esc(v.ip)+'">Chép IP</button></div><div class="srv-r"><small>Link Mod</small>'+(v.mod?'<a href="'+esc(v.mod)+'" target="_blank" rel="noopener">⬇ Tải mod</a>':'<span class="nomod">Không cần mod</span>')+'</div></div>'}).join("")+'</div>'}
 function renderGame(gIdx){
   var g=CFG.games[gIdx];
   var html='<button class="back-btn" id="backGame">← Quay lại danh sách game</button>';
@@ -715,7 +751,7 @@ function renderGame(gIdx){
     (item.links||[]).forEach(function(lnk,j){
       html+='<div class="link-item"><a href="'+esc(lnk.url)+'" target="_blank" rel="noopener">🔗 '+esc(lnk.name)+'</a><span class="desc">'+esc(lnk.desc||"")+'</span></div>';
     });
-    if(item.maps)html+='<div class="mapg"></div>';
+    if(item.maps)html+='<div class="mapg"></div>';if(item.servers)html+=srvHtml(item.servers);
     html+='</div></div></div>';
   });
   html+='</div>';
@@ -837,9 +873,9 @@ $("cln").textContent=CFG.name.toUpperCase();
 function setT(t){root.dataset.theme=t;try{localStorage.setItem("g_theme",t)}catch(e){}document.querySelector('meta[name=theme-color]').content=t==="light"?"#f5f2ff":"#0a0816";tb.setAttribute("aria-pressed",t==="light")}
 setT(root.dataset.theme==="light"?"light":"dark");
 tb.onclick=function(){var t=root.dataset.theme==="light"?"dark":"light";
- if(!document.startViewTransition||RM){setT(t);return}
- var q=tb.getBoundingClientRect(),x=q.left+q.width/2,y=q.top+q.height/2,r=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
- document.startViewTransition(function(){setT(t)}).ready.then(function(){root.animate({clipPath:["circle(0 at "+x+"px "+y+"px)","circle("+r+"px at "+x+"px "+y+"px)"]},{duration:750,easing:"ease-in-out",pseudoElement:"::view-transition-new(root)"})})};
+ if(RM){setT(t);return}
+ if(document.startViewTransition){document.startViewTransition(function(){setT(t)})}
+ else{root.classList.add("tfade");setT(t);setTimeout(function(){root.classList.remove("tfade")},900)}};
 /* Màn chào */
 function open(){cu.classList.remove("in");setTimeout(function(){cu.classList.remove("boot")},1200)}
 if(RM){open()}else if(document.readyState==="complete"){setTimeout(open,900)}else addEventListener("load",function(){setTimeout(open,900)});
@@ -854,10 +890,12 @@ document.addEventListener("pointerdown",function(e){var r=document.createElement
 var AN=["l","r","z","f"];document.querySelectorAll(".rv").forEach(function(el,i){el.dataset.a=AN[i%4]});
 document.querySelectorAll("#socials .soc").forEach(function(a,i){a.style.setProperty("--n",i)});
 new MutationObserver(function(){document.querySelectorAll("#socials .soc").forEach(function(a,i){a.style.setProperty("--n",i)})}).observe($("socials"),{childList:true});
-/* Cuộn: trang nghiêng nhẹ theo tốc độ cuộn */
-if(!RM){var mn=document.querySelector("main"),ly=scrollY,sk=0;(function lp(){var v=scrollY-ly;ly=scrollY;sk+=(Math.max(-5,Math.min(5,v*.1))-sk)*.12;mn.style.transform=Math.abs(sk)>.03?"skewY("+sk.toFixed(3)+"deg)":"";requestAnimationFrame(lp)})()}
 /* Nút hút theo con trỏ */
 if(fine&&!RM){var mg=null;document.addEventListener("pointermove",function(e){var m=e.target.closest(".btn,.soc");if(mg&&mg!==m){mg.style.translate="";mg=null}if(!m)return;mg=m;var r=m.getBoundingClientRect();m.style.translate=(e.clientX-r.left-r.width/2)*.16+"px "+(e.clientY-r.top-r.height/2)*.26+"px"},{passive:true})}
+/* Dòng chữ chạy: nhân 4 lần để chạy liền mạch, dịch 25% mỗi vòng */
+(function(){var a=CFG.marquee||[];if(!a.length){$("mqb").style.display="none";return}var one=a.map(function(t){return'<span class="t">'+esc(t)+'</span><span class="msep">✦</span>'}).join("");$("mqt").innerHTML=one+one+one+one;$("mqt").style.animationDuration=Math.max(12,a.join("").length*.25)+"s"})();
+/* Server: chép IP */
+document.addEventListener("click",function(e){var b=e.target.closest(".cpip");if(!b)return;var ip=b.dataset.ip,ok=function(){b.textContent="Đã chép ✓";setTimeout(function(){b.textContent="Chép IP"},1400)},no=function(){window.prompt("Sao chép IP:",ip)};try{navigator.clipboard.writeText(ip).then(ok,no)}catch(x){no()}});
 /* Tiêu đề: mỗi ký tự một màu cầu vồng */
 document.querySelectorAll(".sec h2").forEach(function(h){var c=h.querySelectorAll(".ch");c.forEach(function(x,i){x.style.color="hsl("+(i/Math.max(1,c.length-1)*330)+" 100% var(--rl))"})});
 })();
