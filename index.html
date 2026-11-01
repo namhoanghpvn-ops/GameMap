@@ -362,6 +362,64 @@ html.tfade,html.tfade *,html.tfade *::before,html.tfade *::after{transition:back
 .gd p{margin:.2rem 0 0;color:var(--text);font-size:1rem;line-height:1.5}
 .gdb{display:inline-block;margin-top:.55rem;padding:.35rem .95rem;border-radius:10px;font:700 .85rem var(--head);letter-spacing:.03em;color:#fff;background:linear-gradient(135deg,var(--v),var(--p));transition:transform .25s,box-shadow .25s}
 .gdb:hover{transform:translateY(-2px);box-shadow:0 10px 22px -10px var(--p)}
+/* ===== CÔNG CỤ ===== */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:22px}
+.tc{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;padding:18px 16px 16px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(160deg,rgba(139,92,255,.14),var(--panel));color:var(--text);cursor:pointer;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s}
+.tc::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,0%),rgba(41,240,255,.2),transparent 55%);opacity:0;transition:opacity .3s;pointer-events:none}
+.tc:hover{transform:translateY(-5px);border-color:var(--c);box-shadow:0 16px 36px -16px var(--v)}
+.tc:hover::before{opacity:1}
+.tc.on{border-color:var(--p);box-shadow:0 0 0 1px var(--p) inset,0 16px 40px -16px var(--p)}
+.rv.in .tc{animation:pop .5s cubic-bezier(.2,1.3,.4,1) backwards;animation-delay:calc(var(--n)*70ms + .2s)}
+.ti{flex:none;display:grid;place-items:center;width:46px;height:46px;border-radius:14px;font-size:1.5rem;background:linear-gradient(135deg,var(--v),var(--p));box-shadow:0 8px 20px -8px var(--p);transition:transform .4s}
+.tc:hover .ti{transform:rotate(-8deg) scale(1.12)}
+.tc b{font:800 1.05rem var(--head)}.tc small{color:var(--mute);font-size:.88rem;line-height:1.4}
+.tc em{font:700 .68rem var(--head);font-style:normal;padding:.12rem .55rem;border-radius:999px;background:rgba(62,224,138,.16);color:#2fbf72;margin-top:2px}
+.tc em.net{background:rgba(255,178,62,.18);color:#e0952a}
+.tpanel{margin-top:18px}
+.tp{border:1px solid var(--line);border-radius:20px;padding:20px;background:var(--panel);animation:tin .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes tin{from{opacity:0;transform:translateY(16px) scale(.98)}}
+.th{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.th h3{margin:0;font:800 1.25rem var(--head)}.th p{margin:.15rem 0 0;color:var(--mute);font-size:.92rem}
+.tx{margin-left:auto;flex:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer}
+.tx:hover{border-color:var(--p)}
+.tsteps{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px;padding:0;list-style:none;counter-reset:s}
+.tsteps li{counter-increment:s;display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--mute);padding:.25rem .8rem .25rem .3rem;border-radius:999px;background:rgba(139,92,255,.1)}
+.tsteps li::before{content:counter(s);display:grid;place-items:center;width:20px;height:20px;border-radius:50%;font:800 .72rem var(--head);color:#fff;background:linear-gradient(135deg,var(--v),var(--p))}
+.dz{display:flex;flex-direction:column;align-items:center;gap:4px;padding:28px 16px;border:2px dashed var(--line);border-radius:16px;cursor:pointer;text-align:center;transition:border-color .25s,background .25s,transform .25s}
+.dz:hover,.dz.drag{border-color:var(--c);background:rgba(41,240,255,.07)}.dz.drag{transform:scale(1.015)}
+.dz i{font-style:normal;font-size:1.8rem;animation:flt 3s ease-in-out infinite}
+.dz span{color:var(--mute);font-size:.9rem}
+.tp select,.tp input[type=number],.tp input[type=url],.tp textarea{padding:.5rem .8rem;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--text);font:600 .95rem var(--body)}
+.tp input[type=number]{width:110px}.tp textarea{width:100%;resize:vertical;margin-top:4px}
+.tp select:focus,.tp input:focus,.tp textarea:focus{outline:none;border-color:var(--c)}
+.tr{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:12px 0}
+.tr label,.ck{font:700 .85rem var(--head);color:var(--mute)}.ck{display:flex;align-items:center;gap:6px;cursor:pointer}
+.tp input[type=range]{flex:1 1 160px;accent-color:var(--v)}
+.tbtn{padding:.5rem 1rem;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--text);font:700 .9rem var(--body);cursor:pointer;transition:transform .2s,border-color .2s}
+.tbtn:hover{border-color:var(--c);transform:translateY(-2px)}
+.tbtn.p{border:0;color:#fff;background:linear-gradient(135deg,var(--v),var(--p))}
+.rw{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 12px;padding:10px 12px;margin-top:8px;border:1px solid var(--line);border-radius:12px;background:rgba(139,92,255,.07);animation:tin .35s}
+.rw b{display:block;overflow-wrap:anywhere}.rw small{color:var(--mute)}
+.rs{color:var(--mute);font-size:.9rem}.rs.bad{color:#ff5f86}
+.bar2{height:8px;border-radius:8px;background:rgba(139,92,255,.18);overflow:hidden;margin-top:12px}.bar2 i{display:block;height:100%;width:0;background:var(--rb);transition:width .15s linear}
+.tnote{margin:10px 0 0;font-size:.85rem;color:var(--mute);line-height:1.5}
+.rbox{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:18px;margin-top:14px}
+.rbox img,.rbox video{width:100%;max-height:300px;object-fit:contain;border-radius:12px;background:rgba(0,0,0,.35)}
+.pwo{display:flex;gap:8px;flex-wrap:wrap}.pwo input{flex:1 1 220px;padding:.55rem .8rem;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--text);font:700 1.1rem ui-monospace,Consolas,monospace}
+.meter{height:8px;border-radius:8px;background:rgba(139,92,255,.18);overflow:hidden;margin-top:6px}.meter i{display:block;height:100%;width:0;transition:width .3s,background .3s}
+.rres{margin:14px 0;min-height:76px;display:grid;place-items:center;text-align:center;font:800 clamp(1.4rem,5vw,2.2rem) var(--head);color:var(--text);border:1px dashed var(--line);border-radius:16px;padding:10px}
+.rres.win{background-image:var(--rb);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:flow 4s linear infinite,tin .5s}
+.sysg{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.sysi{padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(139,92,255,.07)}
+.sysi small{display:block;color:var(--mute);font:700 .72rem var(--head);text-transform:uppercase;letter-spacing:.06em}.sysi b{overflow-wrap:anywhere}
+.ttc{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:rgba(139,92,255,.07)}
+.ttc img{width:110px;height:150px;object-fit:cover;border-radius:10px}.ttc>div{flex:1 1 220px;min-width:0}.ttc small{display:block;color:var(--mute)}
+.tbad{color:#ff5f86;margin-top:10px}
+@media(max-width:760px){.rbox{grid-template-columns:1fr}.tgrid{grid-template-columns:repeat(2,1fr);gap:10px}.tc{padding:14px 12px}.tc small{font-size:.8rem}.tp{padding:14px}.ttc img{width:80px;height:110px}}
+.rbox[hidden]{display:none}
+.tp input[type=checkbox]{width:auto;flex:none;margin:0;padding:0}
+.tp input[type=range]{min-width:0;padding:0;border:0;background:none}
+.tr label.ck{flex-direction:row}
 </style>
 </head>
 <body>
@@ -369,7 +427,7 @@ html.tfade,html.tfade *,html.tfade *::before,html.tfade *::after{transition:back
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="glow" id="glow" aria-hidden="true"></div>
 <div id="prog" aria-hidden="true"></div>
-<nav class="topnav" id="topnav" aria-label="Menu chính"><div class="tn"><a class="brand" id="brand" href="#top">NAM HOÀNG</a><button class="burger" id="burger" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="nl">☰</button><ul id="nl"><li class="sli"><div class="sbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="gs" type="search" placeholder="Tìm trong trang…  ( / )" autocomplete="off" aria-label="Tìm kiếm nội dung trang"><div class="sres" id="sres" role="listbox"></div></div></li><li><a class="nl" href="#top">Trang chủ</a></li><li><a class="nl" href="#me">Liên hệ</a></li><li><a class="nl" href="#games">Game</a></li><li><a class="nl" href="#donate">Hỗ trợ</a></li><li><button class="themebtn" id="theme" type="button" aria-label="Chuyển giao diện sáng hoặc tối" title="Sáng / Tối"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7L7 17M17 7l1.7-1.7"/></g></svg></button></li></ul></div></nav>
+<nav class="topnav" id="topnav" aria-label="Menu chính"><div class="tn"><a class="brand" id="brand" href="#top">NAM HOÀNG</a><button class="burger" id="burger" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="nl">☰</button><ul id="nl"><li class="sli"><div class="sbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="gs" type="search" placeholder="Tìm kiếm… ( / )" autocomplete="off" aria-label="Tìm kiếm nội dung trang"><div class="sres" id="sres" role="listbox"></div></div></li><li><a class="nl" href="#top">Trang chủ</a></li><li><a class="nl" href="#me">Liên hệ</a></li><li><a class="nl" href="#games">Game</a></li><li><a class="nl" href="#tools">Công cụ</a></li><li><a class="nl" href="#donate">Hỗ trợ</a></li><li><button class="themebtn" id="theme" type="button" aria-label="Chuyển giao diện sáng hoặc tối" title="Sáng / Tối"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7L7 17M17 7l1.7-1.7"/></g></svg></button></li></ul></div></nav>
 <button class="totop" id="totop" type="button" aria-label="Lên đầu trang">↑</button>
 <!-- ============ BANNER GIỜ + NHẠC ============ -->
 <header class="hero" id="top"><div class="wrap">
@@ -407,6 +465,12 @@ html.tfade,html.tfade *,html.tfade *::before,html.tfade *::after{transition:back
     <button class="btn open rv" id="open" type="button" aria-expanded="false" aria-controls="chips">🎮 Chọn game</button>
     <div class="chips" id="chips"><div id="chipbox" role="list"></div></div>
     <div class="gpanel" id="gp"><div id="gcontent"></div></div>
+  </section>
+  <!-- ============ TOOLS ============ -->
+  <section class="sec" id="tools" data-n="03">
+    <div class="rv"><span class="tag">// Công cụ</span><h2>Công cụ hữu ích</h2><p style="color:var(--mute);margin:0">Chạy ngay trên trình duyệt: file của bạn được xử lý ngay trên máy bạn, không tải lên đâu cả. Chọn một công cụ để bắt đầu.</p></div>
+    <div class="tgrid rv" id="tgrid" role="list"></div>
+    <div class="tpanel" id="tpanel" aria-live="polite"></div>
   </section>
   <!-- ============ DONATE ============ -->
   <section class="sec rv" id="donate" data-n="03">
@@ -866,7 +930,7 @@ if(!RM){var io3=new IntersectionObserver(function(es){es.forEach(function(e){if(
 /* Hiệu ứng kéo trang */
 var prog=$("prog"),tt=$("totop"),hero=document.querySelector(".hero .wrap"),secs=Array.from(document.querySelectorAll(".sec")),decos=[];
 secs.forEach(function(s,k){for(var j=0;j<2;j++){var d=mk("i","deco",s);d.style.cssText="--s:"+(j?56:90)+"px;left:"+(j?8+k*9:72-k*8)+"%;top:"+(j?72:10)+"%";d.dataset.sp=j?-.12:.18;decos.push(d)}});
-var ids=[["top","Trang chủ"],["me","Liên hệ"],["games","Game"],["donate","Hỗ trợ"]],nav=mk("nav","dots");nav.setAttribute("aria-label","Điều hướng nhanh");
+var ids=[["top","Trang chủ"],["me","Liên hệ"],["games","Game"],["tools","Công cụ"],["donate","Hỗ trợ"]],nav=mk("nav","dots");nav.setAttribute("aria-label","Điều hướng nhanh");
 var dots=ids.map(function(x){var a=mk("a","dt",nav);a.href="#"+x[0];a.setAttribute("aria-label",x[1]);a.dataset.l=x[1];return a});
 var tick=0;
 function upd(){tick=0;var y=scrollY,H=document.documentElement.scrollHeight-innerHeight;
@@ -975,6 +1039,7 @@ function build(){var L=[];
    (it.maps||[]).forEach(function(m){L.push({k:"Map",t:m.t,s:m.d+" · "+m.p+" người · "+m.s,gi:gi,ii:ii,map:m.t})});
    (it.servers||[]).forEach(function(v){L.push({k:"Server",t:v.name,s:v.ip+" · "+v.ver,gi:gi,ii:ii,sel:".srv"})});
    (it.guide||[]).forEach(function(v,n){L.push({k:"Hướng dẫn",t:v.h,s:v.p,gi:gi,ii:ii,sel:'.gd[data-n="'+n+'"]'})})})});
+ (window.TOOLS||[]).forEach(function(t){L.push({k:"Công cụ",t:t.n,s:t.d,tool:t.id})});
  L.push({k:"Liên hệ",t:CFG.name,s:CFG.bio,sec:"me"});
  CFG.socials.forEach(function(x){L.push({k:"Liên hệ",t:x.n,s:x.u,sec:"me"})});
  tracks.forEach(function(t,i){L.push({k:"Nhạc",t:t.t,s:"",tr:i})});
@@ -989,6 +1054,7 @@ function search(){var q=norm(gs.value).trim();act=-1;if(!q){res.classList.remove
 function mark(i){var a=res.querySelectorAll(".sr");a.forEach(function(x,k){x.classList.toggle("act",k===i)});act=i;if(a[i])a[i].scrollIntoView({block:"nearest"})}
 function shine(el){if(!el)return;el.scrollIntoView({behavior:"smooth",block:"center"});el.classList.add("hit");setTimeout(function(){el.classList.remove("hit")},1900)}
 function go(r){res.classList.remove("on");gs.blur();$("topnav").classList.remove("open");$("burger").textContent="☰";
+ if(r.tool){var a=document.querySelector('a.nl[href="#tools"]');if(a)a.click();setTimeout(function(){openTool(r.tool)},900);return}
  if(r.sec){var a=document.querySelector('a.nl[href="#'+r.sec+'"]');if(a)a.click();return}
  if(r.tr!=null){play(r.tr);var h=document.querySelector('a.nl[href="#top"]');if(h)h.click();return}
  if(!$("chips").classList.contains("on"))$("open").click();
@@ -1008,6 +1074,167 @@ gs.addEventListener("keydown",function(e){var n=res.querySelectorAll(".sr").leng
 res.addEventListener("click",function(e){var x=e.target.closest(".sr");if(x)go(list[+x.dataset.i])});
 document.addEventListener("pointerdown",function(e){if(!e.target.closest(".sbox"))res.classList.remove("on")});
 document.addEventListener("keydown",function(e){var t=e.target.tagName;if(((e.key==="/"&&t!=="INPUT"&&t!=="TEXTAREA")||((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"))){e.preventDefault();var tn=$("topnav");if(matchMedia("(max-width:760px)").matches){tn.classList.add("open");$("burger").textContent="✕"}gs.focus()}});
+})();
+</script>
+<script>
+(function(){
+function h(s){var d=document.createElement("div");d.innerHTML=s.trim();return d.firstChild}
+function sz(n){return n>=1048576?(n/1048576).toFixed(2)+" MB":(n/1024).toFixed(1)+" KB"}
+function tm(s){var m=Math.floor(s/60);return m+":"+(s-m*60).toFixed(1).padStart(4,"0")}
+function base(n){return n.replace(/\.[^.]+$/,"")}
+function save(b,n){var a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=n;document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},4000)}
+function once(el,ev){return new Promise(function(ok,no){el.addEventListener(ev,ok,{once:true});el.addEventListener("error",function(){no(new Error("Không đọc được file video"))},{once:true})})}
+function img(f){return new Promise(function(ok,no){var i=new Image();i.onload=function(){ok(i)};i.onerror=function(){no(new Error("Không đọc được ảnh"))};i.src=URL.createObjectURL(f)})}
+function dz(accept,multi,cb,label){
+ var w=h('<div><div class="dz" tabindex="0"><i>⬆️</i><b>'+label+'</b><span>hoặc kéo thả file vào đây</span></div><input type="file" hidden></div>'),d=w.firstChild,f=w.lastChild;
+ f.accept=accept;f.multiple=!!multi;
+ d.onclick=function(){f.click()};
+ d.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();f.click()}};
+ f.onchange=function(){if(f.files.length)cb([].slice.call(f.files));f.value=""};
+ ["dragenter","dragover"].forEach(function(t){d.addEventListener(t,function(e){e.preventDefault();d.classList.add("drag")})});
+ ["dragleave","drop"].forEach(function(t){d.addEventListener(t,function(e){e.preventDefault();d.classList.remove("drag")})});
+ d.addEventListener("drop",function(e){var l=[].slice.call(e.dataTransfer.files);if(l.length)cb(multi?l:[l[0]])});
+ return w}
+function row(o,name,size){var r=h('<div class="rw"><div><b></b><small></small></div><span class="rs">Đang xử lý…</span></div>'),s=r.querySelector(".rs"),sm=r.querySelector("small");r.querySelector("b").textContent=name;sm.textContent=size;o.appendChild(r);
+ return{set:function(m,bad){s.className="rs"+(bad?" bad":"");s.textContent=m},note:function(m){sm.textContent=size+" · "+m},
+  ok:function(b,fn){s.className="rs";s.textContent="";var a=h('<button class="tbtn p" type="button"></button>');a.textContent="⬇ Tải "+fn+" ("+sz(b.size)+")";a.onclick=function(){save(b,fn)};s.appendChild(a)}}}
+/* ---------- âm thanh ---------- */
+function dec(f){return f.arrayBuffer().then(function(ab){var ac=new (window.AudioContext||window.webkitAudioContext)();return ac.decodeAudioData(ab).finally(function(){ac.close()})})}
+function wav(b){var ch=b.numberOfChannels,n=b.length,sr=b.sampleRate,o=new DataView(new ArrayBuffer(44+n*ch*2)),d=[],i,c,p=44;
+ function s(q,t){for(var k=0;k<t.length;k++)o.setUint8(q+k,t.charCodeAt(k))}
+ s(0,"RIFF");o.setUint32(4,36+n*ch*2,true);s(8,"WAVEfmt ");o.setUint32(16,16,true);o.setUint16(20,1,true);o.setUint16(22,ch,true);o.setUint32(24,sr,true);o.setUint32(28,sr*ch*2,true);o.setUint16(32,ch*2,true);o.setUint16(34,16,true);s(36,"data");o.setUint32(40,n*ch*2,true);
+ for(c=0;c<ch;c++)d.push(b.getChannelData(c));
+ for(i=0;i<n;i++)for(c=0;c<ch;c++){var v=Math.max(-1,Math.min(1,d[c][i]));o.setInt16(p,v<0?v*32768:v*32767,true);p+=2}
+ return new Blob([o],{type:"audio/wav"})}
+function to16(f){var a=new Int16Array(f.length);for(var i=0;i<f.length;i++){var v=Math.max(-1,Math.min(1,f[i]));a[i]=v<0?v*32768:v*32767}return a}
+function lame(){return window.lamejs?Promise.resolve():new Promise(function(ok,no){var s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js";s.onload=ok;s.onerror=function(){no(new Error("mp3"))};document.head.appendChild(s)})}
+function mp3(b,k,prog){return new Promise(function(ok){var ch=Math.min(2,b.numberOfChannels),e=new lamejs.Mp3Encoder(ch,b.sampleRate,k),L=to16(b.getChannelData(0)),R=ch>1?to16(b.getChannelData(1)):null,out=[],i=0,B=1152;
+ (function step(){var end=Math.min(L.length,i+B*300),x;for(;i<end;i+=B){x=e.encodeBuffer(L.subarray(i,i+B),R?R.subarray(i,i+B):undefined);if(x.length)out.push(new Int8Array(x))}
+  prog(Math.min(1,i/L.length));if(i<L.length)setTimeout(step,0);else{x=e.flush();if(x.length)out.push(new Int8Array(x));ok(new Blob(out,{type:"audio/mpeg"}))}})()})}
+function encAudio(f,fmt,k,r){r.set("Đang giải mã âm thanh…");
+ return dec(f).then(function(b){if(fmt==="wav"){r.ok(wav(b),base(f.name)+".wav");return}
+  r.set("Đang mã hóa MP3…");
+  return lame().then(function(){return mp3(b,k,function(p){r.set("Đang mã hóa MP3… "+Math.round(p*100)+"%")})}).then(function(bl){r.ok(bl,base(f.name)+".mp3")},function(){r.ok(wav(b),base(f.name)+".wav");r.note("không tải được bộ mã hóa MP3 nên xuất WAV")})})
+ .catch(function(){r.set("Trình duyệt không đọc được âm thanh của file này (hãy thử file MP4, WEBM, MP3, WAV, OGG chuẩn)",1)})}
+/* ---------- 1. đổi đuôi ---------- */
+function rConv(el){var o=h('<div class="tres"></div>');
+ el.innerHTML='<div class="tr"><label>Ảnh đổi sang</label><select id="ci"><option value="image/png">PNG (.png)</option><option value="image/jpeg">JPG (.jpg)</option><option value="image/webp">WEBP (.webp)</option></select><label>Video / nhạc đổi sang</label><select id="ca"><option value="mp3">MP3 (.mp3)</option><option value="wav">WAV (.wav)</option></select></div>';
+ var ci=el.querySelector("#ci"),ca=el.querySelector("#ca");
+ el.appendChild(dz("image/*,audio/*,video/*",true,function(fs){
+  fs.reduce(function(p,f){return p.then(function(){var r=row(o,f.name,sz(f.size));
+   if(/^image\//.test(f.type)){var t=ci.value;return img(f).then(function(im){var c=document.createElement("canvas");c.width=im.naturalWidth;c.height=im.naturalHeight;var x=c.getContext("2d");if(t==="image/jpeg"){x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height)}x.drawImage(im,0,0);return new Promise(function(ok){c.toBlob(ok,t,.92)})}).then(function(b){if(!b||b.type!==t)throw new Error("Trình duyệt không hỗ trợ định dạng này");r.ok(b,base(f.name)+"."+(t==="image/jpeg"?"jpg":t.split("/")[1]))}).catch(function(e){r.set("Lỗi: "+e.message,1)})}
+   if(/^(audio|video)\//.test(f.type)||/\.(mp3|wav|ogg|m4a|aac|flac|mp4|webm|mkv|mov)$/i.test(f.name))return encAudio(f,ca.value,192,r);
+   r.set("Định dạng này chưa được hỗ trợ",1)})},Promise.resolve())},"Chọn file cần đổi (được chọn nhiều file)"));
+ el.appendChild(o);
+ el.appendChild(h('<p class="tnote">Ảnh: PNG, JPG, WEBP, GIF, BMP… · Video/nhạc: lấy phần âm thanh ra MP3 hoặc WAV.</p>'))}
+/* ---------- 2. đổi kích thước ảnh ---------- */
+function rResize(el){var f,im,ratio=1,
+ rb=h('<div class="rbox" hidden><div><img alt="Xem trước"><small class="tnote" id="ri"></small></div><div><div class="tr"><label>Rộng (px)</label><input id="rw" type="number" min="1"><label>Cao (px)</label><input id="rh" type="number" min="1"></div><label class="ck"><input id="rl" type="checkbox" checked> Giữ nguyên tỉ lệ</label><div class="tr"><label>Nhanh:</label><button class="tbtn" data-p="25" type="button">25%</button><button class="tbtn" data-p="50" type="button">50%</button><button class="tbtn" data-p="75" type="button">75%</button><button class="tbtn" data-p="100" type="button">Gốc</button></div><div class="tr"><label>Định dạng</label><select id="rf"><option value="">Giữ nguyên</option><option value="image/jpeg">JPG</option><option value="image/png">PNG</option><option value="image/webp">WEBP</option></select></div><div class="tr"><label>Chất lượng <b id="rqv">85%</b></label><input id="rq" type="range" min="10" max="100" value="85"></div><button class="btn" id="rgo" type="button">Xử lý ảnh</button><div id="rres"></div></div></div>'),
+ q=function(s){return rb.querySelector(s)};
+ el.appendChild(dz("image/*",false,function(fs){f=fs[0];img(f).then(function(i){im=i;ratio=i.naturalWidth/i.naturalHeight;q("#rw").value=i.naturalWidth;q("#rh").value=i.naturalHeight;q("img").src=i.src;q("#ri").textContent=f.name+" · "+i.naturalWidth+"×"+i.naturalHeight+" · "+sz(f.size);q("#rres").innerHTML="";rb.hidden=false},function(e){q("#rres").textContent=e.message;rb.hidden=false})},"Chọn ảnh cần đổi kích thước"));
+ el.appendChild(rb);
+ q("#rw").oninput=function(){if(q("#rl").checked)q("#rh").value=Math.max(1,Math.round(this.value/ratio))};
+ q("#rh").oninput=function(){if(q("#rl").checked)q("#rw").value=Math.max(1,Math.round(this.value*ratio))};
+ rb.addEventListener("click",function(e){var p=e.target.dataset&&e.target.dataset.p;if(p&&im){q("#rw").value=Math.round(im.naturalWidth*p/100)||1;q("#rh").value=Math.round(im.naturalHeight*p/100)||1}});
+ q("#rq").oninput=function(){q("#rqv").textContent=this.value+"%"};
+ q("#rgo").onclick=function(){if(!im)return;var w=+q("#rw").value,hh=+q("#rh").value;if(!w||!hh)return;
+  var t=q("#rf").value||(/^image\/(jpeg|png|webp)$/.test(f.type)?f.type:"image/png"),c=document.createElement("canvas");c.width=w;c.height=hh;var x=c.getContext("2d");x.imageSmoothingQuality="high";if(t==="image/jpeg"){x.fillStyle="#fff";x.fillRect(0,0,w,hh)}x.drawImage(im,0,0,w,hh);
+  c.toBlob(function(b){var ext=t==="image/jpeg"?"jpg":t.split("/")[1],d=Math.round((1-b.size/f.size)*100),r=q("#rres");r.innerHTML='<p class="tnote">Kết quả: <b>'+w+'×'+hh+'</b> · '+sz(b.size)+' ('+(d>=0?'giảm '+d+'%':'tăng '+(-d)+'%')+' so với ảnh gốc)</p>';var bt=h('<button class="tbtn p" type="button">⬇ Tải ảnh '+ext.toUpperCase()+'</button>');bt.onclick=function(){save(b,base(f.name)+"-"+w+"x"+hh+"."+ext)};r.appendChild(bt)},t,q("#rq").value/100)}}
+/* ---------- 3. cắt video ---------- */
+function rTrim(el){var url,dur=0,
+ box=h('<div class="rbox" hidden><div><video controls playsinline></video><small class="tnote" id="tn"></small></div><div><div class="tr"><label>Bắt đầu <b id="sl">0:00.0</b></label><input id="tl-ss" type="range" min="0" max="1" step="0.1" value="0"><button class="tbtn" id="sb" type="button">Lấy vị trí đang xem</button></div><div class="tr"><label>Kết thúc <b id="el">0:00.0</b></label><input id="se" type="range" min="0" max="1" step="0.1" value="1"><button class="tbtn" id="eb" type="button">Lấy vị trí đang xem</button></div><p class="tnote" id="sd"></p><button class="btn" id="tg" type="button">✂️ Cắt video</button><div class="bar2"><i id="tbar"></i></div><div id="tres"></div></div></div>'),
+ q=function(s){return box.querySelector(s)},v=q("video"),ss=q("#tl-ss"),se=q("#se");
+ function upd(){q("#sl").textContent=tm(+ss.value);q("#el").textContent=tm(+se.value);q("#sd").textContent="Đoạn được cắt: "+tm(Math.max(0,se.value-ss.value))+" · thời gian xuất bằng đúng thời lượng đoạn cắt, hãy giữ tab này mở."}
+ function init(){dur=v.duration;ss.max=se.max=dur;ss.value=0;se.value=dur;upd();box.hidden=false}
+ v.onloadedmetadata=function(){if(isFinite(v.duration)&&v.duration>0)init();else{v.currentTime=1e101;v.ontimeupdate=function(){v.ontimeupdate=null;v.currentTime=0;init()}}};
+ el.appendChild(dz("video/*",false,function(fs){var f=fs[0];if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(f);v.src=url;q("#tn").textContent=f.name+" · "+sz(f.size);q("#tres").innerHTML="";q("#tbar").style.width="0"},"Chọn video cần cắt"));
+ el.appendChild(box);
+ ss.oninput=function(){if(+ss.value>+se.value-.3)ss.value=Math.max(0,se.value-.3);upd();v.currentTime=+ss.value};
+ se.oninput=function(){if(+se.value<+ss.value+.3)se.value=Math.min(dur,+ss.value+.3);upd();v.currentTime=+se.value};
+ q("#sb").onclick=function(){ss.value=Math.min(v.currentTime,se.value-.3);upd()};
+ q("#eb").onclick=function(){se.value=Math.max(v.currentTime,+ss.value+.3);upd()};
+ q("#tg").onclick=function(){var st=+ss.value,en=+se.value,go=this,res=q("#tres"),bar=q("#tbar");
+  if(!window.MediaRecorder){res.innerHTML='<p class="tbad">Trình duyệt chưa hỗ trợ cắt video. Hãy dùng Chrome, Edge hoặc Firefox bản mới.</p>';return}
+  go.disabled=true;res.innerHTML="";v.pause();
+  var w=document.createElement("video"),ac,rec,chunks=[],mt=["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm","video/mp4"].filter(function(m){return MediaRecorder.isTypeSupported(m)})[0];
+  w.src=url;w.playsInline=true;w.preload="auto";
+  once(w,"loadedmetadata").then(function(){w.currentTime=st;return once(w,"seeked")}).then(function(){
+   ac=new (window.AudioContext||window.webkitAudioContext)();var dst=ac.createMediaStreamDestination();ac.createMediaElementSource(w).connect(dst);
+   var cs=(w.captureStream||w.mozCaptureStream).call(w);
+   rec=new MediaRecorder(new MediaStream(cs.getVideoTracks().concat(dst.stream.getAudioTracks())),mt?{mimeType:mt,videoBitsPerSecond:6e6}:{});
+   rec.ondataavailable=function(x){if(x.data.size)chunks.push(x.data)};
+   var fin=new Promise(function(ok){rec.onstop=ok});rec.start(250);
+   return ac.resume().then(function(){return w.play()}).then(function(){return new Promise(function(done){var t=setInterval(function(){bar.style.width=Math.min(100,(w.currentTime-st)/(en-st)*100)+"%";if(w.currentTime>=en||w.ended){clearInterval(t);w.pause();rec.stop();done()}},100)})}).then(function(){return fin})})
+  .then(function(){bar.style.width="100%";var ty=rec.mimeType||"video/webm",ext=/mp4/.test(ty)?"mp4":"webm",b=new Blob(chunks,{type:ty}),nm=base(q("#tn").textContent.split(" · ")[0])+"-cat."+ext;
+   res.innerHTML='<video controls playsinline src="'+URL.createObjectURL(b)+'" style="width:100%;margin-top:12px;border-radius:12px;max-height:260px"></video>';
+   var bt=h('<button class="tbtn p" type="button">⬇ Tải video đã cắt ('+sz(b.size)+', .'+ext+')</button>');bt.onclick=function(){save(b,nm)};res.appendChild(bt)})
+  .catch(function(e){res.innerHTML='<p class="tbad">Không cắt được: '+esc(e.message||"lỗi không xác định")+'</p>'})
+  .finally(function(){go.disabled=false;try{ac&&ac.close()}catch(x){}})}}
+/* ---------- 4. tách nhạc ---------- */
+function rExt(el){var o=h('<div class="tres"></div>');
+ el.innerHTML='<div class="tr"><label>Xuất ra</label><select id="ef"><option value="mp3-192">MP3 192 kbps (khuyên dùng)</option><option value="mp3-128">MP3 128 kbps (nhẹ)</option><option value="mp3-320">MP3 320 kbps (chất lượng cao)</option><option value="wav-0">WAV (không nén, file lớn)</option></select></div>';
+ var ef=el.querySelector("#ef");
+ el.appendChild(dz("video/*,audio/*",true,function(fs){fs.reduce(function(p,f){return p.then(function(){var a=ef.value.split("-");return encAudio(f,a[0],+a[1],row(o,f.name,sz(f.size)))})},Promise.resolve())},"Chọn video cần tách nhạc"));
+ el.appendChild(o);el.appendChild(h('<p class="tnote">Hỗ trợ MP4, WEBM, MOV, MP3, WAV, OGG… Nên dùng file dưới ~500 MB để trình duyệt xử lý mượt.</p>'))}
+/* ---------- 5. TikTok ---------- */
+function rTT(el){
+ el.innerHTML='<div class="tr"><input id="tu" type="url" placeholder="Dán link video TikTok vào đây…" style="flex:1 1 280px"><button class="btn" id="tg" type="button">Lấy link tải</button></div><div id="to"></div><p class="tnote">⚠️ Chỉ tải video của chính bạn hoặc video bạn được phép sử dụng. Công cụ dùng dịch vụ bên thứ ba (TikWM) nên đôi khi có thể tạm thời không hoạt động.</p>';
+ var tu=el.querySelector("#tu"),o=el.querySelector("#to");
+ function fix(u){return u?(u.charAt(0)==="/"?"https://www.tikwm.com"+u:u):""}
+ function getf(u,n,b){var t=b.textContent;b.textContent="Đang tải…";fetch(u).then(function(r){if(!r.ok)throw 0;return r.blob()}).then(function(x){save(x,n)}).catch(function(){window.open(u,"_blank","noopener")}).finally(function(){b.textContent=t})}
+ function show(d){var L=[["⬇ Video HD không logo",fix(d.hdplay),".mp4"],["⬇ Video không logo",fix(d.play),".mp4"],["🎵 Chỉ lấy nhạc (MP3)",fix(d.music||(d.music_info&&d.music_info.play)),".mp3"]].filter(function(x){return x[1]}),id=d.id||Date.now();
+  if(d.images&&d.images.length)d.images.forEach(function(u,i){L.push(["⬇ Ảnh "+(i+1),fix(u),".jpg"])});
+  o.innerHTML='<div class="ttc"><img alt="" src="'+esc(fix(d.cover))+'"><div><b>'+esc(d.title||"Video TikTok")+'</b><small>'+esc((d.author&&d.author.nickname)||"")+'</small><div class="tr" id="tb"></div></div></div>';
+  L.forEach(function(x,i){var b=h('<button class="tbtn p" type="button"></button>');b.textContent=x[0];b.onclick=function(){getf(x[1],"tiktok-"+id+(i>2?"-"+(i-2):"")+x[2],b)};o.querySelector("#tb").appendChild(b)})}
+ el.querySelector("#tg").onclick=function(){var u=tu.value.trim();if(!/tiktok\.com/i.test(u)){o.innerHTML='<p class="tbad">Hãy dán đúng link video TikTok (có chứa tiktok.com).</p>';return}
+  o.innerHTML='<p class="tnote">Đang lấy thông tin video…</p>';
+  fetch(CFG.tiktokApi||"https://www.tikwm.com/api/",{method:"POST",body:new URLSearchParams({url:u,hd:1})}).then(function(r){return r.json()}).then(function(j){if(!j||j.code!==0||!j.data)throw new Error((j&&j.msg)||"Không lấy được video");show(j.data)})
+  .catch(function(e){o.innerHTML='<p class="tbad">Không lấy được video: '+esc(e.message||"lỗi kết nối")+'. Bạn có thể thử lại sau hoặc dùng <a href="https://www.tikwm.com/" target="_blank" rel="noopener" style="color:var(--c)">trang tikwm.com</a>.</p>'})}}
+/* ---------- 6. mật khẩu ---------- */
+function rPw(el){
+ el.innerHTML='<div class="pwo"><input id="po" readonly aria-label="Mật khẩu"><button class="tbtn p" id="pc" type="button">Sao chép</button><button class="tbtn" id="pg" type="button">🔄 Tạo mới</button></div><div class="meter"><i id="pm"></i></div><small class="tnote" id="pt"></small><div class="tr"><label>Độ dài: <b id="pl">16</b></label><input id="pn" type="range" min="8" max="64" value="16"></div><div class="tr"><label class="ck"><input type="checkbox" id="c1" checked> a-z</label><label class="ck"><input type="checkbox" id="c2" checked> A-Z</label><label class="ck"><input type="checkbox" id="c3" checked> 0-9</label><label class="ck"><input type="checkbox" id="c4" checked> Ký tự đặc biệt</label></div>';
+ var q=function(s){return el.querySelector(s)};
+ function gen(){var cs=(q("#c1").checked?"abcdefghijkmnopqrstuvwxyz":"")+(q("#c2").checked?"ABCDEFGHJKLMNPQRSTUVWXYZ":"")+(q("#c3").checked?"23456789":"")+(q("#c4").checked?"!@#$%^&*()-_=+?":"");
+  if(!cs){q("#c1").checked=true;cs="abcdefghijkmnopqrstuvwxyz"}
+  var n=+q("#pn").value,r=crypto.getRandomValues(new Uint32Array(n)),p="";for(var i=0;i<n;i++)p+=cs.charAt(Math.floor(r[i]/4294967296*cs.length));
+  q("#po").value=p;q("#pl").textContent=n;var e=n*Math.log2(cs.length),lv=e<40?["Yếu","#ff5f86"]:e<60?["Trung bình","#ffb23e"]:e<80?["Mạnh","#3ee08a"]:["Rất mạnh","#29f0ff"];
+  q("#pm").style.width=Math.min(100,e/1.2)+"%";q("#pm").style.background=lv[1];q("#pt").textContent="Độ mạnh: "+lv[0]+" (~"+Math.round(e)+" bit)"}
+ el.addEventListener("input",gen);q("#pg").onclick=gen;
+ q("#pc").onclick=function(){var b=this;try{navigator.clipboard.writeText(q("#po").value).then(function(){b.textContent="Đã chép ✓";setTimeout(function(){b.textContent="Sao chép"},1300)})}catch(e){q("#po").select()}};gen()}
+/* ---------- 7. quay chọn game ---------- */
+function rRnd(el){
+ el.innerHTML='<div class="tr"><label>Danh sách lựa chọn (mỗi dòng một mục, sửa tùy ý)</label></div><textarea rows="5">'+esc(CFG.games.map(function(g){return g.name}).join("\n"))+'</textarea><div class="rres" id="rr">🎲</div><button class="btn" id="rg" type="button">Quay ngay!</button>';
+ var rr=el.querySelector("#rr"),ta=el.querySelector("textarea"),busy=0;
+ el.querySelector("#rg").onclick=function(){if(busy)return;var L=ta.value.split("\n").map(function(x){return x.trim()}).filter(Boolean);if(L.length<2){rr.textContent="Cần ít nhất 2 lựa chọn";return}
+  busy=1;rr.classList.remove("win");var n=0,tot=22+Math.floor(Math.random()*L.length);
+  (function step(){rr.textContent=L[Math.floor(Math.random()*L.length)];if(++n<tot)setTimeout(step,40+n*n*.5);else{rr.classList.add("win");busy=0}})()}}
+/* ---------- 8. cấu hình máy ---------- */
+function rSys(el){var gl,gpu="Không xác định";try{gl=document.createElement("canvas").getContext("webgl");var d=gl&&gl.getExtension("WEBGL_debug_renderer_info");gpu=d?gl.getParameter(d.UNMASKED_RENDERER_WEBGL):(gl?gl.getParameter(gl.RENDERER):gpu)}catch(e){}
+ var cn=navigator.connection,ua=navigator.userAgent,os=/Windows/.test(ua)?"Windows":/Android/.test(ua)?"Android":/iPhone|iPad/.test(ua)?"iOS":/Mac/.test(ua)?"macOS":/Linux/.test(ua)?"Linux":"Khác",
+ br=/Edg\//.test(ua)?"Edge":/OPR\//.test(ua)?"Opera":/Firefox\//.test(ua)?"Firefox":/Chrome\//.test(ua)?"Chrome":/Safari\//.test(ua)?"Safari":"Khác",
+ R=[["CPU (số luồng)",navigator.hardwareConcurrency||"Không rõ"],["RAM (ước tính)",navigator.deviceMemory?"từ "+navigator.deviceMemory+" GB trở lên":"Trình duyệt không cung cấp"],["Card đồ họa (GPU)",gpu],["Độ phân giải màn hình",screen.width+"×"+screen.height+" (tỉ lệ x"+devicePixelRatio+")"],["Vùng hiển thị trình duyệt",innerWidth+"×"+innerHeight],["Hệ điều hành",os],["Trình duyệt",br],["Mạng",cn?(cn.effectiveType||"?")+" · ~"+(cn.downlink||"?")+" Mbps":"Không rõ"],["Màn hình cảm ứng",navigator.maxTouchPoints>0?"Có ("+navigator.maxTouchPoints+" điểm chạm)":"Không"]];
+ el.innerHTML='<div class="sysg">'+R.map(function(r){return'<div class="sysi"><small>'+r[0]+'</small><b>'+esc(String(r[1]))+'</b></div>'}).join("")+'</div><div class="tr"><button class="tbtn p" id="sc" type="button">📋 Sao chép thông tin</button></div><p class="tnote">Dùng để đối chiếu cấu hình yêu cầu của game. RAM chỉ là ước tính tối đa 8 GB theo quy định của trình duyệt.</p>';
+ el.querySelector("#sc").onclick=function(){var b=this,t=R.map(function(r){return r[0]+": "+r[1]}).join("\n");try{navigator.clipboard.writeText(t).then(function(){b.textContent="Đã chép ✓";setTimeout(function(){b.textContent="📋 Sao chép thông tin"},1300)})}catch(e){}}}
+/* ---------- danh sách + khung hiển thị ---------- */
+var TOOLS=[
+ {id:"conv",ic:"🔄",n:"Đổi đuôi file",d:"Ảnh sang PNG/JPG/WEBP, video/nhạc sang MP3/WAV",u:["Chọn file","Chọn định dạng","Tải về"],r:rConv},
+ {id:"resize",ic:"🖼️",n:"Đổi kích thước ảnh",d:"Thu nhỏ, phóng to và nén ảnh giảm dung lượng",u:["Chọn ảnh","Nhập kích thước","Xử lý và tải về"],r:rResize},
+ {id:"trim",ic:"✂️",n:"Cắt video",d:"Chọn đoạn đầu và cuối rồi xuất video mới",u:["Chọn video","Kéo thanh chọn đoạn","Cắt và tải về"],r:rTrim},
+ {id:"ext",ic:"🎧",n:"Tách nhạc khỏi video",d:"Lấy âm thanh từ video ra MP3 hoặc WAV",u:["Chọn video","Chọn chất lượng","Tải nhạc về"],r:rExt},
+ {id:"tt",ic:"🎵",n:"Tải video TikTok",d:"Không dính logo, kèm tải riêng nhạc nền",net:1,u:["Dán link TikTok","Bấm lấy link","Chọn bản muốn tải"],r:rTT},
+ {id:"pw",ic:"🔐",n:"Tạo mật khẩu mạnh",d:"Ngẫu nhiên, an toàn, sao chép một chạm",u:["Chọn độ dài","Chọn loại ký tự","Sao chép"],r:rPw},
+ {id:"rnd",ic:"🎲",n:"Hôm nay chơi gì?",d:"Quay ngẫu nhiên để chọn game cần chơi",u:["Sửa danh sách","Bấm quay","Chơi thôi!"],r:rRnd},
+ {id:"sys",ic:"💻",n:"Kiểm tra cấu hình máy",d:"CPU, RAM, card đồ họa và màn hình của bạn",u:["Xem thông số","Đối chiếu yêu cầu game"],r:rSys}
+],grid=$("tgrid"),panel=$("tpanel"),cur=null;
+grid.innerHTML=TOOLS.map(function(t,i){return'<button class="tc" type="button" role="listitem" style="--n:'+i+'" data-t="'+t.id+'"><span class="ti">'+t.ic+'</span><b>'+t.n+'</b><small>'+t.d+'</small><em'+(t.net?' class="net"':'')+'>'+(t.net?"Cần kết nối mạng":"Chạy trên máy bạn")+'</em></button>'}).join("");
+function closeT(){cur=null;panel.innerHTML="";[].forEach.call(grid.children,function(c){c.classList.remove("on")})}
+function openT(id){var t=TOOLS.filter(function(x){return x.id===id})[0];if(!t)return;if(cur===id){closeT();return}
+ cur=id;[].forEach.call(grid.children,function(c){c.classList.toggle("on",c.dataset.t===id)});panel.innerHTML="";
+ var p=h('<div class="tp"><div class="th"><span class="ti">'+t.ic+'</span><div><h3>'+t.n+'</h3><p>'+t.d+'</p></div><button class="tx" type="button" aria-label="Đóng công cụ">✕</button></div><ol class="tsteps">'+t.u.map(function(x){return'<li>'+x+'</li>'}).join("")+'</ol><div class="tbody"></div></div>');
+ p.querySelector(".tx").onclick=closeT;panel.appendChild(p);t.r(p.querySelector(".tbody"));setTimeout(function(){p.scrollIntoView({behavior:"smooth",block:"nearest"})},60)}
+grid.addEventListener("click",function(e){var c=e.target.closest(".tc");if(c)openT(c.dataset.t)});
+grid.addEventListener("pointermove",function(e){var c=e.target.closest(".tc");if(c){var r=c.getBoundingClientRect();c.style.setProperty("--mx",(e.clientX-r.left)+"px");c.style.setProperty("--my",(e.clientY-r.top)+"px")}},{passive:true});
+window.TOOLS=TOOLS;window.openTool=function(id){if(cur!==id)openT(id)};
 })();
 </script>
 </body>
