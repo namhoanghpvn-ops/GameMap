@@ -196,12 +196,65 @@ body.hc input,body.hc textarea{cursor:text!important}
 @media (max-width:760px){.dots{display:none}.sec::before{opacity:.6}}
 @media (prefers-reduced-motion:reduce){.ch{opacity:1!important;transform:none!important;filter:none!important}.deco{display:none}#prog{transition:none}}
 .mrow{display:flex;justify-content:space-between;align-items:center;gap:8px}
+
+html{overflow-x:hidden}
+/* ===== V3: THANH MENU CỐ ĐỊNH · PLAYER · NÚT GAME · DI ĐỘNG ===== */
+.topnav{position:fixed;left:0;right:0;top:0;z-index:9990;padding-top:env(safe-area-inset-top,0px);background:rgba(10,8,22,.5);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:background .3s,border-color .3s,box-shadow .3s}
+.topnav.sc{background:rgba(10,8,22,.9);border-color:var(--line);box-shadow:0 10px 30px -12px #000}
+.tn{max-width:1040px;margin:0 auto;padding:0 20px;height:58px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tn .brand{font:800 1.05rem var(--head);letter-spacing:.06em;background:linear-gradient(90deg,var(--c),var(--p));-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.tn ul{display:flex;gap:4px;list-style:none;margin:0;padding:0}
+.nl{display:block;padding:.45rem .95rem;border-radius:10px;font:700 .9rem var(--head);letter-spacing:.04em;color:var(--mute);transition:color .25s,background .25s,transform .25s}
+.nl:hover{color:#fff;background:rgba(139,92,255,.22);transform:translateY(-2px)}
+.nl.on{color:#fff;background:rgba(139,92,255,.2);box-shadow:inset 0 -2px 0 var(--c)}
+.burger{display:none;width:44px;height:44px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);font-size:1.3rem;cursor:pointer;place-items:center}
+.sec,.hero{scroll-margin-top:64px}
+.hero{padding-top:84px}
+.player{position:relative}
+.cover{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;padding:14px;cursor:pointer;background:radial-gradient(circle at 15% 20%,rgba(41,240,255,.3),transparent 45%),radial-gradient(circle at 85% 85%,rgba(255,61,129,.35),transparent 50%),linear-gradient(135deg,#1a1240,#0d0a20);transition:opacity .6s,visibility .6s}
+.cover.off{opacity:0;visibility:hidden;pointer-events:none}
+.cover .big{font-size:clamp(2rem,8vw,3.2rem);animation:flt 3s ease-in-out infinite}
+.cover b{font:800 clamp(1rem,3.6vw,1.4rem) var(--head);letter-spacing:.08em}
+.cover span{color:var(--mute);font-size:.95rem;max-width:90%}
+.eq{display:flex;gap:4px;height:22px;align-items:flex-end;margin-top:6px}
+.eq em{display:block;width:5px;height:100%;border-radius:2px;background:linear-gradient(var(--c),var(--p));transform-origin:bottom;animation:eq 1s ease-in-out infinite}
+.eq em:nth-child(2){animation-delay:.2s}.eq em:nth-child(3){animation-delay:.4s}.eq em:nth-child(4){animation-delay:.6s}
+@keyframes eq{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+@keyframes flt{50%{transform:translateY(-8px) rotate(-6deg)}}
+.unm{position:absolute;right:10px;bottom:10px;z-index:3;font:700 .9rem var(--body);padding:.45rem .9rem;border-radius:999px;border:0;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--v),var(--p));animation:pul 1.6s infinite}
+.unm[hidden]{display:none}
+@keyframes pul{0%,100%{box-shadow:0 0 0 0 rgba(255,61,129,.6)}50%{box-shadow:0 0 0 10px rgba(255,61,129,0)}}
+.pl h3{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ctl{display:flex;gap:6px}
+.ctl button{width:34px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);cursor:pointer}
+.ctl button:hover{border-color:var(--c)}
+.list li.bad{opacity:.45}
+.chips>div{gap:14px}
+.chip{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:160px;padding:1rem 1.4rem;border-radius:18px;background:linear-gradient(160deg,rgba(139,92,255,.16),var(--panel))}
+.chip .ci{font-size:2rem;line-height:1.2;transition:transform .3s}
+.chip small{font:600 .8rem var(--body);letter-spacing:0;color:var(--mute);text-transform:none}
+.chip:hover{box-shadow:0 14px 34px -12px var(--v),0 0 0 1px var(--c) inset}
+.chip:hover .ci{transform:scale(1.25) rotate(-8deg)}
+.chip[aria-expanded="true"] small{color:#fff}
+@media(max-width:760px){
+ .burger{display:grid}
+ .tn ul{position:absolute;left:0;right:0;top:100%;flex-direction:column;gap:2px;background:rgba(10,8,22,.97);padding:10px 16px 16px;border-bottom:1px solid var(--line);opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .25s,transform .25s}
+ .topnav.open ul{opacity:1;transform:none;pointer-events:auto}
+ .nl{padding:.85rem 1rem;font-size:1rem}
+ .wrap{padding:0 16px}.sec{padding:56px 0 20px}
+ .player{aspect-ratio:16/9}
+ input{font-size:16px!important}
+ .add{flex-wrap:wrap}.add input{flex:1 1 160px}
+ .chips>div{gap:10px}.chip{flex:1 1 calc(50% - 10px);min-width:0;padding:.9rem .6rem}
+ .list{max-height:200px}
+}
 </style>
 </head>
 <body>
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="glow" id="glow" aria-hidden="true"></div>
 <div id="prog" aria-hidden="true"></div>
+<nav class="topnav" id="topnav" aria-label="Menu chính"><div class="tn"><a class="brand" id="brand" href="#top">NAM HOÀNG</a><button class="burger" id="burger" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="nl">☰</button><ul id="nl"><li><a class="nl" href="#top">Trang chủ</a></li><li><a class="nl" href="#me">Liên hệ</a></li><li><a class="nl" href="#games">Game</a></li><li><a class="nl" href="#donate">Hỗ trợ</a></li></ul></div></nav>
 <button class="totop" id="totop" type="button" aria-label="Lên đầu trang">↑</button>
 <!-- ============ BANNER GIỜ + NHẠC ============ -->
 <header class="hero" id="top"><div class="wrap">
@@ -211,9 +264,9 @@ body.hc input,body.hc textarea{cursor:text!important}
   <h1 style="margin:0;font:800 clamp(1.4rem,4vw,2.2rem) var(--head)"><span class="glitch" data-t="CHÀO MỪNG ĐẾN GÓC GAME">CHÀO MỪNG ĐẾN GÓC GAME</span></h1>
   <div class="type" id="type"></div>
   <div class="music hud" id="music">
-    <div class="player"><iframe id="yt" title="Trình phát nhạc YouTube" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>
+    <div class="player"><div id="yt"></div><div class="cover" id="cover" role="button" tabindex="0" aria-label="Bấm để phát nhạc"><div class="big">🎮🎧</div><b>GÓC NHẠC GAME</b><span id="cvs">Đang tải nhạc…</span><i class="eq"><em></em><em></em><em></em><em></em></i></div><button class="unm" id="unm" type="button" hidden>🔊 Bật tiếng</button></div>
     <div class="pl">
-      <h3>♪ DANH SÁCH NHẠC</h3>
+      <h3><span>♪ DANH SÁCH NHẠC</span><span class="ctl"><button id="prv" type="button" aria-label="Bài trước">⏮</button><button id="nxt" type="button" aria-label="Bài tiếp">⏭</button></span></h3>
       <ul class="list" id="list"></ul>
       <div class="add"><input id="url" placeholder="Dán link YouTube..." aria-label="Link YouTube"><button class="btn" id="addbtn" type="button">Thêm</button></div>
     </div>
@@ -360,13 +413,18 @@ var CFG={
     {n:"Discord",u:"https://discord.gg/ma-moi",i:"dc"}
   ],
   music:[
-    {id:"jfKfPfyJRdk",t:"Lofi chill để chơi game"},
-    {id:"5qap5aO4i9A",t:"Lofi Hip Hop Radio"},
-    {id:"4xDzrJKXOOY",t:"Synthwave Radio"}
+    /* DANH SÁCH NHẠC GÁN SẴN – khách vào web sẽ tự phát lần lượt từ trên xuống.
+       Thêm bài: copy 1 dòng, id có thể là cả link YouTube hoặc chỉ mã 11 ký tự.
+       Chỉ dùng video thường (KHÔNG dùng livestream, sẽ báo lỗi). Tên bài tự lấy từ YouTube. */
+    {id:"60ItHLz5WEA",t:"Alan Walker - Faded"},
+    {id:"1-xGerv5FOk",t:"Alan Walker - Alone"},
+    {id:"wJnBTPUQS5A",t:"Alan Walker - The Spectre"},
+    {id:"RgKAFK5djSk",t:"See You Again"}
   ],
   games:[
     {
       name:"Red Alert 2",
+      icon:"🪖",
       note:"Mod, map, bản Việt hóa",
       items:[
         {
@@ -383,8 +441,6 @@ var CFG={
           t:"Việt hóa đầy đủ",
           note:"Bản dịch hoàn chỉnh",
           links:[
-            {name:"Link 1",url:"https://example.com/mc-2",desc:"Đang cập nhật"},
-            {name:"Link 2",url:"https://example.com/vh-ra2-2",desc:"Đang cập nhật"}
           ]
         },
         {
@@ -397,6 +453,7 @@ var CFG={
     },
     {
       name:"Minecraft",
+      icon:"⛏️",
       note:"Mod, texture và map",
       items:[
         {
@@ -435,6 +492,7 @@ var CFG={
     },
     {
       name:"GTA V",
+      icon:"🚗",
       note:"Xe, nhân vật, script",
       items:[
         {
@@ -457,6 +515,7 @@ var CFG={
     },
     {
       name:"Liên Quân",
+      icon:"⚔️",
       note:"Skin, hướng dẫn",
       items:[
         {
@@ -487,6 +546,7 @@ var CFG={
     },
     {
       name:"Valorant",
+      icon:"🎯",
       note:"Setting, crosshair",
       items:[
         {
@@ -532,24 +592,43 @@ tick();setInterval(tick,1000);
   if(!del&&j===w.length){del=true;t=1400}else if(del&&j===0){del=false;i=(i+1)%CFG.typing.length;t=300}
   setTimeout(step,t)})()})();
 function ytId(s){s=String(s).trim();var m=s.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/);if(m)return m[1];return/^[\w-]{11}$/.test(s)?s:null}
-var tracks=CFG.music.map(function(m){return{id:ytId(m.id),t:m.t}}).filter(function(m){return m.id});
-try{var sv=JSON.parse(localStorage.getItem("g_music")||"null");if(sv&&sv.length)tracks=sv}catch(e){}
-var cur=0;
-function save(){try{localStorage.setItem("g_music",JSON.stringify(tracks))}catch(e){}}
-function play(i,auto){if(!tracks.length){$("yt").removeAttribute("src");return}cur=Math.max(0,Math.min(i,tracks.length-1));
- $("yt").src="https://www.youtube-nocookie.com/embed/"+tracks[cur].id+"?rel=0&modestbranding=1"+(auto?"&autoplay=1":"");drawList()}
-function drawList(){$("list").innerHTML=tracks.map(function(t,i){return'<li class="'+(i===cur?"on":"")+'" data-i="'+i+'" tabindex="0"><img src="https://i.ytimg.com/vi/'+t.id+'/default.jpg" alt=""><span>'+esc(t.t)+'</span><button type="button" data-d="'+i+'" aria-label="Xóa bài">✕</button></li>'}).join("")||'<li style="cursor:default">Chưa có bài nào. Hãy dán link YouTube bên dưới.</li>'}
+var PRESET=CFG.music.map(function(m){return{id:ytId(m.id),t:m.t,fixed:1}}).filter(function(m){return m.id});
+var userT=[];try{userT=JSON.parse(localStorage.getItem("g_music_user")||"[]").filter(function(m){return m&&ytId(m.id)})}catch(e){}
+var tracks=PRESET.concat(userT),cur=0,yp=null,fails=0,unlocked=false;
+function save(){try{localStorage.setItem("g_music_user",JSON.stringify(tracks.filter(function(t){return!t.fixed}).map(function(t){return{id:t.id,t:t.t}})))}catch(e){}}
+function say(t,show){if(t)$("cvs").textContent=t;$("cover").classList.toggle("off",!show)}
+function play(i){if(!tracks.length){say("Chưa có bài nào. Hãy dán link YouTube bên dưới.",true);drawList();return}
+ cur=((i%tracks.length)+tracks.length)%tracks.length;say("Đang tải: "+tracks[cur].t,true);
+ if(yp&&yp.loadVideoById)yp.loadVideoById(tracks[cur].id);drawList()}
+function drawList(){$("list").innerHTML=tracks.map(function(t,i){return'<li class="'+(i===cur?"on":"")+(t.bad?" bad":"")+'" data-i="'+i+'" tabindex="0"><img src="https://i.ytimg.com/vi/'+t.id+'/default.jpg" alt=""><span>'+esc(t.t)+'</span>'+(t.fixed?"":'<button type="button" data-d="'+i+'" aria-label="Xóa bài">✕</button>')+'</li>'}).join("")||'<li style="cursor:default">Chưa có bài nào. Hãy dán link YouTube bên dưới.</li>'}
+function fetchTitle(t){fetch("https://www.youtube.com/oembed?format=json&url="+encodeURIComponent("https://www.youtube.com/watch?v="+t.id)).then(function(r){return r.json()}).then(function(j){if(j&&j.title){t.t=j.title;if(!t.fixed)save();drawList()}}).catch(function(){})}
+function unlock(){unlocked=true;$("unm").hidden=true;try{if(yp&&yp.unMute){yp.unMute();yp.setVolume(100)}}catch(e){}}
+["pointerdown","keydown","touchstart"].forEach(function(ev){addEventListener(ev,unlock,{once:true,passive:true})});
+$("unm").onclick=unlock;
+$("cover").onclick=function(){unlock();try{yp&&yp.playVideo()}catch(e){}};
+$("cover").addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();this.click()}});
+$("prv").onclick=function(){play(cur-1)};$("nxt").onclick=function(){play(cur+1)};
+window.onYouTubeIframeAPIReady=function(){
+ var pv={autoplay:1,mute:1,rel:0,modestbranding:1,playsinline:1};if(/^https?:$/.test(location.protocol))pv.origin=location.origin;
+ yp=new YT.Player("yt",{host:"https://www.youtube-nocookie.com",videoId:tracks[cur]?tracks[cur].id:undefined,playerVars:pv,events:{
+  onReady:function(){if(unlocked){unlock()}else{$("unm").hidden=false}
+   if(tracks.length)yp.playVideo();
+   setTimeout(function(){try{if(yp.getPlayerState()!==1&&tracks.length)say("Bấm vào đây để bắt đầu nghe nhạc ▶",true)}catch(e){}},4000)},
+  onStateChange:function(e){if(e.data===1){fails=0;say("",false)}else if(e.data===0){play(cur+1)}},
+  onError:function(){fails++;if(tracks[cur])tracks[cur].bad=1;drawList();
+   if(fails>=tracks.length){say("Chưa phát được bài nào. Hãy thử thêm link YouTube khác bên dưới.",true);return}
+   say("Bài này không phát được, đang chuyển bài…",true);setTimeout(function(){play(cur+1)},1200)}}})};
+(function(){var t=document.createElement("script");t.src="https://www.youtube.com/iframe_api";t.async=true;document.head.appendChild(t);
+ setTimeout(function(){if(!yp)say("Chưa tải được trình phát nhạc. Kiểm tra mạng rồi tải lại trang nhé.",true)},9000)})();
 $("list").addEventListener("click",function(e){var d=e.target.closest("[data-d]");
- if(d){e.stopPropagation();tracks.splice(+d.dataset.d,1);save();var wasCur=+d.dataset.d===cur;if(+d.dataset.d<cur)cur--;if(wasCur)play(cur,false);else drawList();return}
- var li=e.target.closest("li[data-i]");if(li)play(+li.dataset.i,true)});
-$("list").addEventListener("keydown",function(e){var li=e.target.closest("li[data-i]");if(li&&(e.key==="Enter"||e.key===" ")){e.preventDefault();play(+li.dataset.i,true)}});
+ if(d){e.stopPropagation();var k=+d.dataset.d,was=k===cur;tracks.splice(k,1);save();if(k<cur)cur--;if(was)play(cur);else drawList();return}
+ var li=e.target.closest("li[data-i]");if(li)play(+li.dataset.i)});
+$("list").addEventListener("keydown",function(e){var li=e.target.closest("li[data-i]");if(li&&(e.key==="Enter"||e.key===" ")){e.preventDefault();play(+li.dataset.i)}});
 function addTrack(){var id=ytId($("url").value);if(!id){$("url").style.borderColor="var(--p)";$("url").placeholder="Link chưa đúng, thử lại";return}
  $("url").style.borderColor="";$("url").value="";$("url").placeholder="Dán link YouTube...";
- var t={id:id,t:"Bài mới ("+id+")"};tracks.push(t);save();
- fetch("https://www.youtube.com/oembed?format=json&url="+encodeURIComponent("https://www.youtube.com/watch?v="+id)).then(function(r){return r.json()}).then(function(j){t.title=j.title;t.t=j.title;save();drawList()}).catch(function(){});
- play(tracks.length-1,true)}
+ var t={id:id,t:"Bài mới ("+id+")"};tracks.push(t);save();fetchTitle(t);play(tracks.length-1)}
 $("addbtn").onclick=addTrack;$("url").addEventListener("keydown",function(e){if(e.key==="Enter")addTrack()});
-play(0,false);
+PRESET.forEach(fetchTitle);drawList();
 var IC={
  fb:'<path d="M13.5 22v-8h2.7l.5-3.2h-3.2V8.7c0-.9.4-1.7 1.8-1.7h1.5V4.2S15.5 4 14.3 4C11.8 4 10.2 5.5 10.2 8.2v2.6H7.5V14h2.7v8z"/>',
  zl:'<path d="M12 3C6.8 3 3 6.6 3 11c0 2.4 1.1 4.5 2.9 6L5 21l3.7-1.9c1 .3 2.2.5 3.3.5 5.2 0 9-3.6 9-8.1S17.2 3 12 3zm-3 5.5h4.4v1L10.5 13H13.5v1.2H8.6v-1l2.9-3.5H9z"/>',
@@ -558,7 +637,7 @@ var IC={
 $("socials").innerHTML=CFG.socials.map(function(s){return'<a class="soc" href="'+esc(s.u)+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true">'+(IC[s.i]||IC.fb)+'</svg>'+esc(s.n)+'</a>'}).join("");
 var PAL=[["#8b5cff","#29f0ff"],["#ff3d81","#ffb23e"],["#29f0ff","#3ee08a"],["#ff3d81","#8b5cff"]];
 function art(t,i){var c=PAL[i%PAL.length];return"data:image/svg+xml;charset=utf-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200"><defs><linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+c[0]+'"/><stop offset="1" stop-color="'+c[1]+'"/></linearGradient></defs><rect width="320" height="200" fill="url(#a)"/><circle cx="262" cy="44" r="48" fill="#fff" opacity=".16"/><path d="M0 165 L70 105 L130 152 L205 85 L320 172 V200 H0Z" fill="#000" opacity=".25"/><text x="24" y="70" font-family="sans-serif" font-size="46" font-weight="800" fill="#fff">'+esc((t||"?").charAt(0).toUpperCase())+'</text></svg>')}
-$("chipbox").innerHTML=CFG.games.map(function(g,i){return'<button class="chip" type="button" role="listitem" style="--i:'+i+'" data-g="'+i+'" aria-expanded="false">'+esc(g.name)+'</button>'}).join("");
+$("chipbox").innerHTML=CFG.games.map(function(g,i){return'<button class="chip" type="button" role="listitem" style="--i:'+i+'" data-g="'+i+'" aria-expanded="false"><span class="ci">'+(g.icon||"🎮")+'</span><b>'+esc(g.name)+'</b><small>'+esc(g.note||"")+'</small></button>'}).join("");
 $("open").onclick=function(){var on=!$("chips").classList.contains("on");$("chips").classList.toggle("on",on);this.setAttribute("aria-expanded",on);this.textContent=on?"✕ Đóng danh sách":"🎮 Chọn game";
  if(!on){$("gp").classList.remove("on");document.querySelectorAll(".chip").forEach(function(c){c.setAttribute("aria-expanded","false")})}};
 var openG=-1, openItem=-1;
@@ -676,6 +755,15 @@ window.initGallery=function(box,maps){
  grid.addEventListener("error",function(e){var im=e.target;if(im.tagName!=="IMG"||im.dataset.f)return;im.dataset.f=1;var i=+im.dataset.i;im.src=art(maps[i].t,i)},true);
  box.querySelector(".mq").addEventListener("input",function(){st.q=this.value.toLowerCase().trim();draw()});
  draw()};
+})();
+</script>
+<script>
+(function(){var nav=$("topnav"),ls=[].slice.call(nav.querySelectorAll("a.nl")),ids=ls.map(function(a){return a.getAttribute("href").slice(1)});
+$("brand").textContent=CFG.name.toUpperCase();
+function on(){nav.classList.toggle("sc",scrollY>20);if(nav.classList.contains("open")){nav.classList.remove("open");$("burger").textContent="☰"}var c=0;ids.forEach(function(id,i){var el=$(id);if(el&&el.getBoundingClientRect().top<innerHeight*.4)c=i});ls.forEach(function(a,i){a.classList.toggle("on",i===c)})}
+addEventListener("scroll",on,{passive:true});on();
+$("burger").onclick=function(){var o=nav.classList.toggle("open");this.setAttribute("aria-expanded",o);this.textContent=o?"✕":"☰"};
+nav.addEventListener("click",function(e){if(e.target.closest("a.nl")){nav.classList.remove("open");$("burger").textContent="☰"}});
 })();
 </script>
 </body>
