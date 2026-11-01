@@ -360,6 +360,8 @@ html.tfade,html.tfade *,html.tfade *::before,html.tfade *::after{transition:back
 .gd>i{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:800 .95rem var(--head);font-style:normal;color:#fff;background:linear-gradient(135deg,var(--v),var(--p))}
 .gd b{color:var(--c);font:700 1rem var(--head)}
 .gd p{margin:.2rem 0 0;color:var(--text);font-size:1rem;line-height:1.5}
+.gdb{display:inline-block;margin-top:.55rem;padding:.35rem .95rem;border-radius:10px;font:700 .85rem var(--head);letter-spacing:.03em;color:#fff;background:linear-gradient(135deg,var(--v),var(--p));transition:transform .25s,box-shadow .25s}
+.gdb:hover{transform:translateY(-2px);box-shadow:0 10px 22px -10px var(--p)}
 </style>
 </head>
 <body>
@@ -564,13 +566,14 @@ var CFG={
           note:"Tạo trigger, quy tắc tự định nghĩa (Red Alert 2…)",
           /* Có video hoặc bài viết hướng dẫn thì thêm link vào đây: {name:"Video hướng dẫn",url:"https://...",desc:"..."} */
           links:[],
+          /* Mỗi bước có nút "Xem chi tiết": sửa url:"..." thành link của bạn (để url:"" thì nút tự ẩn) */
           guide:[
-            {h:"Chuẩn bị công cụ",p:"Cài Red Alert 2 kèm Yuri's Revenge và một trình soạn map như FinalAlert 2. Luôn sao lưu file map gốc trước khi sửa."},
-            {h:"Mở và chỉnh bản đồ",p:"Mở file map, chỉnh địa hình, quặng, công trình. Đặt Waypoint để làm vị trí xuất phát cho từng người chơi."},
-            {h:"Tạo Trigger",p:"Mỗi trigger gồm Sự kiện (Event) là điều kiện kích hoạt và Hành động (Action) là việc sẽ xảy ra. Chọn phe sở hữu, đặt chạy một lần hoặc lặp lại. Ví dụ: sau 5 phút thì gọi quân tiếp viện."},
-            {h:"Tạo đội quân và kịch bản",p:"Dùng Team Type, Task Force và Script để quy định đội nào xuất hiện, đi đâu, tấn công gì. Trigger sẽ gọi các đội này ra."},
-            {h:"Quy tắc tự định nghĩa",p:"Muốn đổi giá, tốc độ hay sát thương, hãy ghi đè thông số bằng các mục INI trong file map hoặc file rules của mod. Chỉ sửa đúng mục cần đổi."},
-            {h:"Chạy thử và hoàn thiện",p:"Lưu map, vào chế độ Skirmish thử nhiều lần, sửa lỗi trigger rồi mới chia sẻ cho mọi người."}
+            {h:"Chuẩn bị công cụ",p:"Cài Red Alert 2 kèm Yuri's Revenge và một trình soạn map như FinalAlert 2. Luôn sao lưu file map gốc trước khi sửa.",url:"https://example.com/ra2-buoc-1"},
+            {h:"Mở và chỉnh bản đồ",p:"Mở file map, chỉnh địa hình, quặng, công trình. Đặt Waypoint để làm vị trí xuất phát cho từng người chơi.",url:"https://example.com/ra2-buoc-2"},
+            {h:"Tạo Trigger",p:"Mỗi trigger gồm Sự kiện (Event) là điều kiện kích hoạt và Hành động (Action) là việc sẽ xảy ra. Chọn phe sở hữu, đặt chạy một lần hoặc lặp lại. Ví dụ: sau 5 phút thì gọi quân tiếp viện.",url:"https://example.com/ra2-buoc-3"},
+            {h:"Tạo đội quân và kịch bản",p:"Dùng Team Type, Task Force và Script để quy định đội nào xuất hiện, đi đâu, tấn công gì. Trigger sẽ gọi các đội này ra.",url:"https://example.com/ra2-buoc-4"},
+            {h:"Quy tắc tự định nghĩa",p:"Muốn đổi giá, tốc độ hay sát thương, hãy ghi đè thông số bằng các mục INI trong file map hoặc file rules của mod. Chỉ sửa đúng mục cần đổi.",url:"https://example.com/ra2-buoc-5"},
+            {h:"Chạy thử và hoàn thiện",p:"Lưu map, vào chế độ Skirmish thử nhiều lần, sửa lỗi trigger rồi mới chia sẻ cho mọi người.",url:"https://example.com/ra2-buoc-6"}
           ]
         }
       ]
@@ -580,6 +583,14 @@ var CFG={
       icon:"⛏️",
       note:"Mod, texture và map",
       items:[
+        {
+          t:"Link tải Launcher",
+          note:"Launcher để chơi Minecraft",
+          links:[
+            {name:"Link 1",url:"https://example.com/launcher-1",desc:"Bản mới nhất"},
+            {name:"Link 2",url:"https://example.com/launcher-2",desc:"Dự phòng"}
+          ]
+        },
         {
           t:"Gói đồ họa Realistic 4K",
           note:"Độ phân giải cao",
@@ -597,11 +608,11 @@ var CFG={
           ]
         },
         {
-          t:"Việt hóa đầy đủ",
-          note:"Bản dịch hoàn chỉnh",
+          t:"Minecraft _ Hướng dẫn cài mods Modpack từ CurseForge chi tiết",
+          note:"Hướng dẫn từng bước kèm link",
           links:[
-            {name:"Link 1",url:"https://example.com/mc-2",desc:"Cho bản 1.20+"},
-            {name:"Link 2",url:"https://example.com/mc-2-2",desc:"Dự phòng"}
+            {name:"Link 1",url:"https://example.com/mc-2",desc:"Video hướng dẫn"},
+            {name:"Link 2",url:"https://example.com/mc-2-2",desc:"Bài viết chi tiết"}
           ]
         },
         {
@@ -775,7 +786,7 @@ $("chipbox").innerHTML=CFG.games.map(function(g,i){return'<button class="chip" t
 $("open").onclick=function(){var on=!$("chips").classList.contains("on");$("chips").classList.toggle("on",on);this.setAttribute("aria-expanded",on);this.textContent=on?"✕ Đóng danh sách":"🎮 Chọn game";
  if(!on){$("gp").classList.remove("on");document.querySelectorAll(".chip").forEach(function(c){c.setAttribute("aria-expanded","false")})}};
 var openG=-1, openItem=-1;
-function guideHtml(a){return'<div class="gdl">'+a.map(function(v,n){return'<div class="gd" data-n="'+n+'"><i>'+(n+1)+'</i><div><b>'+esc(v.h)+'</b><p>'+esc(v.p)+'</p></div></div>'}).join("")+'</div>'}
+function guideHtml(a){return'<div class="gdl">'+a.map(function(v,n){return'<div class="gd" data-n="'+n+'"><i>'+(n+1)+'</i><div><b>'+esc(v.h)+'</b><p>'+esc(v.p)+'</p>'+(v.url?'<a class="gdb" href="'+esc(v.url)+'" target="_blank" rel="noopener">Xem chi tiết →</a>':'')+'</div></div>'}).join("")+'</div>'}
 function srvHtml(a){return'<div class="srvs">'+a.map(function(v){return'<div class="srv"><div class="srv-h"><span class="live" title="Đang hoạt động"></span><b>'+esc(v.name)+'</b><span class="ver">'+esc(v.ver)+'</span></div><div class="srv-r"><small>IP</small><code>'+esc(v.ip)+'</code><button type="button" class="cpip" data-ip="'+esc(v.ip)+'">Chép IP</button></div><div class="srv-r"><small>Link Mod</small>'+(v.mod?'<a href="'+esc(v.mod)+'" target="_blank" rel="noopener">⬇ Tải mod</a>':'<span class="nomod">Không cần mod</span>')+'</div></div>'}).join("")+'</div>'}
 function renderGame(gIdx){
   var g=CFG.games[gIdx];
