@@ -414,6 +414,7 @@ body.hc select{cursor:pointer!important}
 :root[data-theme=light] .cb.ct,:root[data-theme=light] .cb.on,:root[data-theme=light] .ctab.on{color:#fff}
 .sendrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 .nw .sendrow .cb{padding:.4rem .9rem;font-size:.9rem;margin-top:0}
+.clist{max-height:560px;overflow:auto;padding-right:4px}
 </style>
 </head>
 <body>
@@ -829,7 +830,7 @@ function build(db){var d={cmt:db.BinhLuan||[],dl:{},rt:{},vt:{}};
  (db.Dem||[]).forEach(function(e){if(e.loai==="dl")d.dl[e.key]=(d.dl[e.key]||0)+1;else if(e.loai==="rt"){var r=d.rt[e.key]||(d.rt[e.key]={s:0,n:0});r.s+=+e.val;r.n++}else if(e.loai==="vt"){var m=d.vt[e.val]||(d.vt[e.val]={});m[e.key]=(m[e.key]||0)+1}});return d}
 function post_(o){return fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)})}
 var API={on:!!API_URL,
- load:function(){if(!API.on)return Promise.resolve(build(lsg("g_db")));return fetch(API_URL+"?_="+Date.now()).then(function(r){return r.json()}).catch(function(){return{}})},
+ load:function(){if(!API.on)return Promise.resolve(build(lsg("g_db")));return fetch(API_URL+"?_="+Date.now()).then(function(r){return r.json()}).then(function(j){return j&&j.cmt?j:build(j||{})}).catch(function(){return{}})},
  add:function(sh,row){if(!API.on){var db=lsg("g_db");(db[sh]=db[sh]||[]).push(row);lss("g_db",db);return Promise.resolve()}return post_({sh:sh,row:row}).catch(function(){})},
  dem:function(t,k,v){return API.add("Dem",{ts:Date.now(),loai:t,key:k,val:v})},
  /* bình chọn theo IP: ip là mã băm, M là tháng "2026-11" (val lưu "m2026-11"). Mỗi IP 1 phiếu/tháng */
@@ -1193,11 +1194,22 @@ function pSub(){
   if(t.length<2||by.length<2){msg("sm","Nhập tên map và tên người tạo.");return}if(!http(u)){msg("sm","Link tải phải bắt đầu bằng http:// hoặc https://");return}
   if(im&&!http(im)){msg("sm","Link ảnh chưa đúng.");return}
   msg("sm","");toMsgr("⭐ GỬI MAP MỚI\nTên map: "+t+"\nNgười tạo: "+by+"\nSố người: "+$("sp").value+" | Độ khó: "+$("sd").value+" | Cỡ map: "+$("ss").value+"\nLink tải: "+u+"\nLink ảnh: "+(im||"(gửi ảnh trong chat)"),"sx");["sn","su","si"].forEach(function(i){$(i).value=""})}}
-function pCmt(){var a=ST.cmt.slice().sort(function(x,y){return y.ts-x.ts}).slice(0,40);
- P.innerHTML='<div class="cf"><div class="r2"><label>Tên bạn<input id="cn" maxlength="30"></label><label>Bạn đã chơi map nào?<select id="cm">'+sel(["Chung (cả web)"].concat(allMaps().map(function(m){return m.t})))+'</select></label></div><label>Cảm nhận<textarea id="cc" rows="3" maxlength="400" placeholder="Chơi map này thấy thế nào?"></textarea></label><div><button class="btn" id="cs" type="button">💬 Gửi bình luận</button></div><p class="mt" id="cx"></p></div>'+
- (a.length?a.map(function(x){return'<div class="nw"><small><b>'+esc(x.ten||"Ẩn danh")+"</b> · "+esc(x.map||"Chung")+" · "+fd(x.ts)+"</small><p>"+esc(x.noidung)+"</p></div>"}).join(""):'<p class="mt">Chưa có bình luận nào.</p>');
+function cList(){var a=ST.cmt.slice().sort(function(x,y){return y.ts-x.ts}).slice(0,100);
+ return a.length?a.map(function(x){return'<div class="nw"><small><b>'+esc(x.ten||"Ẩn danh")+"</b> · "+esc(x.map||"Chung")+" · "+ft(x.ts)+"</small><p>"+esc(x.noidung)+"</p></div>"}).join(""):'<p class="mt">Chưa có bình luận nào. Hãy là người đầu tiên!</p>'}
+function ft(t){var d=new Date(+t||0);return d.toLocaleDateString("vi-VN")+" "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
+var PEND=[];
+function pCmt(){
+ P.innerHTML='<div class="cf"><div class="r2"><label>Tên bạn<input id="cn" maxlength="30"></label><label>Bạn đã chơi map nào?<select id="cm">'+sel(["Chung (cả web)"].concat(allMaps().map(function(m){return m.t})))+'</select></label></div><label>Cảm nhận<textarea id="cc" rows="3" maxlength="400" placeholder="Chơi map này thấy thế nào?"></textarea></label><div><button class="btn" id="cs" type="button">💬 Gửi bình luận</button></div><p class="mt" id="cx"></p></div><div class="clist" id="cl">'+cList()+'</div>';
+ try{var sn=localStorage.getItem("g_cname");if(sn)$("cn").value=sn}catch(x){}
  $("cs").onclick=function(){var c=$("cc").value.trim();if(c.length<3){msg("cx","Hãy viết vài chữ cảm nhận của bạn.");return}if(!cool("cmt",20000)){msg("cx","Bạn gửi hơi nhanh, đợi chút nhé.");return}
-  var r={id:nid(),ts:Date.now(),ten:$("cn").value.trim().slice(0,30),map:$("cm").value,noidung:c.slice(0,400)};ST.cmt.push(r);API.add("BinhLuan",r);render()}}
+  var nm=$("cn").value.trim().slice(0,30);try{localStorage.setItem("g_cname",nm)}catch(x){}
+  var r={id:nid(),ts:Date.now(),ten:nm,map:$("cm").value,noidung:c.slice(0,400)};ST.cmt.push(r);PEND.push(r);API.add("BinhLuan",r);render()}}
+/* tự cập nhật bình luận của mọi người mỗi 12 giây khi đang xem tab Bình luận */
+setInterval(function(){if(!API.on||document.hidden||cur!=="cmt")return;
+ API.load().then(function(d){if(!d||!d.cmt)return;setData(d);
+  PEND=PEND.filter(function(x){return Date.now()-x.ts<90000});
+  PEND.forEach(function(x){if(!ST.cmt.some(function(y){return y.id===x.id}))ST.cmt.push(x)});
+  var l=$("cl");if(l&&cur==="cmt")l.innerHTML=cList()})},12000);
 var VS={m:"",v:undefined,ip:""};
 function hash(s){return crypto.subtle.digest("SHA-256",new TextEncoder().encode(s+"|nhgame")).then(function(b){return"h"+Array.prototype.map.call(new Uint8Array(b).slice(0,12),function(x){return("0"+x.toString(16)).slice(-2)}).join("")})}
 function myIp(){return fetch("https://api.ipify.org?format=json").then(function(r){return r.json()}).then(function(j){return hash(j.ip)})}
