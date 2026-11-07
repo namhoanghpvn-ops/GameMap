@@ -6,6 +6,7 @@
 <meta http-equiv="Content-Language" content="vi">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0816">
+<link rel="icon" type="image/png" href="favicon.png">
 <title>Nam Hoàng · Góc game</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
@@ -411,6 +412,8 @@ body.hc select{cursor:pointer!important}
 :root[data-theme=light] .cf textarea,:root[data-theme=light] .cf select{background:#fff}
 :root[data-theme=light] .cpanel{background:rgba(255,255,255,.7)}
 :root[data-theme=light] .cb.ct,:root[data-theme=light] .cb.on,:root[data-theme=light] .ctab.on{color:#fff}
+.sendrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.nw .sendrow .cb{padding:.4rem .9rem;font-size:.9rem;margin-top:0}
 </style>
 </head>
 <body>
@@ -578,6 +581,12 @@ var MAPS=[
    API_URL = link Google Apps Script (xem file google-apps-script.gs), dùng để lưu bình luận, lượt tải, sao và bình chọn theo IP.
    Để trống = chế độ thử (chỉ lưu trên máy từng người). */
 var API_URL="";
+/* ---- GỬI GÓP Ý / GỬI MAP KHÔNG CẦN MESSENGER (tùy chọn, rất nên điền) ----
+   FORM_KEY: vào https://web3forms.com, nhập email của bạn, nhận "Access Key" (miễn phí) rồi dán vào đây.
+             Khách bấm Gửi là nội dung bay thẳng về email bạn, không phải mở Messenger nữa.
+   CONTACT_EMAIL: email hiện nút "Gửi Email" dự phòng (để trống = ẩn nút). */
+var FORM_KEY="";
+var CONTACT_EMAIL="";
 var KHACH_DIR="mapkhach/", KHACH_EXT=".jpg";
 /* ---- MAP CỘNG ĐỒNG: khách gửi qua Messenger, bạn kiểm duyệt xong thì thêm 1 dòng vào đây (giống MAPS), by = tên người tạo.
    Ảnh: bỏ vào thư mục mapkhach/ trên GitHub, tên file = đúng tên map + .jpg */
@@ -1122,7 +1131,8 @@ document.addEventListener("keydown",function(e){var t=e.target.tagName;if(((e.ke
 (function(){
 var P=$("cp"),cur="news",DIFF=["Dễ","Trung Bình","Khó","Cực Khó","Siêu Cấp"],SZ=["Nhỏ","Vừa","Rộng"],
  FBP=((CFG.socials.filter(function(s){return s.n==="Facebook"})[0])||{}).u||"https://www.facebook.com/",
- MSG=FBP.replace(/^.*facebook\.com\//,"https://m.me/").replace(/\/$/,""),
+ MSG=(function(){var m=FBP.match(/profile\.php\?id=(\d+)/);if(m)return"https://m.me/"+m[1];return FBP.replace(/^.*facebook\.com\//,"https://m.me/").replace(/[?#].*$/,"").replace(/\/$/,"")})(),
+ ZL=((CFG.socials.filter(function(s){return s.n==="Zalo"})[0])||{}).u||"",
  URL0=location.href.split("#")[0].split("?")[0];
 $("c-fb").href=FBP;$("c-ms").href=MSG;
 function ym(d){d=d||new Date();return d.getFullYear()+"-"+p2(d.getMonth()+1)}
@@ -1155,8 +1165,25 @@ function setData(d){ST.dl=d.dl||{};ST.rt=d.rt||{};ST.vt=d.vt||{};ST.cmt=d.cmt||[
 function load(){return API.load().then(function(d){setData(d||{});redraw();render()})}
 /* ---- các tab ---- */
 function pNews(){P.innerHTML=NEWS.length?NEWS.map(function(n){return'<div class="nw"><small>📢 '+esc(n.d)+'</small><p><b>'+esc(n.t)+'</b></p><p>'+esc(n.b)+'</p></div>'}).join(""):'<p class="mt">Chưa có tin mới.</p>'}
-function toMsgr(text,id){try{navigator.clipboard.writeText(text).catch(function(){})}catch(x){}window.open(MSG,"_blank","noopener");
- $(id).innerHTML='<div class="nw champ"><b>✅ Gần xong rồi!</b> Messenger đã mở và nội dung đã được chép sẵn. Hãy <b>dán</b> vào khung chat với Nam Hoàng rồi bấm <b>Gửi</b>. Nếu không dán được, chép tay ở ô dưới:<div class="cf" style="margin:8px 0 0"><textarea readonly rows="6" onclick="this.select()">'+esc(text)+'</textarea></div></div>'}
+function copyTxt(t){try{if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(t).then(function(){return true},function(){return false})}catch(x){}return Promise.resolve(false)}
+function toMsgr(text,id){
+ var box=$(id);
+ var show=function(failed){
+  var b=function(h,l,c){return'<a class="cb'+(c?" ct":"")+'" href="'+esc(h)+'" target="_blank" rel="noopener">'+l+'</a>'};
+  var em=(typeof CONTACT_EMAIL==="string"&&CONTACT_EMAIL)?b("mailto:"+CONTACT_EMAIL+"?subject="+encodeURIComponent("Góp ý từ web Góc game")+"&body="+encodeURIComponent(text),"📧 Gửi Email"):"";
+  box.innerHTML='<div class="nw champ"><b>'+(failed?"⚠ Chưa gửi tự động được.":"✅ Nội dung đã được chép sẵn.")+'</b> Chọn 1 cách để gửi cho Nam Hoàng (dán nội dung rồi bấm Gửi):'
+   +'<div class="sendrow">'+b(MSG,"✉ Mở Messenger",1)+(ZL?b(ZL,"💬 Zalo"):"")+b(FBP,"📘 Facebook")+em+'<button class="cb cpy" type="button">📋 Chép lại</button></div>'
+   +'<small>Messenger cứ quay vòng, không chat được? Do trình duyệt chưa đăng nhập Messenger: hãy mở bằng app Messenger/Facebook trên điện thoại, hoặc dùng Zalo / Email.</small>'
+   +'<div class="cf" style="margin:8px 0 0"><textarea readonly rows="6" onclick="this.select()">'+esc(text)+'</textarea></div></div>';
+  var c=box.querySelector(".cpy");if(c)c.onclick=function(){copyTxt(text).then(function(ok){toast(ok?"Đã chép nội dung ✓":"Hãy chạm vào khung và chép tay")})}};
+ if(typeof FORM_KEY==="string"&&FORM_KEY){
+  box.innerHTML='<div class="nw">⏳ Đang gửi...</div>';
+  fetch("https://api.web3forms.com/submit",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({access_key:FORM_KEY,subject:text.split("\n")[0],from_name:"Web Góc game",message:text})})
+   .then(function(r){return r.json()})
+   .then(function(j){if(j&&j.success)box.innerHTML='<div class="nw champ"><b>✅ Đã gửi!</b> Cảm ơn bạn, Nam Hoàng đã nhận được nội dung.</div>';else throw 0})
+   .catch(function(){copyTxt(text);show(true)});
+  return}
+ copyTxt(text);show(false)}
 function pReq(){P.innerHTML='<div class="cf"><p class="mt">Điền xong bấm gửi: nội dung sẽ được chép sẵn và Messenger của Nam Hoàng sẽ mở ra, bạn chỉ cần dán rồi bấm Gửi.</p><div class="r2"><label>Tên của bạn<input id="rn" maxlength="40" placeholder="Có thể bỏ trống"></label><label>Loại<select id="rk">'+sel(["Yêu cầu map","Yêu cầu mod","Góp ý","Báo lỗi link"])+'</select></label></div><label>Nội dung<textarea id="rc" rows="4" maxlength="600" placeholder="Ghi tên map/mod và link tham khảo nếu có..."></textarea></label><div class="cr"><button class="btn" id="rs" type="button">💡 Gửi góp ý</button></div><p class="mt" id="rm"></p><div id="rx"></div></div>';
  $("rs").onclick=function(){var c=$("rc").value.trim();if(c.length<5){msg("rm","Hãy nhập nội dung (ít nhất 5 ký tự).");return}
   msg("rm","");toMsgr("💡 GÓP Ý TỪ WEB\nLoại: "+$("rk").value+"\nTên: "+($("rn").value.trim()||"Ẩn danh")+"\nNội dung: "+c.slice(0,600),"rx");$("rc").value=""}}
