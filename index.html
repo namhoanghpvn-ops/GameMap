@@ -580,7 +580,7 @@ var MAPS=[
    Góp ý và gửi map của khách được chuyển thẳng vào Messenger của bạn (không lưu trên web).
    API_URL = link Google Apps Script (xem file google-apps-script.gs), dùng để lưu bình luận, lượt tải, sao và bình chọn theo IP.
    Để trống = chế độ thử (chỉ lưu trên máy từng người). */
-var API_URL="https://script.google.com/macros/s/AKfycbyJsmgMSIlLinS16Yhjqp9YYHWxjBsd5N9UFTygTdZ79lQx393hvw0s0d76tldRV45s/exec";
+var API_URL="";
 /* ---- GỬI GÓP Ý / GỬI MAP KHÔNG CẦN MESSENGER (tùy chọn, rất nên điền) ----
    FORM_KEY: vào https://web3forms.com, nhập email của bạn, nhận "Access Key" (miễn phí) rồi dán vào đây.
              Khách bấm Gửi là nội dung bay thẳng về email bạn, không phải mở Messenger nữa.
@@ -638,6 +638,21 @@ var CFG={
             {name:"Link 2 - MediaFire",url:"https://www.mediafire.com/file/szfhang298vko9m/Ra2_Fix_By_Nam_Hoang.rar/file",desc:"Bản gốc 30k Gold đã Fix lỗi"},
             {name:"Link 3 - MediaFire",url:"https://www.mediafire.com/file/oet0k6r248lkg8x/Ra2_1006_vietnam.rar/file",desc:"Bản Yuri 30k Gold có quân Việt Nam"},
             {name:"Link 4 - MediaFire",url:"https://www.mediafire.com/file/i4wo9mxfglykkuh/RedAlert2_1006_NamHoang_Fix.rar/file",desc:"Bản gốc 10k Gold đã Fix lỗi"}
+          ]
+        },
+        {
+          t:"Chơi lane với nhau qua Radmin VPN",
+          note:"Tạo mạng LAN ảo để chơi cùng bạn bè ở xa",
+          links:[
+            {name:"Tải Radmin VPN",url:"https://www.radmin-vpn.com/",desc:"Miễn phí, tất cả người chơi đều cần cài"}
+          ],
+          guide:[
+            {h:"Cài Radmin VPN",p:"Mỗi người chơi tải và cài Radmin VPN trên máy của mình. Mở lên và đợi chương trình hiện trạng thái đã kết nối.",url:""},
+            {h:"Tạo mạng (chủ phòng)",p:"Một người làm chủ phòng: bấm «Create network», đặt tên mạng và mật khẩu rồi gửi 2 thông tin này cho bạn bè.",url:""},
+            {h:"Tham gia mạng (người còn lại)",p:"Bấm «Join network», nhập đúng tên mạng và mật khẩu của chủ phòng. Khi tên mọi người hiện lên trong danh sách (chấm xanh) là đã vào cùng một mạng LAN ảo.",url:""},
+            {h:"Cho phép game qua tường lửa",p:"Nếu không thấy phòng, mở Windows Firewall và cho phép Red Alert 2 (gamemd.exe) ở cả mạng Private và Public, hoặc tạm tắt tường lửa khi chơi.",url:""},
+            {h:"Vào game chơi LAN",p:"Mọi người dùng cùng một bản game, chọn Network (LAN) trong game. Chủ phòng tạo phòng, những người khác sẽ thấy phòng và bấm vào để tham gia.",url:""},
+            {h:"Mẹo khi không thấy phòng",p:"Tạm tắt Wi-Fi hoặc card mạng khác, chỉ để Radmin VPN hoạt động, rồi mở lại game. Nếu vẫn không được, thử bấm chuột phải vào tên chủ phòng trong Radmin để ping thử kết nối.",url:""}
           ]
         },
         {
@@ -722,83 +737,6 @@ var CFG={
           servers:[
             {name:"Survival Việt Nam",ip:"play.example.com",ver:"1.20.4",mod:""},
             {name:"Modpack Server",ip:"mod.example.com:25565",ver:"1.20.1 Forge",mod:"https://example.com/modpack"}
-          ]
-        }
-      ]
-    },
-    {
-      name:"GTA V",
-      icon:"🚗",
-      note:"Xe, nhân vật, script",
-      items:[
-        {
-          t:"Xe Việt Nam Pack",
-          note:"Bộ xe phổ biến VN",
-          links:[
-            {name:"Link 1",url:"https://example.com/gta-1",desc:"Bản đầy đủ"},
-            {name:"Link 2",url:"https://example.com/gta-1-2",desc:"Dự phòng"}
-          ]
-        },
-        {
-          t:"Menu mod",
-          note:"Công cụ tùy chỉnh trong game",
-          links:[
-            {name:"Link 1",url:"https://example.com/gta-2",desc:"Phiên bản mới"},
-            {name:"Link 2",url:"https://example.com/gta-2-2",desc:"Dự phòng"}
-          ]
-        }
-      ]
-    },
-    {
-      name:"Liên Quân",
-      icon:"⚔️",
-      note:"Skin, hướng dẫn",
-      items:[
-        {
-          t:"Hướng dẫn lên rank",
-          note:"Chiến thuật từng vị trí",
-          links:[
-            {name:"Link 1",url:"https://example.com/lq-1",desc:"Bản đầy đủ"},
-            {name:"Link 2",url:"https://example.com/lq-1-2",desc:"Tóm tắt nhanh"}
-          ]
-        },
-        {
-          t:"Bảng ngọc mới nhất",
-          note:"Cập nhật theo mùa giải",
-          links:[
-            {name:"Link 1",url:"https://example.com/lq-2",desc:"Tất cả tướng"},
-            {name:"Link 2",url:"https://example.com/lq-2-2",desc:"Top tướng mạnh"}
-          ]
-        },
-        {
-          t:"Cấu hình đồ họa mượt",
-          note:"Tối ưu cho máy yếu",
-          links:[
-            {name:"Link 1",url:"https://example.com/lq-3",desc:"Cấu hình chi tiết"},
-            {name:"Link 2",url:"https://example.com/lq-3-2",desc:"Công cụ tự động"}
-          ]
-        }
-      ]
-    },
-    {
-      name:"Valorant",
-      icon:"🎯",
-      note:"Setting, crosshair",
-      items:[
-        {
-          t:"Crosshair đẹp",
-          note:"Bộ mẫu phổ biến pro player",
-          links:[
-            {name:"Link 1",url:"https://example.com/val-1",desc:"Bộ 50 mẫu"},
-            {name:"Link 2",url:"https://example.com/val-1-2",desc:"Tạo riêng"}
-          ]
-        },
-        {
-          t:"Setting tối ưu FPS",
-          note:"Cấu hình tăng khung hình",
-          links:[
-            {name:"Link 1",url:"https://example.com/val-2",desc:"Cài đặt hệ thống"},
-            {name:"Link 2",url:"https://example.com/val-2-2",desc:"Cấu hình trong game"}
           ]
         }
       ]
