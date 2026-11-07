@@ -457,8 +457,7 @@ body.hc select{cursor:pointer!important}
   <section class="sec" id="community" data-n="02">
     <div class="rv"><span class="tag">// Cộng đồng</span><h2>Góc cộng đồng</h2><p style="color:var(--mute);margin:0">Web này là của tất cả người chơi: gửi map, góp ý, bình luận và bình chọn Map Tháng.</p></div>
     <div class="cbar"><span class="cl2">Chia sẻ web:</span><button class="cb" data-s="cp" type="button">🔗 Chép link</button><span class="cl2 sp2">Phản hồi / Liên hệ:</span><a class="cb ct" id="c-fb" target="_blank" rel="noopener">💬 Facebook của Nam Hoàng</a><a class="cb" id="c-ms" target="_blank" rel="noopener">✉ Messenger</a></div>
-    <div class="cnote" id="dbnote" hidden></div>
-    <div class="ctabs" id="ctabs" role="tablist"><button class="ctab on" type="button" data-t="news">📢 Tin tức &amp; Sự kiện</button><button class="ctab" type="button" data-t="req">💡 Góp ý &amp; Yêu cầu</button><button class="ctab" type="button" data-t="sub">⭐ Gửi map của bạn</button><button class="ctab" type="button" data-t="cmt">💬 Bình luận</button><button class="ctab" type="button" data-t="vote">🏆 Bình chọn tháng</button><button class="ctab" type="button" data-t="ppl">👥 Người đóng góp</button></div>
+        <div class="ctabs" id="ctabs" role="tablist"><button class="ctab on" type="button" data-t="news">📢 Tin tức &amp; Sự kiện</button><button class="ctab" type="button" data-t="req">💡 Góp ý &amp; Yêu cầu</button><button class="ctab" type="button" data-t="sub">⭐ Gửi map của bạn</button><button class="ctab" type="button" data-t="cmt">💬 Bình luận</button><button class="ctab" type="button" data-t="vote">🏆 Bình chọn tháng</button><button class="ctab" type="button" data-t="ppl">👥 Người đóng góp</button></div>
     <div class="cpanel" id="cp" aria-live="polite"></div>
   </section>
   <!-- ============ GAME ============ -->
@@ -1144,7 +1143,6 @@ function msg(id,t){var e=$(id);if(e)e.textContent=t}
 function nid(){return"i"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 function toast(t){var e=document.createElement("div");e.className="toast";e.textContent=t;document.body.appendChild(e);setTimeout(function(){e.remove()},2600)}
 function cool(k,ms){var L=lsg("g_cool"),n=Date.now();if(L[k]&&n-L[k]<ms)return false;L[k]=n;lss("g_cool",L);return true}
-function noteDb(){var e=$("dbnote");e.hidden=API.on;if(!API.on)e.textContent="⚠ Chưa điền API_URL: bình luận, lượt tải, sao, bình chọn đang ở chế độ thử và chỉ lưu trong trình duyệt này. Làm theo hướng dẫn trong file google-apps-script.gs."}
 function shareTo(){var f=function(){window.prompt("Sao chép link:",URL0)};try{navigator.clipboard.writeText(URL0).then(function(){toast("Đã chép link ✓")},f)}catch(x){f()}}
 /* ---- đếm lượt tải · đánh giá sao ---- */
 function refresh(k){document.querySelectorAll(".dlc,.rate").forEach(function(el){if(el.dataset.k!==k)return;if(el.classList.contains("dlc"))el.textContent="⬇ "+(ST.dl[k]||0);else el.outerHTML=rateHtml(k)})}
@@ -1220,7 +1218,7 @@ $("ctabs").addEventListener("click",function(e){var b=e.target.closest(".ctab");
 P.addEventListener("click",function(e){var b=e.target.closest(".cb[data-v]");if(!b||b.disabled||VS.v!=="")return;
  var M=ym(),k=b.dataset.v,v=ST.vt["m"+M]||(ST.vt["m"+M]={});VS.v=k;v[k]=(v[k]||0)+1;pVote();
  API.vote(VS.ip,M,k).then(function(j){if(j&&j.dup){v[k]--;VS.v=j.v||k;toast("IP của bạn đã bình chọn tháng này rồi")}else toast("Đã ghi nhận phiếu bầu ✓");if(cur==="vote")pVote()})});
-noteDb();render("news");load();
+render("news");load();
 /* ---- mở thẳng map từ link chia sẻ (?map=Tên map) ---- */
 var qm=new URLSearchParams(location.search).get("map");
 if(qm)setTimeout(function(){var g=$("gs");g.value=qm;g.dispatchEvent(new Event("input"));var r=document.querySelector(".sr");if(r)r.click()},3200);
