@@ -604,7 +604,7 @@ var CONTACT_EMAIL="";
 var KHACH_DIR="mapkhach/", KHACH_EXT=".jpg";
 /* ---- NĂNG LƯỢNG THEO IP (xem google-apps-script-tai-khoan.gs) ----
    ACC_API = link Web App của script năng lượng (khác API_URL). Trống = tắt. Không cần đăng nhập. */
-var ACC_API="https://script.google.com/macros/s/AKfycbxvK0avJCQaTt8CZ1-ZL4p-6aMNPHj7YycnlNH3TvazRRWa7YZdYNLva0dJzo-PK63p/exec";
+var ACC_API="";
 /* ---- MAP CỘNG ĐỒNG: khách gửi qua Messenger, bạn kiểm duyệt xong thì thêm 1 dòng vào đây (giống MAPS), by = tên người tạo.
    Ảnh: bỏ vào thư mục mapkhach/ trên GitHub, tên file = đúng tên map + .jpg */
 var CMAPS=[
@@ -1101,7 +1101,7 @@ function toast(t){var e=document.createElement("div");e.className="toast";e.text
 function cool(k,ms){var L=lsg("g_cool"),n=Date.now();if(L[k]&&n-L[k]<ms)return false;L[k]=n;lss("g_cool",L);return true}
 function shareTo(){var f=function(){window.prompt("Sao chép link:",URL0)};try{navigator.clipboard.writeText(URL0).then(function(){toast("Đã chép link ✓")},f)}catch(x){f()}}
 /* ---- NĂNG LƯỢNG THEO IP · MAP CỘNG ĐỒNG ---- */
-var CM0=CMAPS.slice(),U=null,EN={n:0,resetAt:0,onl:0,post:0},IPV="",CF={cost:4,daily:10,onlMax:5,postRew:5,postRewMax:2},BY="";try{BY=localStorage.getItem("g_by")||""}catch(x){}
+var CM0=CMAPS.slice(),U=null,EN={n:0,resetAt:0,onl:0,post:0},IPV="",CF={cost:4,daily:10,onlMax:5,postRew:5,postRewMax:2},BY="",ERR="";try{BY=localStorage.getItem("g_by")||""}catch(x){}
 var CH=document.createElement("button");CH.className="accchip";CH.type="button";document.body.appendChild(CH);
 function myip(){return IPV?Promise.resolve(IPV):fetch("https://api.ipify.org?format=json").then(function(r){return r.json()}).then(function(j){return IPV=j.ip})}
 function call(op,d){d=d||{};d.op=op;if(!ACC_API)return Promise.resolve({ok:false,err:"Chưa cấu hình ACC_API"});
@@ -1110,11 +1110,11 @@ function chip(){CH.hidden=!ACC_API;CH.innerHTML="⚡ <b>"+EN.n+"</b>";$("accnote
 function setE(j){if(j.user)U=j.user;if(j.en)EN=j.en;if(j.cfg)CF=j.cfg;chip()}
 function modal(h){var o=$("amod");if(o)o.remove();o=document.createElement("div");o.id="amod";o.className="amod";o.innerHTML='<div class="abox"><button class="ax" type="button" aria-label="Đóng">✕</button>'+h+'</div>';o.onclick=function(e){if(e.target===o||e.target.classList.contains("ax"))o.remove()};document.body.appendChild(o);return o}
 function left(){var m=Math.max(0,Math.round((EN.resetAt-Date.now())/60000));return Math.floor(m/60)+"g "+m%60+"p"}
-CH.onclick=function(){modal('<h3>⚡ Năng lượng của bạn</h3><p class="big">⚡ <b>'+EN.n+'</b></p><p class="mt">Tự nhận diện theo IP, không cần đăng nhập. Reset về '+CF.daily+' lúc 00:00 (còn '+left()+').</p><p class="mt">• Tải 1 map: −⚡'+CF.cost+' (mở khóa 1 lần, tải lại miễn phí)<br>• Online: +⚡1 mỗi 10 phút (hôm nay '+EN.onl+'/'+CF.onlMax+')<br>• Đăng map: +⚡'+CF.postRew+' mỗi lần (hôm nay '+EN.post+'/'+CF.postRewMax+' lần)</p><p class="mt"><small>Mã của bạn: '+esc(U?U.id:"…")+'</small></p>')};
+CH.onclick=function(){modal('<h3>⚡ Năng lượng của bạn</h3><p class="big">⚡ <b>'+EN.n+'</b></p><p class="mt">Tự nhận diện theo IP, không cần đăng nhập. Reset về '+CF.daily+' lúc 00:00 (còn '+left()+').</p><p class="mt">• Tải 1 map: −⚡'+CF.cost+' (mở khóa 1 lần, tải lại miễn phí)<br>• Online: +⚡1 mỗi 10 phút (hôm nay '+EN.onl+'/'+CF.onlMax+')<br>• Đăng map: +⚡'+CF.postRew+' mỗi lần (hôm nay '+EN.post+'/'+CF.postRewMax+' lần)</p><p class="mt"><small>Mã của bạn: '+esc(U?U.id:"chưa kết nối")+'</small></p>'+(U?"":'<p class="mt" style="color:var(--p)">⚠ Chưa kết nối được máy chủ năng lượng: '+esc(ERR||"đang kết nối…")+'<br>Kiểm tra ACC_API đã đúng link /exec và đã «Triển khai phiên bản mới» bằng file .gs mới nhất chưa. Tắt trình chặn quảng cáo nếu có (api.ipify.org bị chặn sẽ không lấy được IP).</p>')+'<button class="btn" id="rtry" type="button">↻ Thử kết nối lại</button>');var r=$("rtry");if(r)r.onclick=function(){init2();$("amod").remove()}};
 setInterval(function(){if(!U||document.hidden)return;call("ping").then(function(j){if(j.ok){var o=EN.n;setE(j);if(EN.n>o)toast("⚡ +"+(EN.n-o)+" năng lượng vì bạn online")}})},60000);
 function loadC(){if(!ACC_API)return;call("maps").then(function(j){if(!j.ok)return;CMAPS.length=0;CM0.concat(j.maps.map(function(m){m.cid=m.id;return m})).forEach(function(m){CMAPS.push(m)});
  CFG.games.forEach(function(g){g.items.forEach(function(it){if(it.maps===CMAPS)it.note=CMAPS.length+" map · do người chơi gửi, ghi rõ tên người tạo"})});redraw();if(cur==="sub"||cur==="ppl")render()})}
-function init2(){chip();if(!ACC_API)return;call("me").then(function(j){if(j.ok)setE(j);loadC()})}
+function init2(){chip();if(!ACC_API)return;call("me").then(function(j){if(j.ok){ERR="";setE(j)}else{ERR=j.err||"lỗi không rõ";toast("Năng lượng: "+ERR)}loadC()})}
 function cmBy(m){return"👤 "+esc(m.by)}
 function cmDet(m){return'<div class="dlx">Hôm nay <b>+'+(m.dl1||0)+'</b> · 7 ngày <b>+'+(m.dl7||0)+'</b>'+(m.ts?" · đăng "+fd(Date.parse(m.ts)):"")+'</div>'}
 function cmAct(m){return'<button type="button" class="btn cdl" data-id="'+m.cid+'">⬇ Tải map <i>'+(m.got||m.own?"miễn phí":"⚡"+CF.cost)+'</i></button>'+(m.own||(U&&U.admin)?'<button type="button" class="cp cdel" data-id="'+m.cid+'">Xóa</button>':"")}
