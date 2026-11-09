@@ -604,7 +604,7 @@ var CONTACT_EMAIL="";
 var KHACH_DIR="mapkhach/", KHACH_EXT=".jpg";
 /* ---- NĂNG LƯỢNG THEO IP (xem google-apps-script-tai-khoan.gs) ----
    ACC_API = link Web App của script năng lượng (khác API_URL). Trống = tắt. Không cần đăng nhập. */
-var ACC_API="https://script.google.com/macros/s/AKfycbx9GNYasEHD2uvnQvANc--WEMqYDr8tGyDkUGdFcnYjjFw70-opLT4mZVBL8-TmiwGY/exec";
+var ACC_API="";
 /* ---- MAP CỘNG ĐỒNG: khách gửi qua Messenger, bạn kiểm duyệt xong thì thêm 1 dòng vào đây (giống MAPS), by = tên người tạo.
    Ảnh: bỏ vào thư mục mapkhach/ trên GitHub, tên file = đúng tên map + .jpg */
 var CMAPS=[
@@ -1101,28 +1101,28 @@ function toast(t){var e=document.createElement("div");e.className="toast";e.text
 function cool(k,ms){var L=lsg("g_cool"),n=Date.now();if(L[k]&&n-L[k]<ms)return false;L[k]=n;lss("g_cool",L);return true}
 function shareTo(){var f=function(){window.prompt("Sao chép link:",URL0)};try{navigator.clipboard.writeText(URL0).then(function(){toast("Đã chép link ✓")},f)}catch(x){f()}}
 /* ---- NĂNG LƯỢNG THEO IP · MAP CỘNG ĐỒNG ---- */
-var CM0=CMAPS.slice(),U=null,EN={n:0,resetAt:0,onl:0,post:0},IPV="",CF={cost:4,daily:10,onlMax:5,postRew:5,postRewMax:2},BY="",ERR="";try{BY=localStorage.getItem("g_by")||""}catch(x){}
+var CM0=CMAPS.slice(),U=null,EN={n:0,resetAt:0,onl:0,post:0},IPV="",CF={cost:4,daily:10,onlMax:5,postRew:5,postRewMax:2},BY="",ERR="",AK="";try{AK=localStorage.getItem("g_ak")||""}catch(x){}try{BY=localStorage.getItem("g_by")||""}catch(x){}
 var CH=document.createElement("button");CH.className="accchip";CH.type="button";document.body.appendChild(CH);
 function myip(){if(IPV)return Promise.resolve(IPV);
  var src=[["https://api.ipify.org?format=json",function(t){return JSON.parse(t).ip}],["https://api64.ipify.org?format=json",function(t){return JSON.parse(t).ip}],["https://www.cloudflare.com/cdn-cgi/trace",function(t){return t.match(/ip=(\S+)/)[1]}]];
  return src.reduce(function(p,x){return p.catch(function(){return fetch(x[0]).then(function(r){return r.text()}).then(function(t){var ip=x[1](t);if(!/^[0-9a-fA-F:.]{3,45}$/.test(ip))throw 0;return IPV=ip})})},Promise.reject())}
-function call(op,d){d=d||{};d.op=op;if(!ACC_API)return Promise.resolve({ok:false,err:"Chưa điền ACC_API trong index.html"});
+function call(op,d){d=d||{};d.op=op;d.ak=AK;if(!ACC_API)return Promise.resolve({ok:false,err:"Chưa điền ACC_API trong index.html"});
  if(ACC_API===API_URL)return Promise.resolve({ok:false,err:"ACC_API đang trùng API_URL (script cũ). Cần link /exec của script năng lượng mới."});
  return myip().then(function(ip){d.ip=ip;
   return fetch(ACC_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)}).then(function(r){return r.text()}).then(function(t){try{return JSON.parse(t)}catch(x){return{ok:false,err:"Máy chủ không trả về JSON: link ACC_API sai, hoặc lúc triển khai chưa chọn «Bất kỳ ai» được truy cập, hoặc chưa cấp quyền cho script."}}},function(){return{ok:false,err:"Không gọi được ACC_API (sai link hoặc mạng/trình chặn quảng cáo chặn script.google.com)."}})},
   function(){return{ok:false,err:"Không lấy được IP của bạn (ipify/cloudflare bị chặn). Tắt trình chặn quảng cáo/VPN rồi thử lại."}})}
-function chip(){CH.hidden=!ACC_API;CH.innerHTML="⚡ <b>"+EN.n+"</b>";$("accnote").textContent=ACC_API?"Bạn có ⚡"+EN.n+" năng lượng (tự nhận diện theo IP, tải 1 map tốn ⚡"+CF.cost+", mỗi ngày nhận ⚡"+CF.daily+").":""}
+function chip(){CH.hidden=!ACC_API;CH.innerHTML="⚡ <b>"+EN.n+"</b>";$("accnote").textContent=ACC_API?"Bạn có ⚡"+EN.n+" năng lượng (tự nhận diện theo IP, tải 1 map tốn ⚡"+CF.cost+", mỗi ngày nhận ⚡"+CF.daily+"). [bản web v5]":""}
 function setE(j){if(j.user)U=j.user;if(j.en)EN=j.en;if(j.cfg)CF=j.cfg;chip()}
 function modal(h){var o=$("amod");if(o)o.remove();o=document.createElement("div");o.id="amod";o.className="amod";o.innerHTML='<div class="abox"><button class="ax" type="button" aria-label="Đóng">✕</button>'+h+'</div>';o.onclick=function(e){if(e.target===o||e.target.classList.contains("ax"))o.remove()};document.body.appendChild(o);return o}
 function left(){var m=Math.max(0,Math.round((EN.resetAt-Date.now())/60000));return Math.floor(m/60)+"g "+m%60+"p"}
-CH.onclick=function(){modal('<h3>⚡ Năng lượng của bạn</h3><p class="big">⚡ <b>'+EN.n+'</b></p><p class="mt">Tự nhận diện theo IP. Reset về '+CF.daily+' lúc 00:00 (còn '+left()+').</p><p class="mt">• Tải 1 map: −⚡'+CF.cost+' (mở khóa 1 lần, tải lại miễn phí)<br>• Online: +⚡1 mỗi 10 phút (hôm nay '+EN.onl+'/'+CF.onlMax+')<br>• Đăng map: +⚡'+CF.postRew+' mỗi lần (hôm nay '+EN.post+'/'+CF.postRewMax+' lần)</p><p class="mt"><small>Mã của bạn: '+esc(U?U.id:"chưa kết nối")+'</small></p>'+(U?"":'<p class="mt" style="color:var(--p)">⚠ Chưa kết nối được máy chủ năng lượng: '+esc(ERR||"đang kết nối…")+'<br>Kiểm tra ACC_API đã đúng link /exec và đã «Triển khai phiên bản mới» bằng file .gs mới nhất chưa. Tắt trình chặn quảng cáo nếu có (api.ipify.org bị chặn sẽ không lấy được IP).</p>')+'<button class="btn" id="rtry" type="button">↻ Thử kết nối lại</button>');var r=$("rtry");if(r)r.onclick=function(){init2();$("amod").remove()}};
+CH.onclick=function(){modal('<h3>⚡ Năng lượng của bạn</h3><p class="big">⚡ <b>'+EN.n+'</b></p><p class="mt">Tự nhận diện theo IP. Reset về '+CF.daily+' lúc 00:00 (còn '+left()+').</p><p class="mt">• Tải 1 map: −⚡'+CF.cost+' (mở khóa 1 lần, tải lại miễn phí)<br>• Online: +⚡1 mỗi 10 phút (hôm nay '+EN.onl+'/'+CF.onlMax+')<br>• Đăng map: +⚡'+CF.postRew+' mỗi lần (hôm nay '+EN.post+'/'+CF.postRewMax+' lần)</p><p class="mt"><small>Mã của bạn: '+esc(U?U.id:"chưa kết nối")+'</small> <button class="cp" id="adm" type="button">🛡 '+(U&&U.admin?"Admin (đổi/thoát)":"Quản trị")+'</button></p>'+(U?"":'<p class="mt" style="color:var(--p)">⚠ Chưa kết nối được máy chủ năng lượng: '+esc(ERR||"đang kết nối…")+'<br>Kiểm tra ACC_API đã đúng link /exec và đã «Triển khai phiên bản mới» bằng file .gs mới nhất chưa. Tắt trình chặn quảng cáo nếu có (api.ipify.org bị chặn sẽ không lấy được IP).</p>')+'<button class="btn" id="rtry" type="button">↻ Thử kết nối lại</button>');var ad=$("adm");if(ad)ad.onclick=function(){var k=prompt("Nhập mã admin (để trống = thoát admin):",AK);if(k===null)return;AK=k.trim();try{localStorage.setItem("g_ak",AK)}catch(x){}$("amod").remove();call("me").then(function(j){if(j.ok)setE(j);toast(j.user&&j.user.admin?"Đã vào chế độ admin ✓":AK?"Mã admin sai":"Đã thoát admin");loadC()})};var r=$("rtry");if(r)r.onclick=function(){init2();$("amod").remove()}};
 setInterval(function(){if(!U||document.hidden)return;call("ping").then(function(j){if(j.ok){var o=EN.n;setE(j);if(EN.n>o)toast("⚡ +"+(EN.n-o)+" năng lượng vì bạn online")}})},60000);
 function loadC(){if(!ACC_API)return;call("maps").then(function(j){if(!j.ok)return;CMAPS.length=0;CM0.concat(j.maps.map(function(m){m.cid=m.id;return m})).forEach(function(m){CMAPS.push(m)});
  CFG.games.forEach(function(g){g.items.forEach(function(it){if(it.maps===CMAPS)it.note=CMAPS.length+" map · do người chơi gửi, ghi rõ tên người tạo"})});redraw();if(cur==="sub"||cur==="ppl")render()})}
 function init2(){chip();if(!ACC_API)return;call("me").then(function(j){if(j.ok){ERR="";setE(j)}else{ERR=j.err||"lỗi không rõ";toast("Năng lượng: "+ERR)}loadC()})}
 function cmBy(m){return"👤 "+esc(m.by)}
 function cmDet(m){return'<div class="dlx">Hôm nay <b>+'+(m.dl1||0)+'</b> · 7 ngày <b>+'+(m.dl7||0)+'</b>'+(m.ts?" · đăng "+fd(Date.parse(m.ts)):"")+'</div>'}
-function cmAct(m){return'<button type="button" class="btn cdl" data-id="'+m.cid+'">⬇ Tải map <i>'+(m.got||m.own?"miễn phí":"⚡"+CF.cost)+'</i></button>'+(m.own||(U&&U.admin)?'<button type="button" class="cp cdel" data-id="'+m.cid+'">Xóa</button>':"")}
+function cmAct(m){return'<button type="button" class="btn cdl" data-id="'+m.cid+'">⬇ Tải map <i>'+(m.got||m.own?"miễn phí":"⚡"+CF.cost)+'</i></button>'+(U&&U.admin?'<button type="button" class="cp cdel" data-id="'+m.cid+'">Xóa</button>':"")}
 window.cmBy=cmBy;window.cmDet=cmDet;window.cmAct=cmAct;
 document.addEventListener("click",function(e){var b=e.target.closest(".cdl,.cdel");if(!b)return;
  var id=b.dataset.id,m=CMAPS.filter(function(x){return x.cid===id})[0];if(!m)return;if(!U){toast("Đang kết nối, thử lại sau giây lát");return}
