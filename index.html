@@ -424,7 +424,7 @@ body.hc select{cursor:pointer!important}
 .abox{position:relative;width:min(420px,100%);background:var(--panel);border:1px solid var(--c);border-radius:16px;padding:22px 20px;box-shadow:0 20px 60px -20px var(--v)}
 .abox h3{margin:0 0 8px;font:700 1.15rem var(--head);color:var(--c)}.abox .big{font-size:1.4rem;margin:.2rem 0}
 .ax{position:absolute;right:10px;top:8px;border:0;background:none;color:var(--mute);font-size:1.1rem;cursor:pointer}
-.pvs{display:grid;gap:10px;margin-top:12px}.pv{justify-content:center}.fbb{background:#1877f2}.zlb{background:#0068ff}
+.pvs{display:grid;gap:10px;margin-top:12px}.pv{justify-content:center}.pv.off{opacity:.45;cursor:not-allowed;background:var(--line)}.fbb{background:#1877f2}.zlb{background:#0068ff}
 .cdl i{font-style:normal;font-size:.78rem;opacity:.9;background:rgba(0,0,0,.28);padding:0 .45rem;border-radius:99px}
 .dlx{font-size:.82rem;color:var(--mute);margin:2px 0 6px}.dlx b{color:var(--c)}
 .nw .cdl{padding:.3rem .8rem;font-size:.85rem}
@@ -602,10 +602,9 @@ var API_URL="https://script.google.com/macros/s/AKfycbyJsmgMSIlLinS16Yhjqp9YYHWx
 var FORM_KEY="";
 var CONTACT_EMAIL="";
 var KHACH_DIR="mapkhach/", KHACH_EXT=".jpg";
-/* ---- TÀI KHOẢN + NĂNG LƯỢNG (xem google-apps-script-tai-khoan.gs) ----
-   ACC_API = link Web App của script tài khoản (khác API_URL ở trên). Trống = tắt đăng nhập.
-   Chỉ điền ID công khai ở đây, KHÔNG dán secret vào file này. Nút nào để trống sẽ tự ẩn. */
-var ACC_API="https://script.google.com/macros/s/AKfycbyxyYsUmwpc9Bz6QMuSUZKtzURlIPvnuLSHDNvMg5SlhmbsBFonzIXy9BG6SuUtZDYhig/exec", GOOGLE_CLIENT_ID="", FB_APP_ID="", ZALO_APP_ID="";
+/* ---- NĂNG LƯỢNG THEO IP (xem google-apps-script-tai-khoan.gs) ----
+   ACC_API = link Web App của script năng lượng (khác API_URL). Trống = tắt. Không cần đăng nhập. */
+var ACC_API="";
 /* ---- MAP CỘNG ĐỒNG: khách gửi qua Messenger, bạn kiểm duyệt xong thì thêm 1 dòng vào đây (giống MAPS), by = tên người tạo.
    Ảnh: bỏ vào thư mục mapkhach/ trên GitHub, tên file = đúng tên map + .jpg */
 var CMAPS=[
@@ -1101,50 +1100,31 @@ function nid(){return"i"+Date.now().toString(36)+Math.random().toString(36).slic
 function toast(t){var e=document.createElement("div");e.className="toast";e.textContent=t;document.body.appendChild(e);setTimeout(function(){e.remove()},2600)}
 function cool(k,ms){var L=lsg("g_cool"),n=Date.now();if(L[k]&&n-L[k]<ms)return false;L[k]=n;lss("g_cool",L);return true}
 function shareTo(){var f=function(){window.prompt("Sao chép link:",URL0)};try{navigator.clipboard.writeText(URL0).then(function(){toast("Đã chép link ✓")},f)}catch(x){f()}}
-/* ---- TÀI KHOẢN · NĂNG LƯỢNG · MAP CỘNG ĐỒNG ---- */
-var CM0=CMAPS.slice(),U=null,EN={n:0,resetAt:0,onl:0,post:0},SS="",PA=null,CF={cost:4,daily:10,onlMax:5,postRew:5,postRewMax:2};try{SS=localStorage.getItem("g_ss")||""}catch(x){}
+/* ---- NĂNG LƯỢNG THEO IP · MAP CỘNG ĐỒNG ---- */
+var CM0=CMAPS.slice(),U=null,EN={n:0,resetAt:0,onl:0,post:0},IPV="",CF={cost:4,daily:10,onlMax:5,postRew:5,postRewMax:2},BY="";try{BY=localStorage.getItem("g_by")||""}catch(x){}
 var CH=document.createElement("button");CH.className="accchip";CH.type="button";document.body.appendChild(CH);
-function call(op,d){d=d||{};d.op=op;d.s=SS;if(!ACC_API)return Promise.resolve({ok:false,err:"Chưa cấu hình ACC_API"});
- return fetch(ACC_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)}).then(function(r){return r.json()}).then(function(j){if(j&&j.err==="auth")setU(null,"");return j}).catch(function(){return{ok:false,err:"Không kết nối được máy chủ"}})}
-function chip(){CH.hidden=!ACC_API;CH.innerHTML=U?(U.av?'<img src="'+esc(U.av)+'" referrerpolicy="no-referrer" alt="">':"")+'⚡ <b>'+EN.n+'</b>':"🔐 Đăng nhập";
- $("accnote").textContent=ACC_API?(U?"Xin chào "+U.name+" · ⚡"+EN.n+" năng lượng (tải 1 map tốn ⚡"+CF.cost+").":"Đăng nhập Google / Facebook / Zalo để đăng và tải map cộng đồng. Mỗi ngày nhận ⚡"+CF.daily+"."):""}
-function setU(u,s,en){U=u;if(s!==undefined){SS=s;try{localStorage.setItem("g_ss",s)}catch(x){}}if(en)EN=en;chip();if(cur==="sub")render();redraw()}
+function myip(){return IPV?Promise.resolve(IPV):fetch("https://api.ipify.org?format=json").then(function(r){return r.json()}).then(function(j){return IPV=j.ip})}
+function call(op,d){d=d||{};d.op=op;if(!ACC_API)return Promise.resolve({ok:false,err:"Chưa cấu hình ACC_API"});
+ return myip().then(function(ip){d.ip=ip;return fetch(ACC_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)})}).then(function(r){return r.json()}).catch(function(){return{ok:false,err:"Không kết nối được máy chủ hoặc không xác định được IP"}})}
+function chip(){CH.hidden=!ACC_API;CH.innerHTML="⚡ <b>"+EN.n+"</b>";$("accnote").textContent=ACC_API?"Bạn có ⚡"+EN.n+" năng lượng (tự nhận diện theo IP, tải 1 map tốn ⚡"+CF.cost+", mỗi ngày nhận ⚡"+CF.daily+").":""}
+function setE(j){if(j.user)U=j.user;if(j.en)EN=j.en;if(j.cfg)CF=j.cfg;chip()}
 function modal(h){var o=$("amod");if(o)o.remove();o=document.createElement("div");o.id="amod";o.className="amod";o.innerHTML='<div class="abox"><button class="ax" type="button" aria-label="Đóng">✕</button>'+h+'</div>';o.onclick=function(e){if(e.target===o||e.target.classList.contains("ax"))o.remove()};document.body.appendChild(o);return o}
-function ld(u){if(document.querySelector('script[src="'+u+'"]'))return;var t=document.createElement("script");t.src=u;t.async=true;document.head.appendChild(t)}
-function login(why,after){PA=after||null;modal('<h3>🔐 Đăng nhập</h3><p>'+esc(why||"Đăng nhập để đăng và tải map cộng đồng.")+'</p><p class="mt">Mỗi ngày nhận ⚡'+CF.daily+', tải 1 map tốn ⚡'+CF.cost+'. Có thể kiếm thêm bằng cách online hoặc đăng map.</p><div class="pvs">'+(GOOGLE_CLIENT_ID?'<button class="btn pv" data-p="google">Google</button>':"")+(FB_APP_ID?'<button class="btn pv fbb" data-p="facebook">Facebook</button>':"")+(ZALO_APP_ID?'<button class="btn pv zlb" data-p="zalo">Zalo</button>':"")+'</div>');
- if(GOOGLE_CLIENT_ID)ld("https://accounts.google.com/gsi/client");
- if(FB_APP_ID){window.fbAsyncInit=function(){FB.init({appId:FB_APP_ID,version:"v19.0"})};ld("https://connect.facebook.net/vi_VN/sdk.js")}}
-function b64u(b){return btoa(String.fromCharCode.apply(0,new Uint8Array(b))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
-function zl(){var a=new Uint8Array(48);crypto.getRandomValues(a);var v=b64u(a),st=b64u(a.slice(0,12));
- crypto.subtle.digest("SHA-256",new TextEncoder().encode(v)).then(function(h){sessionStorage.zv=v;sessionStorage.zs=st;location.href="https://oauth.zaloapp.com/v4/permission?app_id="+ZALO_APP_ID+"&redirect_uri="+encodeURIComponent(URL0)+"&code_challenge="+b64u(h)+"&code_challenge_method=S256&state="+st})}
-function fin(d){call("login",d).then(function(j){if(!j.ok){toast(j.err||"Đăng nhập thất bại");return}CF=j.cfg||CF;setU(j.user,j.sess,j.en);var o=$("amod");if(o)o.remove();toast("Xin chào "+j.user.name+" ✓");loadC();if(PA){var f=PA;PA=null;f()}})}
 function left(){var m=Math.max(0,Math.round((EN.resetAt-Date.now())/60000));return Math.floor(m/60)+"g "+m%60+"p"}
-function acct(){var o=modal('<h3>'+esc(U.name)+(U.admin?" 🛡":"")+'</h3><p class="big">⚡ <b>'+EN.n+'</b> năng lượng</p><p class="mt">Reset về '+CF.daily+' lúc 00:00 (còn '+left()+').</p><p class="mt">• Tải 1 map: −⚡'+CF.cost+' (mở khóa 1 lần, tải lại miễn phí)<br>• Online: +⚡1 mỗi 10 phút (hôm nay '+EN.onl+'/'+CF.onlMax+')<br>• Đăng map: +⚡'+CF.postRew+' mỗi lần (hôm nay '+EN.post+'/'+CF.postRewMax+' lần)</p><p class="mt"><small>Mã tài khoản: '+esc(U.id)+'</small></p><button class="btn ghost" id="lo" type="button">Đăng xuất</button>');
- $("lo").onclick=function(){call("logout");o.remove();setU(null,"");loadC()}}
-CH.onclick=function(){U?acct():login()};
-setInterval(function(){if(!U||document.hidden)return;call("ping").then(function(j){if(j.ok){var o=EN.n;EN=j.en;chip();if(EN.n>o)toast("⚡ +"+(EN.n-o)+" năng lượng vì bạn online")}})},60000);
+CH.onclick=function(){modal('<h3>⚡ Năng lượng của bạn</h3><p class="big">⚡ <b>'+EN.n+'</b></p><p class="mt">Tự nhận diện theo IP, không cần đăng nhập. Reset về '+CF.daily+' lúc 00:00 (còn '+left()+').</p><p class="mt">• Tải 1 map: −⚡'+CF.cost+' (mở khóa 1 lần, tải lại miễn phí)<br>• Online: +⚡1 mỗi 10 phút (hôm nay '+EN.onl+'/'+CF.onlMax+')<br>• Đăng map: +⚡'+CF.postRew+' mỗi lần (hôm nay '+EN.post+'/'+CF.postRewMax+' lần)</p><p class="mt"><small>Mã của bạn: '+esc(U?U.id:"…")+'</small></p>')};
+setInterval(function(){if(!U||document.hidden)return;call("ping").then(function(j){if(j.ok){var o=EN.n;setE(j);if(EN.n>o)toast("⚡ +"+(EN.n-o)+" năng lượng vì bạn online")}})},60000);
 function loadC(){if(!ACC_API)return;call("maps").then(function(j){if(!j.ok)return;CMAPS.length=0;CM0.concat(j.maps.map(function(m){m.cid=m.id;return m})).forEach(function(m){CMAPS.push(m)});
  CFG.games.forEach(function(g){g.items.forEach(function(it){if(it.maps===CMAPS)it.note=CMAPS.length+" map · do người chơi gửi, ghi rõ tên người tạo"})});redraw();if(cur==="sub"||cur==="ppl")render()})}
-function init2(){chip();var q=new URLSearchParams(location.search);
- if(q.get("code")&&q.get("state")&&q.get("state")===sessionStorage.zs){fin({provider:"zalo",code:q.get("code"),verifier:sessionStorage.zv,redirect:URL0});history.replaceState(null,"",URL0+"#community")}
- else if(SS)call("me").then(function(j){if(j.ok){CF=j.cfg||CF;setU(j.user,SS,j.en)}loadC()});
- if(!SS)loadC()}
-function cmBy(m){return(m.av?'<img class="av" src="'+esc(m.av)+'" referrerpolicy="no-referrer" alt=""> ':"👤 ")+esc(m.by)}
+function init2(){chip();if(!ACC_API)return;call("me").then(function(j){if(j.ok)setE(j);loadC()})}
+function cmBy(m){return"👤 "+esc(m.by)}
 function cmDet(m){return'<div class="dlx">Hôm nay <b>+'+(m.dl1||0)+'</b> · 7 ngày <b>+'+(m.dl7||0)+'</b>'+(m.ts?" · đăng "+fd(Date.parse(m.ts)):"")+'</div>'}
 function cmAct(m){return'<button type="button" class="btn cdl" data-id="'+m.cid+'">⬇ Tải map <i>'+(m.got||m.own?"miễn phí":"⚡"+CF.cost)+'</i></button>'+(m.own||(U&&U.admin)?'<button type="button" class="cp cdel" data-id="'+m.cid+'">Xóa</button>':"")}
 window.cmBy=cmBy;window.cmDet=cmDet;window.cmAct=cmAct;
-document.addEventListener("click",function(e){var b=e.target.closest(".pv,.cdl,.cdel,#sl");if(!b)return;
- if(b.classList.contains("pv")){var p=b.dataset.p;
-  if(p==="google"){if(!window.google||!google.accounts){toast("Đang tải Google, bấm lại nhé");return}google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:"openid profile",callback:function(r){if(r&&r.access_token)fin({provider:"google",token:r.access_token})}}).requestAccessToken()}
-  else if(p==="facebook"){if(!window.FB){toast("Đang tải Facebook, bấm lại nhé");return}FB.login(function(r){if(r.authResponse)fin({provider:"facebook",token:r.authResponse.accessToken})},{scope:"public_profile"})}
-  else zl();return}
- if(b.id==="sl"){login();return}
- var id=b.dataset.id,m=CMAPS.filter(function(x){return x.cid===id})[0];if(!m)return;
- if(!U){login("Đăng nhập để tải map «"+m.t+"».",function(){toast("Bấm Tải map lần nữa để tải")});return}
+document.addEventListener("click",function(e){var b=e.target.closest(".cdl,.cdel");if(!b)return;
+ var id=b.dataset.id,m=CMAPS.filter(function(x){return x.cid===id})[0];if(!m)return;if(!U){toast("Đang kết nối, thử lại sau giây lát");return}
  if(b.classList.contains("cdel")){if(confirm("Xóa map này?"))call("del",{id:id}).then(function(j){toast(j.ok?"Đã xóa":j.err);loadC()});return}
  if(!m.got&&!m.own){if(EN.n<CF.cost){toast("Không đủ năng lượng (cần ⚡"+CF.cost+", còn ⚡"+EN.n+"). Online thêm hoặc đăng map để nhận thêm.");return}
   if(!confirm("Tải map này tốn ⚡"+CF.cost+" (bạn còn ⚡"+EN.n+"). Tiếp tục?"))return}
- var w=window.open("","_blank");call("dl",{id:id}).then(function(j){if(!j.ok){if(w)w.close();toast(j.err);return}EN=j.en;chip();
+ var w=window.open("","_blank");call("dl",{id:id}).then(function(j){if(!j.ok){if(w)w.close();toast(j.err);return}setE(j);
   if(w&&!w.closed)w.location=j.u;else modal('<h3>Link tải map</h3><a class="btn" href="'+esc(j.u)+'" target="_blank" rel="noopener">⬇ Mở link tải</a>');loadC()})});
 /* ---- đếm lượt tải · đánh giá sao ---- */
 function refresh(k){document.querySelectorAll(".dlc,.rate").forEach(function(el){if(el.dataset.k!==k)return;if(el.classList.contains("dlc"))el.textContent="⬇ "+(ST.dl[k]||0);else el.outerHTML=rateHtml(k)})}
@@ -1188,13 +1168,13 @@ function pReq(){P.innerHTML='<div class="cf"><p class="mt">Điền xong bấm g�
  $("rs").onclick=function(){var c=$("rc").value.trim();if(c.length<5){msg("rm","Hãy nhập nội dung (ít nhất 5 ký tự).");return}
   msg("rm","");toMsgr("💡 GÓP Ý TỪ WEB\nLoại: "+$("rk").value+"\nTên: "+($("rn").value.trim()||"Ẩn danh")+"\nNội dung: "+c.slice(0,600),"rx");$("rc").value=""}}
 function pSub(){
- var f=U?'<div class="cf"><p class="mt">Đăng với tên <b>'+esc(U.name)+'</b>. Map hiện ngay ở mục «Map cộng đồng» kèm tên bạn. Đăng thành công +⚡'+CF.postRew+' (tối đa '+CF.postRewMax+' lần/ngày, đăng tối đa 5 map/ngày). Map sai link hoặc vi phạm sẽ bị gỡ.</p><div class="r2"><label>Tên map<input id="sn" maxlength="80"></label><label>Số người<select id="sp">'+sel([2,3,4,5,6,7,8])+'</select></label></div><div class="r2"><label>Độ khó<select id="sd">'+sel(DIFF)+'</select></label><label>Cỡ map<select id="ss">'+sel(SZ)+'</select></label></div><label>Link tải (MediaFire, Drive, Mega…)<input id="su" type="url" placeholder="https://"></label><label>Link ảnh map (nên có, dán link ảnh trực tiếp)<input id="si" type="url" placeholder="https://"></label><div class="cr"><button class="btn" id="sg" type="button">⭐ Đăng map</button></div><p class="mt" id="sm"></p></div>'
-  :'<div class="cf"><p class="mt">'+(ACC_API?"Bạn cần đăng nhập để đăng map. Map sẽ hiện ngay, kèm tên bạn và số lượt tải.":"Tính năng đăng nhập chưa được bật (chưa điền ACC_API).")+'</p>'+(ACC_API?'<div><button class="btn" id="sl" type="button">🔐 Đăng nhập</button></div>':"")+'</div>';
+ var f=ACC_API?'<div class="cf"><p class="mt">Không cần đăng nhập. Map hiện ngay ở mục «Map cộng đồng» kèm tên bạn nhập. Đăng thành công +⚡'+CF.postRew+' (tối đa '+CF.postRewMax+' lần/ngày, đăng tối đa 5 map/ngày). Map sai link hoặc vi phạm sẽ bị gỡ.</p><div class="r2"><label>Tên người đóng góp<input id="sb" maxlength="40"></label><label>Tên map<input id="sn" maxlength="80"></label></div><div class="r2"><label>Số người<select id="sp">'+sel([2,3,4,5,6,7,8])+'</select></label><label>Độ khó<select id="sd">'+sel(DIFF)+'</select></label><label>Cỡ map<select id="ss">'+sel(SZ)+'</select></label></div><label>Link tải (MediaFire, Drive, Mega…)<input id="su" type="url" placeholder="https://"></label><label>Link ảnh map (nên có, dán link ảnh trực tiếp)<input id="si" type="url" placeholder="https://"></label><div class="cr"><button class="btn" id="sg" type="button">⭐ Đăng map</button></div><p class="mt" id="sm"></p></div>':'<p class="mt">Tính năng chưa được bật (chưa điền ACC_API).</p>';
  var L=CMAPS.map(function(m){return'<div class="nw"><b>'+esc(m.t)+'</b> <span class="by">'+(m.cid?cmBy(m):"👤 "+esc(m.by))+" · "+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+'</span>'+(m.cid?'<div class="dlx">⬇ <b>'+(m.dl||0)+'</b> lượt tải · hôm nay <b>+'+(m.dl1||0)+'</b> · 7 ngày <b>+'+(m.dl7||0)+'</b></div>'+cmAct(m):'<br><a class="cb dlb" data-t="'+esc(m.t)+'" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a>')+'</div>'}).join("");
  P.innerHTML=f+'<h3 class="sh">🌟 Map cộng đồng đã đăng ('+CMAPS.length+')</h3>'+(L||'<p class="mt">Chưa có map nào. Hãy là người đầu tiên!</p>');
- if(!U)return;$("sg").onclick=function(){var t=$("sn").value.trim(),u=$("su").value.trim(),im=$("si").value.trim();
-  if(t.length<2){msg("sm","Nhập tên map.");return}if(!http(u)){msg("sm","Link tải phải bắt đầu bằng http:// hoặc https://");return}if(im&&!http(im)){msg("sm","Link ảnh chưa đúng.");return}
-  msg("sm","Đang đăng…");call("submit",{t:t,p:$("sp").value,d:$("sd").value,s:$("ss").value,u:u,img:im}).then(function(j){if(!j.ok){msg("sm",j.err||"Không đăng được");return}EN=j.en;chip();toast("Đã đăng map ✓"+(j.reward?" +⚡"+j.reward:""));loadC()})}}
+ if(!ACC_API)return;$("sb").value=BY;$("sg").onclick=function(){var by=$("sb").value.trim(),t=$("sn").value.trim(),u=$("su").value.trim(),im=$("si").value.trim();
+  if(by.length<2||t.length<2){msg("sm","Nhập tên người đóng góp và tên map.");return}if(!http(u)){msg("sm","Link tải phải bắt đầu bằng http:// hoặc https://");return}if(im&&!http(im)){msg("sm","Link ảnh chưa đúng.");return}
+  BY=by;try{localStorage.setItem("g_by",by)}catch(x){}
+  msg("sm","Đang đăng…");call("submit",{by:by,t:t,p:$("sp").value,d:$("sd").value,s:$("ss").value,u:u,img:im}).then(function(j){if(!j.ok){msg("sm",j.err||"Không đăng được");return}setE(j);toast("Đã đăng map ✓"+(j.reward?" +⚡"+j.reward:""));loadC()})}}
 function cList(){var a=ST.cmt.slice().sort(function(x,y){return y.ts-x.ts}).slice(0,100);
  return a.length?a.map(function(x){return'<div class="nw"><small><b>'+esc(x.ten||"Ẩn danh")+"</b> · "+esc(x.map||"Chung")+" · "+ft(x.ts)+"</small><p>"+esc(x.noidung)+"</p></div>"}).join(""):'<p class="mt">Chưa có bình luận nào. Hãy là người đầu tiên!</p>'}
 function ft(t){var d=new Date(+t||0);return d.toLocaleDateString("vi-VN")+" "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
