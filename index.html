@@ -415,6 +415,34 @@ body.hc select{cursor:pointer!important}
 .sendrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 .nw .sendrow .cb{padding:.4rem .9rem;font-size:.9rem;margin-top:0}
 .clist{max-height:560px;overflow:auto;padding-right:4px}
+
+/* ===== LIVE TIKTOK ===== */
+#live{--k:#ff2d55}
+.lvbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+.lvcount{font:700 .95rem var(--head);color:var(--mute)}.lvcount b{color:#ff2d55}
+.lvgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:6px 0 18px}
+.lvcard{position:relative;border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:14px 14px 12px;display:flex;flex-direction:column;gap:8px;transition:transform .25s,border-color .25s,box-shadow .25s}
+.lvcard:hover{transform:translateY(-5px);border-color:#ff2d55;box-shadow:0 16px 34px -18px #ff2d55}
+.lvon{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;font:800 .78rem var(--head);letter-spacing:.08em;color:#fff;background:#ff2d55;border-radius:99px;padding:.15rem .7rem}
+.lvon::before{content:"";width:8px;height:8px;border-radius:50%;background:#fff;animation:lvp 1.2s ease-in-out infinite}
+@keyframes lvp{50%{opacity:.25;transform:scale(.7)}}
+.lvcard h3{margin:0;font:700 1.05rem/1.3 var(--body);overflow-wrap:anywhere}
+.lvu{color:var(--c);font-weight:700;overflow-wrap:anywhere}
+.lvmeta{color:var(--mute);font-size:.85rem}
+.lvact{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.lvact .btn{flex:1;text-align:center;font-size:.9rem;padding:.5rem .8rem;background:linear-gradient(135deg,#ff2d55,var(--v))}
+.lvact .cp{font:700 .8rem var(--body);padding:.42rem .65rem;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer}
+.lvact .cp:hover{border-color:var(--c);color:var(--c)}
+.lvact .cp.end:hover,.lvact .cp.adm:hover{border-color:#ff5b6e;color:#ff5b6e}
+.lvempty{grid-column:1/-1;text-align:center;color:var(--mute);padding:26px 0;border:1px dashed var(--line);border-radius:14px}
+.lvform{border:1px solid var(--line);border-radius:16px;background:rgba(20,16,42,.6);padding:16px;margin:8px 0 6px}
+.lvform[hidden]{display:none}
+.lvform h3{margin:0 0 4px;font:700 1.1rem var(--head);color:var(--c)}
+.lvform .cf{margin:10px 0 0}
+.lvnote{color:var(--mute);font-size:.88rem;margin:6px 0 0}
+:root[data-theme=light] .lvform{background:rgba(255,255,255,.75)}
+:root[data-theme=light] .lvact .btn{color:#fff}
+@media (max-width:760px){.lvgrid{grid-template-columns:1fr}}
 </style>
 <style>
 .accchip{position:fixed;left:14px;bottom:14px;z-index:9991;display:flex;align-items:center;gap:6px;font:700 .95rem var(--body);padding:.4rem .9rem;border-radius:99px;border:1px solid var(--c);background:var(--panel);color:var(--text);cursor:pointer;box-shadow:0 8px 24px -10px #000}
@@ -436,7 +464,7 @@ body.hc select{cursor:pointer!important}
 <canvas id="fx" aria-hidden="true"></canvas>
 <div class="glow" id="glow" aria-hidden="true"></div>
 <div id="prog" aria-hidden="true"></div>
-<nav class="topnav" id="topnav" aria-label="Menu chính"><div class="tn"><a class="brand" id="brand" href="#top">NAM HOÀNG</a><button class="burger" id="burger" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="nl">☰</button><ul id="nl"><li class="sli"><div class="sbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="gs" type="search" placeholder="Tìm kiếm… ( / )" autocomplete="off" aria-label="Tìm kiếm nội dung trang"><div class="sres" id="sres" role="listbox"></div></div></li><li><a class="nl" href="#top">Trang chủ</a></li><li><a class="nl" href="#me">Liên hệ</a></li><li><a class="nl" href="#community">Cộng đồng</a></li><li><a class="nl" href="#games">Game</a></li><li><a class="nl" href="#donate">Hỗ trợ</a></li><li><button class="themebtn" id="theme" type="button" aria-label="Chuyển giao diện sáng hoặc tối" title="Sáng / Tối"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7L7 17M17 7l1.7-1.7"/></g></svg></button></li></ul></div></nav>
+<nav class="topnav" id="topnav" aria-label="Menu chính"><div class="tn"><a class="brand" id="brand" href="#top">NAM HOÀNG</a><button class="burger" id="burger" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="nl">☰</button><ul id="nl"><li class="sli"><div class="sbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="gs" type="search" placeholder="Tìm kiếm… ( / )" autocomplete="off" aria-label="Tìm kiếm nội dung trang"><div class="sres" id="sres" role="listbox"></div></div></li><li><a class="nl" href="#top">Trang chủ</a></li><li><a class="nl" href="#me">Liên hệ</a></li><li><a class="nl" href="#community">Cộng đồng</a></li><li><a class="nl" href="#games">Game</a></li><li><a class="nl" href="#live">Live</a></li><li><a class="nl" href="#donate">Hỗ trợ</a></li><li><button class="themebtn" id="theme" type="button" aria-label="Chuyển giao diện sáng hoặc tối" title="Sáng / Tối"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7L7 17M17 7l1.7-1.7"/></g></svg></button></li></ul></div></nav>
 <button class="totop" id="totop" type="button" aria-label="Lên đầu trang">↑</button>
 <!-- ============ BANNER GIỜ + NHẠC ============ -->
 <header class="hero" id="top"><div class="wrap">
@@ -483,8 +511,25 @@ body.hc select{cursor:pointer!important}
     <div class="chips" id="chips"><div id="chipbox" role="list"></div></div>
     <div class="gpanel" id="gp"><div id="gcontent"></div></div>
   </section>
+  <!-- ============ LIVE TIKTOK ============ -->
+  <section class="sec" id="live" data-n="04">
+    <div class="rv"><span class="tag">// Trực tiếp</span><h2>Live TikTok</h2><p style="color:var(--mute);margin:0">Đang live game trên TikTok? Chia sẻ ở đây để mọi người vào xem và cổ vũ cùng bạn.</p></div>
+    <div class="lvbar"><span class="lvcount" id="lvcount" aria-live="polite"></span><button class="cb" id="lvrf" type="button">🔄 Làm mới</button><button class="cb ct" id="lvtog" type="button" aria-expanded="false" aria-controls="lvform">📡 Chia sẻ live của tôi</button></div>
+    <div class="lvform" id="lvform" hidden>
+      <h3>📡 Chia sẻ live của bạn</h3>
+      <p class="lvnote">Hãy <b>bật live trên TikTok trước</b>, rồi dán link hoặc @username vào đây. Người xem bấm nút sẽ mở thẳng phòng live của bạn trên TikTok.</p>
+      <div class="cf">
+        <div class="r2"><label>Link TikTok hoặc @username<input id="lvu" maxlength="120" placeholder="@tenban hoặc tiktok.com/@tenban" autocomplete="off"></label><label>Bạn đang chơi game gì?<select id="lvg"></select></label></div>
+        <label>Tiêu đề live<input id="lvt" maxlength="60" placeholder="VD: Solo map War Pro 9, ai vào thách đấu"></label>
+        <div><button class="btn" id="lvsend" type="button">🔴 Đăng live</button></div>
+        <p class="mt" id="lvmsg" aria-live="polite"></p>
+      </div>
+    </div>
+    <div class="lvgrid" id="lvgrid"></div>
+    <p class="lvnote">TikTok không cho nhúng phòng live vào web khác, nên bấm «Xem live» sẽ mở TikTok. Live tự ẩn sau <span id="lvttl"></span> giờ hoặc khi người đăng bấm «Kết thúc».</p>
+  </section>
   <!-- ============ DONATE ============ -->
-  <section class="sec rv" id="donate" data-n="04">
+  <section class="sec rv" id="donate" data-n="05">
     <span class="tag">// Hỗ trợ</span>
     <h2>💖 Hỗ trợ tôi</h2>
     <div class="donate-card hud">
@@ -603,6 +648,15 @@ var API_URL="https://script.google.com/macros/s/AKfycbyJsmgMSIlLinS16Yhjqp9YYHWx
 var FORM_KEY="";
 var CONTACT_EMAIL="";
 var KHACH_DIR="mapkhach/", KHACH_EXT=".jpg";
+/* ---- LIVE TIKTOK ----
+   LIVE_API = link Web App của script google-apps-script-live.gs (để khách tự đăng live, mọi người cùng thấy). Trống = chỉ hiện danh sách LIVES bên dưới.
+   LIVE_TTL_H = số giờ một live tự ẩn khỏi danh sách nếu người đăng quên bấm «Kết thúc». */
+var LIVE_API="";
+var LIVE_TTL_H=6;
+/* Live do chính bạn thêm tay (luôn hiện, kể cả khi chưa có LIVE_API). u = username TikTok (không cần @), t = tiêu đề, g = game */
+var LIVES=[
+  /* {u:"user6002956066196",t:"Chơi Red Alert 2 cùng anh em",g:"Red Alert 2"}, */
+];
 /* ---- NĂNG LƯỢNG THEO IP (xem google-apps-script-tai-khoan.gs) ----
    ACC_API = link Web App của script năng lượng (khác API_URL). Trống = tắt. Không cần đăng nhập. */
 var ACC_API="https://script.google.com/macros/s/AKfycbzwSorYaKeoFEKdEJlCyNmGvFNksHbm6aBzxPhuFjvaZNejRP8V6m7VFGGrkCpTY_Fa/exec";
@@ -933,7 +987,7 @@ if(!RM){var io3=new IntersectionObserver(function(es){es.forEach(function(e){if(
 /* Hiệu ứng kéo trang */
 var prog=$("prog"),tt=$("totop"),hero=document.querySelector(".hero .wrap"),secs=Array.from(document.querySelectorAll(".sec")),decos=[];
 secs.forEach(function(s,k){for(var j=0;j<2;j++){var d=mk("i","deco",s);d.style.cssText="--s:"+(j?56:90)+"px;left:"+(j?8+k*9:72-k*8)+"%;top:"+(j?72:10)+"%";d.dataset.sp=j?-.12:.18;decos.push(d)}});
-var ids=[["top","Trang chủ"],["me","Liên hệ"],["community","Cộng đồng"],["games","Game"],["donate","Hỗ trợ"]],nav=mk("nav","dots");nav.setAttribute("aria-label","Điều hướng nhanh");
+var ids=[["top","Trang chủ"],["me","Liên hệ"],["community","Cộng đồng"],["games","Game"],["live","Live"],["donate","Hỗ trợ"]],nav=mk("nav","dots");nav.setAttribute("aria-label","Điều hướng nhanh");
 var dots=ids.map(function(x){var a=mk("a","dt",nav);a.href="#"+x[0];a.setAttribute("aria-label",x[1]);a.dataset.l=x[1];return a});
 var tick=0;
 function upd(){tick=0;var y=scrollY,H=document.documentElement.scrollHeight-innerHeight;
@@ -1051,6 +1105,7 @@ function build(){var L=[];
  L.push({k:"Liên hệ",t:CFG.name,s:CFG.bio,sec:"me"});
  CFG.socials.forEach(function(x){L.push({k:"Liên hệ",t:x.n,s:x.u,sec:"me"})});
  tracks.forEach(function(t,i){L.push({k:"Nhạc",t:t.t,s:"",tr:i})});
+ L.push({k:"Live",t:"Live TikTok",s:"Xem và chia sẻ live game trên TikTok",sec:"live"});
  L.push({k:"Hỗ trợ",t:"Ủng hộ cà phê",s:"Quét mã QR để ủng hộ",sec:"donate"});
  return L}
 function hl(t,q){var n=norm(t);if(n.length!==t.length)return esc(t);var i=n.indexOf(q);return i<0?esc(t):esc(t.slice(0,i))+"<mark>"+esc(t.slice(i,i+q.length))+"</mark>"+esc(t.slice(i+q.length))}
@@ -1223,6 +1278,72 @@ render("news");load();init2();
 /* ---- mở thẳng map từ link chia sẻ (?map=Tên map) ---- */
 var qm=new URLSearchParams(location.search).get("map");
 if(qm)setTimeout(function(){var g=$("gs");g.value=qm;g.dispatchEvent(new Event("input"));var r=document.querySelector(".sr");if(r)r.click()},3200);
+})();
+</script>
+<script>
+/* ===== LIVE TIKTOK: chia sẻ và xem live cùng nhau ===== */
+(function(){
+var G=$("lvgrid"),CNT=$("lvcount"),FORM=$("lvform"),TOG=$("lvtog"),MSG=$("lvmsg"),
+    TTL=(typeof LIVE_TTL_H==="number"&&LIVE_TTL_H>0)?LIVE_TTL_H:6,ON=!!(typeof LIVE_API==="string"&&LIVE_API),
+    NEW=[],cache=[],last=0,busy=false;
+$("lvttl").textContent=TTL;
+function toast2(t){var e=document.createElement("div");e.className="toast";e.textContent=t;document.body.appendChild(e);setTimeout(function(){e.remove()},2600)}
+function say(t){MSG.textContent=t||""}
+function me(){try{var t=localStorage.getItem("g_lvtok");if(!t){t="t"+Date.now().toString(36)+Math.random().toString(36).slice(2,10);localStorage.setItem("g_lvtok",t)}return t}catch(e){return"anon"}}
+function admKey(){try{return localStorage.getItem("g_ak")||""}catch(e){return""}}
+function parseUser(s){s=String(s||"").trim();var m=s.match(/tiktok\.com\/@([A-Za-z0-9._]{2,24})/i);if(m)s=m[1];else s=s.replace(/^@/,"");
+  return/^[A-Za-z0-9._]{2,24}$/.test(s)?s:""}
+function liveUrl(u){return"https://www.tiktok.com/@"+encodeURIComponent(u)+"/live"}
+function ago(ts){var m=Math.max(0,Math.round((Date.now()-ts)/60000));return m<1?"vừa xong":m<60?m+" phút trước":Math.floor(m/60)+" giờ "+(m%60)+" phút trước"}
+function fixed(){return LIVES.map(function(x,i){return{id:"fx"+i,u:parseUser(x.u),t:x.t||"",g:x.g||"",ts:0,fixed:1}}).filter(function(x){return x.u})}
+function fresh(a){var lim=Date.now()-TTL*3600000;return a.filter(function(x){return x.fixed||(x.ts>lim&&!x.end)})}
+function all(){var seen=Object.create(null),out=[];
+  fixed().concat(fresh(cache),fresh(NEW)).forEach(function(x){var k=x.u.toLowerCase();if(seen[k]){if(!x.fixed&&seen[k].fixed)return;if(x.ts<=seen[k].ts)return}seen[k]=x});
+  Object.keys(seen).forEach(function(k){out.push(seen[k])});
+  return out.sort(function(a,b){return (b.ts||9e15)-(a.ts||9e15)})}
+function draw(){var a=all(),adm=!!admKey();
+  CNT.innerHTML=a.length?'<b>🔴 '+a.length+'</b> live đang được chia sẻ':'Chưa có live nào';
+  G.innerHTML=a.length?a.map(function(x){var mine=!x.fixed&&(x.mine||x.tok===me());
+    return'<article class="lvcard"><span class="lvon">LIVE</span><h3>'+esc(x.t||"Đang live trên TikTok")+'</h3><div><span class="lvu">@'+esc(x.u)+'</span></div>'
+    +'<div class="lvmeta">'+(x.g?"🎮 "+esc(x.g)+" · ":"")+(x.fixed?"Do Nam Hoàng chia sẻ":(x.by?"Đăng bởi "+esc(x.by)+" · ":"")+ago(x.ts))+'</div>'
+    +'<div class="lvact"><a class="btn" href="'+esc(liveUrl(x.u))+'" target="_blank" rel="noopener noreferrer">▶ Xem live</a><button class="cp" type="button" data-a="cp" data-u="'+esc(x.u)+'">🔗 Chép link</button>'
+    +(mine?'<button class="cp end" type="button" data-a="end" data-id="'+esc(x.id)+'">⏹ Kết thúc</button>':"")
+    +(adm&&!x.fixed&&ON?'<button class="cp adm" type="button" data-a="del" data-id="'+esc(x.id)+'">🗑 Xóa</button>':"")+'</div></article>'}).join("")
+   :'<div class="lvempty">Chưa có ai đang live. Bật live trên TikTok rồi bấm «Chia sẻ live của tôi» để là người đầu tiên!</div>'}
+function post(o){o.tok=me();return fetch(LIVE_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)}).then(function(r){return r.json()})}
+function load(force){if(!ON){draw();return Promise.resolve()}
+  if(busy||(!force&&Date.now()-last<8000))return Promise.resolve();busy=true;
+  return fetch(LIVE_API+"?live=1&tok="+encodeURIComponent(me())+"&_="+Date.now()).then(function(r){return r.json()}).then(function(j){
+    if(j&&j.lives){cache=j.lives.map(function(x){x.u=parseUser(x.u);x.ts=+x.ts||0;return x}).filter(function(x){return x.u});
+      NEW=NEW.filter(function(n){return !cache.some(function(c){return c.id===n.id})&&Date.now()-n.ts<90000})}
+  }).catch(function(){}).then(function(){busy=false;last=Date.now();draw()})}
+TOG.onclick=function(){var o=FORM.hidden;FORM.hidden=!o;TOG.setAttribute("aria-expanded",o);TOG.textContent=o?"✕ Đóng":"📡 Chia sẻ live của tôi";if(o)$("lvu").focus()};
+$("lvrf").onclick=function(){load(true);toast2("Đã làm mới danh sách")};
+$("lvg").innerHTML=CFG.games.map(function(g){return"<option>"+esc(g.name)+"</option>"}).join("")+"<option>Game khác</option>";
+try{var sv=localStorage.getItem("g_lvu");if(sv)$("lvu").value=sv}catch(e){}
+$("lvsend").onclick=function(){var u=parseUser($("lvu").value),t=$("lvt").value.trim().slice(0,60),g=$("lvg").value;
+  if(!u){say("Chưa đúng. Nhập @username TikTok hoặc dán link dạng tiktok.com/@tenban (link rút gọn vm.tiktok.com thì hãy nhập username).");return}
+  if(t.length<3){say("Hãy nhập tiêu đề live (ít nhất 3 ký tự).");return}
+  try{var L=+localStorage.getItem("g_lvcool")||0;if(Date.now()-L<30000){say("Bạn đăng hơi nhanh, đợi chút nhé.");return}localStorage.setItem("g_lvcool",Date.now());localStorage.setItem("g_lvu",u)}catch(e){}
+  var row={id:"l"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),u:u,t:t,g:g,by:u,ts:Date.now(),tok:me()};
+  if(!ON){say("");toast2("Chưa bật LIVE_API nên live chỉ hiện trên máy bạn.");NEW.push(row);draw();return}
+  say("Đang đăng…");post({op:"add",row:row}).then(function(j){
+    if(!j||!j.ok){say((j&&j.err)||"Không đăng được, thử lại sau.");return}
+    say("");row.id=j.id||row.id;NEW.push(row);$("lvt").value="";FORM.hidden=true;TOG.setAttribute("aria-expanded","false");TOG.textContent="📡 Chia sẻ live của tôi";
+    toast2("Đã đăng live ✓");draw();load(true)}).catch(function(){say("Không kết nối được máy chủ LIVE_API.")})};
+G.addEventListener("click",function(e){var b=e.target.closest("button[data-a]");if(!b)return;var a=b.dataset.a;
+  if(a==="cp"){var url=liveUrl(b.dataset.u);try{navigator.clipboard.writeText(url).then(function(){toast2("Đã chép link live ✓")},function(){window.prompt("Sao chép link:",url)})}catch(x){window.prompt("Sao chép link:",url)}return}
+  var id=b.dataset.id;
+  if(a==="end"){if(!confirm("Kết thúc và gỡ live này khỏi danh sách?"))return;
+    NEW.forEach(function(x){if(x.id===id)x.end=1});cache.forEach(function(x){if(x.id===id)x.end=1});draw();
+    if(ON)post({op:"end",id:id}).then(function(j){if(!j||!j.ok)toast2((j&&j.err)||"Chưa gỡ được trên máy chủ");load(true)}).catch(function(){});
+    return}
+  if(a==="del"){if(!confirm("Xóa live này?"))return;
+    post({op:"del",id:id,ak:admKey()}).then(function(j){toast2(j&&j.ok?"Đã xóa ✓":((j&&j.err)||"Không xóa được"));load(true)}).catch(function(){})}});
+var sec=$("live"),vis=false;
+if("IntersectionObserver" in window){new IntersectionObserver(function(es){vis=es[0].isIntersecting;if(vis)load(false)},{threshold:.05}).observe(sec)}else vis=true;
+setInterval(function(){if(vis&&!document.hidden)load(true);else draw()},30000);
+draw();load(true);
 })();
 </script>
 </body>
