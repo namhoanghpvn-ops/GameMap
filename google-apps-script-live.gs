@@ -74,13 +74,9 @@ function doPost(e) {
     var x = all.filter(function (y) { return y.id === String(d.id || ""); })[0];
     if (!x) return out_({ ok: false, err: "Không tìm thấy live này (có thể đã hết hạn)." });
 
-    if (d.op === "end") {
-      if (x.tok !== tok) return out_({ ok: false, err: "Chỉ người đăng mới được kết thúc live này." });
-      sh.getRange(x.row, 8).setValue(true);
-      return out_({ ok: true });
-    }
-    if (d.op === "del") {
-      if (!d.ak || d.ak !== ADMIN_KEY) return out_({ ok: false, err: "Sai khóa admin." });
+    // Chỉ Admin được kết thúc live sớm (người đăng và người xem đều không thể). Live còn lại tự hết hạn sau TTL_H giờ.
+    if (d.op === "end" || d.op === "del") {
+      if (!d.ak || d.ak !== ADMIN_KEY) return out_({ ok: false, err: "Chỉ Admin mới được kết thúc live." });
       sh.getRange(x.row, 8).setValue(true);
       return out_({ ok: true });
     }

@@ -526,7 +526,7 @@ body.hc select{cursor:pointer!important}
       </div>
     </div>
     <div class="lvgrid" id="lvgrid"></div>
-    <p class="lvnote">TikTok không cho nhúng phòng live vào web khác, nên bấm «Xem live» sẽ mở TikTok. Live tự ẩn sau <span id="lvttl"></span> giờ hoặc khi người đăng bấm «Kết thúc».</p>
+    <p class="lvnote">TikTok không cho nhúng phòng live vào web khác, nên bấm «Xem live» sẽ mở TikTok. Live tự ẩn sau <span id="lvttl"></span> giờ kể từ lúc đăng, hoặc khi Admin kết thúc.</p>
   </section>
   <!-- ============ DONATE ============ -->
   <section class="sec rv" id="donate" data-n="05">
@@ -1169,7 +1169,8 @@ function call(op,d){d=d||{};d.op=op;d.ak=AK;if(!ACC_API)return Promise.resolve({
   return fetch(ACC_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)}).then(function(r){return r.text()}).then(function(t){try{return JSON.parse(t)}catch(x){return{ok:false,err:"Máy chủ không trả về JSON: link ACC_API sai, hoặc lúc triển khai chưa chọn «Bất kỳ ai» được truy cập, hoặc chưa cấp quyền cho script."}}},function(){return{ok:false,err:"Không gọi được ACC_API (sai link hoặc mạng/trình chặn quảng cáo chặn script.google.com)."}})},
   function(){return{ok:false,err:"Không lấy được IP của bạn (ipify/cloudflare bị chặn). Tắt trình chặn quảng cáo/VPN rồi thử lại."}})}
 function chip(){CH.hidden=!ACC_API;CH.innerHTML="⚡ <b>"+EN.n+"</b>";$("accnote").textContent=ACC_API?"Bạn có ⚡"+EN.n+" năng lượng (tự nhận diện theo IP, tải 1 map tốn ⚡"+CF.cost+", mỗi ngày nhận ⚡"+CF.daily+"). [bản web v5]":""}
-function setE(j){if(j.user)U=j.user;if(j.en)EN=j.en;if(j.cfg)CF=j.cfg;chip()}
+function setE(j){if(j.user)U=j.user;if(j.en)EN=j.en;if(j.cfg)CF=j.cfg;chip();try{document.dispatchEvent(new Event("accchange"))}catch(x){}}
+window.isLiveAdmin=function(){return !!(U&&U.admin)};
 function modal(h){var o=$("amod");if(o)o.remove();o=document.createElement("div");o.id="amod";o.className="amod";o.innerHTML='<div class="abox"><button class="ax" type="button" aria-label="Đóng">✕</button>'+h+'</div>';o.onclick=function(e){if(e.target===o||e.target.classList.contains("ax"))o.remove()};document.body.appendChild(o);return o}
 function left(){var m=Math.max(0,Math.round((EN.resetAt-Date.now())/60000));return Math.floor(m/60)+"g "+m%60+"p"}
 CH.onclick=function(){modal('<h3>⚡ Năng lượng của bạn</h3><p class="big">⚡ <b>'+EN.n+'</b></p><p class="mt">Tự nhận diện theo IP. Reset về '+CF.daily+' lúc 00:00 (còn '+left()+').</p><p class="mt">• Tải 1 map: −⚡'+CF.cost+' (mở khóa 1 lần, tải lại miễn phí)<br>• Online: +⚡1 mỗi 10 phút (hôm nay '+EN.onl+'/'+CF.onlMax+')<br>• Đăng map: +⚡'+CF.postRew+' mỗi lần (hôm nay '+EN.post+'/'+CF.postRewMax+' lần)</p><p class="mt"><small>Mã của bạn: '+esc(U?U.id:"chưa kết nối")+'</small> <button class="cp" id="adm" type="button">🛡 '+(U&&U.admin?"Admin":"Đăng nhập")+'</button></p>'+(U?"":'<p class="mt" style="color:var(--p)">⚠ Chưa kết nối được máy chủ năng lượng: '+esc(ERR||"đang kết nối…")+'<br>Kiểm tra ACC_API đã đúng link /exec và đã «Triển khai phiên bản mới» bằng file .gs mới nhất chưa. Tắt trình chặn quảng cáo nếu có (api.ipify.org bị chặn sẽ không lấy được IP).</p>')+'<button class="btn" id="rtry" type="button">↻ Thử kết nối lại</button>');var ad=$("adm");if(ad)ad.onclick=function(){var k=prompt("Đăng nhập admin: nhập mã admin (để trống = thoát admin):",AK);if(k===null)return;AK=k.trim();try{localStorage.setItem("g_ak",AK)}catch(x){}$("amod").remove();call("me").then(function(j){if(j.ok)setE(j);if(!j.ok)toast("Đăng nhập thất bại");else if(j.user&&j.user.admin)toast("Đăng nhập thành công ✓ Bạn đã là Admin");else if(!AK)toast("Đã thoát admin");else if(j.user&&j.user.admin===undefined)toast("Đăng nhập thất bại");else toast("Đăng nhập thất bại");loadC();var cl0=$("cl");if(cl0&&cur==="cmt")cl0.innerHTML=cList()})};var r=$("rtry");if(r)r.onclick=function(){init2();$("amod").remove()}};
@@ -1301,14 +1302,13 @@ function all(){var seen=Object.create(null),out=[];
   fixed().concat(fresh(cache),fresh(NEW)).forEach(function(x){var k=x.u.toLowerCase();if(seen[k]){if(!x.fixed&&seen[k].fixed)return;if(x.ts<=seen[k].ts)return}seen[k]=x});
   Object.keys(seen).forEach(function(k){out.push(seen[k])});
   return out.sort(function(a,b){return (b.ts||9e15)-(a.ts||9e15)})}
-function draw(){var a=all(),adm=!!admKey();
+function draw(){var a=all(),adm=!!(window.isLiveAdmin&&window.isLiveAdmin());
   CNT.innerHTML=a.length?'<b>🔴 '+a.length+'</b> live đang được chia sẻ':'Chưa có live nào';
-  G.innerHTML=a.length?a.map(function(x){var mine=!x.fixed&&(x.mine||x.tok===me());
+  G.innerHTML=a.length?a.map(function(x){
     return'<article class="lvcard"><span class="lvon">LIVE</span><h3>'+esc(x.t||"Đang live trên TikTok")+'</h3><div><span class="lvu">@'+esc(x.u)+'</span></div>'
     +'<div class="lvmeta">'+(x.g?"🎮 "+esc(x.g)+" · ":"")+(x.fixed?"Do Nam Hoàng chia sẻ":(x.by?"Đăng bởi "+esc(x.by)+" · ":"")+ago(x.ts))+'</div>'
     +'<div class="lvact"><a class="btn" href="'+esc(liveUrl(x.u))+'" target="_blank" rel="noopener noreferrer">▶ Xem live</a><button class="cp" type="button" data-a="cp" data-u="'+esc(x.u)+'">🔗 Chép link</button>'
-    +(mine?'<button class="cp end" type="button" data-a="end" data-id="'+esc(x.id)+'">⏹ Kết thúc</button>':"")
-    +(adm&&!x.fixed&&ON?'<button class="cp adm" type="button" data-a="del" data-id="'+esc(x.id)+'">🗑 Xóa</button>':"")+'</div></article>'}).join("")
+    +(adm&&!x.fixed&&ON?'<button class="cp end" type="button" data-a="end" data-id="'+esc(x.id)+'">⏹ Kết thúc live (Admin)</button>':"")+'</div></article>'}).join("")
    :'<div class="lvempty">Chưa có ai đang live. Bật live trên TikTok rồi bấm «Chia sẻ live của tôi» để là người đầu tiên!</div>'}
 function post(o){o.tok=me();return fetch(LIVE_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)}).then(function(r){return r.json()})}
 function load(force){if(!ON){draw();return Promise.resolve()}
@@ -1334,12 +1334,10 @@ $("lvsend").onclick=function(){var u=parseUser($("lvu").value),t=$("lvt").value.
 G.addEventListener("click",function(e){var b=e.target.closest("button[data-a]");if(!b)return;var a=b.dataset.a;
   if(a==="cp"){var url=liveUrl(b.dataset.u);try{navigator.clipboard.writeText(url).then(function(){toast2("Đã chép link live ✓")},function(){window.prompt("Sao chép link:",url)})}catch(x){window.prompt("Sao chép link:",url)}return}
   var id=b.dataset.id;
-  if(a==="end"){if(!confirm("Kết thúc và gỡ live này khỏi danh sách?"))return;
-    NEW.forEach(function(x){if(x.id===id)x.end=1});cache.forEach(function(x){if(x.id===id)x.end=1});draw();
-    if(ON)post({op:"end",id:id}).then(function(j){if(!j||!j.ok)toast2((j&&j.err)||"Chưa gỡ được trên máy chủ");load(true)}).catch(function(){});
-    return}
-  if(a==="del"){if(!confirm("Xóa live này?"))return;
-    post({op:"del",id:id,ak:admKey()}).then(function(j){toast2(j&&j.ok?"Đã xóa ✓":((j&&j.err)||"Không xóa được"));load(true)}).catch(function(){})}});
+  if(a==="end"){if(!(window.isLiveAdmin&&window.isLiveAdmin())){toast2("Chỉ Admin mới được kết thúc live");return}
+    if(!confirm("Kết thúc và gỡ live này khỏi danh sách?"))return;
+    post({op:"end",id:id,ak:admKey()}).then(function(j){toast2(j&&j.ok?"Đã kết thúc live ✓":((j&&j.err)||"Không kết thúc được"));load(true)}).catch(function(){toast2("Không kết nối được máy chủ")})}});
+document.addEventListener("accchange",draw);
 var sec=$("live"),vis=false;
 if("IntersectionObserver" in window){new IntersectionObserver(function(es){vis=es[0].isIntersecting;if(vis)load(false)},{threshold:.05}).observe(sec)}else vis=true;
 setInterval(function(){if(vis&&!document.hidden)load(true);else draw()},30000);
