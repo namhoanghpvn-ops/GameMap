@@ -760,7 +760,7 @@ var LIVES=[
 ];
 /* ---- NĂNG LƯỢNG THEO IP (xem google-apps-script-tai-khoan.gs) ----
    ACC_API = link Web App của script năng lượng (khác API_URL). Trống = tắt. Không cần đăng nhập. */
-var ACC_API="https://script.google.com/macros/s/AKfycbz3o4PMpJr7D4usOGXjezY4k2dfV4fYwVfFX5I4ochTBV3O1ason3MFQESYkBfSCmdpGw/exec";
+var ACC_API="https://script.google.com/macros/s/AKfycbzXTVVe4QRtBw_wt7v-thQ5xW2XVA5AxCcNreE107ixCEbc0zTXHyQWubwsk2tXNqXwNQ/exec";
 /* ---- MAP CỘNG ĐỒNG: khách gửi qua Messenger, bạn kiểm duyệt xong thì thêm 1 dòng vào đây (giống MAPS), by = tên người tạo.
    Ảnh: bỏ vào thư mục mapkhach/ trên GitHub, tên file = đúng tên map + .jpg */
 var CMAPS=[
@@ -1428,6 +1428,7 @@ function cosHtml(name,e){var n=esc(name);if(!e||typeof e!=="object")return n;
 function nmH(name){name=String(name||"Ẩn danh");var l=name.trim().toLowerCase(),me=String(BY||"").trim().toLowerCase();return cosHtml(name,me&&l===me?EQ:COS[l])}
 function pubEq(){if(BY&&ACC_API)call("equip",{by:BY,eq:EQ}).then(function(j){if(j&&!j.ok&&j.err)toast(j.err)})}
 function loadCos(){if(!ACC_API)return;call("cos").then(function(j){if(!j||!j.ok||!j.cos)return;var o=Object.create(null);Object.keys(j.cos).forEach(function(k){o[k.toLowerCase()]=j.cos[k]});COS=o;
+ if(j.box&&j.box.forEach){MBX=j.box.slice();if(cur==="box")pBox()}
  if(j.own&&j.own.forEach){var ow={};j.own.forEach(function(id){if(PRICE[id]!==undefined)ow[id]=1});OWN=ow;js_("g_own",OWN);["fr","co","ic"].forEach(function(g){if(EQ[g]&&!OWN[EQ[g]])EQ[g]=""});js_("g_eq",EQ)}
  if(cur==="ppl")render();else if(cur==="cmt"){var l=$("cl");if(l)l.innerHTML=cList()}}).catch(function(){})}
 function shopCard(g,it){var id=it[0],own=OWN[id],on=EQ[g]===id,e={fr:"",co:"",ic:""};e[g]=id;
@@ -1448,7 +1449,8 @@ P.addEventListener("click",function(e){var b=e.target.closest(".shb2");if(!b)ret
   setE(j);OWN[id]=1;js_("g_own",OWN);EQ[g]=id;js_("g_eq",EQ);pubEq();toast("Đã mua ✓ và đang dùng");pShop()})});
 /* ---- map bí ẩn (lấy từ kho map sinh tồn) ---- */
 var MYST=2;
-function mOpened(){var a=jl("g_myst",[]);return Array.isArray(a)?a:[]}
+var MBX=[];
+function mOpened(){var a=jl("g_myst",[]);if(!Array.isArray(a))a=[];var r=MBX.slice();a.forEach(function(t){if(r.indexOf(t)<0)r.push(t)});return r}
 function mapRow(m){var im=m.img||(MAP_DIR+encodeURIComponent(m.t)+MAP_EXT);
  return'<div class="nw"><div class="cmrow"><div class="cmi"><b>'+esc(m.t)+'</b> <span class="by">👥 '+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+'</span><br><a class="cb dlb" data-t="'+esc(m.t)+'" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a> '+tipBtn(m.t)+"</div>"+cmThumb({t:m.t,img:im})+"</div></div>"}
 function pBox(rev){var op=mOpened(),pool=MAPS.filter(function(m){return op.indexOf(m.t)<0});
@@ -1460,10 +1462,10 @@ function pBox(rev){var op=mOpened(),pool=MAPS.filter(function(m){return op.index
  bo.onclick=function(){if(!ACC_API||!U){toast("Đang kết nối máy chủ năng lượng, thử lại sau giây lát");return}
   if(EN.n<MYST){toast("Không đủ năng lượng (cần ⚡"+MYST+", còn ⚡"+EN.n+")");return}
   if(!confirm("Mở hộp bí ẩn tốn ⚡"+MYST+" (bạn còn ⚡"+EN.n+"). Tiếp tục?"))return;
+  var op1=mOpened(),pl0=MAPS.filter(function(m){return op1.indexOf(m.t)<0}),pick=pl0[Math.floor(Math.random()*pl0.length)];if(!pick){toast("Bạn đã mở hết kho map");return}
   bo.disabled=true;var bx=$("mbi");bx.classList.add("shk");
-  call("spend",{kind:"mystery",cost:MYST}).then(function(j){bx.classList.remove("shk");if(!j||!j.ok){bo.disabled=false;toast(spErr(j));return}
-   setE(j);var o2=mOpened(),pl=MAPS.filter(function(m){return o2.indexOf(m.t)<0}),m=pl[Math.floor(Math.random()*pl.length)]||MAPS[Math.floor(Math.random()*MAPS.length)];
-   if(o2.indexOf(m.t)<0)o2.push(m.t);js_("g_myst",o2);pBox(m)})}}
+  call("spend",{kind:"mystery",cost:MYST,map:pick.t}).then(function(j){bx.classList.remove("shk");if(!j||!j.ok){bo.disabled=false;if(/đã mở map này/.test((j&&j.err)||""))loadCos();toast(spErr(j));return}
+   setE(j);var o2=jl("g_myst",[]);if(!Array.isArray(o2))o2=[];if(o2.indexOf(pick.t)<0)o2.push(pick.t);js_("g_myst",o2);if(MBX.indexOf(pick.t)<0)MBX.push(pick.t);pBox(pick)})}}
 /* ---- mẹo phá đảo: lưu chung trong bảng bình luận (tiền tố [MEO]/[LIKE]) nên không cần sửa máy chủ ---- */
 var TP="[MEO]",TL="[LIKE]",TIPT="";
 function myCid(){var c=jl("g_cid","");if(!c){c="u"+Math.random().toString(36).slice(2,10);js_("g_cid",c)}return c}

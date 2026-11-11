@@ -17,9 +17,9 @@ var C={SALT:"doi-chuoi-bi-mat-nay",ADMIN_KEY:"", // ĐẶT 1 MẬT KHẨU DÀI, 
  TZ:"Asia/Ho_Chi_Minh"};
 var H={Users:["id","prov","name","av","day","n","onlSec","onlG","posts","postRew","lastPing"],
  Sessions:["h","uid","exp"],Maps:["id","ts","uid","by","av","t","p","d","s","u","img","st"],Downloads:["ts","uid","mid"],
- Shop:["ts","uid","item","price"],Equip:["uid","by","fr","co","ic","ts"],Boxes:["ts","uid"]};
+ Shop:["ts","uid","item","price"],Equip:["uid","by","fr","co","ic","ts"],Boxes:["ts","uid","map"]};
 var DF=["Dễ","Trung Bình","Khó","Cực Khó","Siêu Cấp"],SZ=["Nhỏ","Vừa","Rộng"];
-function sh(n){var ss=SpreadsheetApp.getActive(),s=ss.getSheetByName(n);if(!s){s=ss.insertSheet(n);s.appendRow(H[n])}return s}
+function sh(n){var ss=SpreadsheetApp.getActive(),s=ss.getSheetByName(n);if(!s){s=ss.insertSheet(n);s.appendRow(H[n])}else if(s.getLastColumn()<H[n].length)s.getRange(1,1,1,H[n].length).setValues([H[n]]);return s}
 function all(n){var v=sh(n).getDataRange().getValues(),h=v.shift();return v.map(function(r,i){var o={_r:i+2};h.forEach(function(k,j){o[k]=r[j]});return o})}
 function row(n,o){return H[n].map(function(k){return o[k]===undefined?"":o[k]})}
 function put(n,o){sh(n).appendRow(row(n,o))}
@@ -48,7 +48,7 @@ function pub(u){var dl={},t0=new Date(en({n:0}).resetAt-864e5).getTime(),now=Dat
  return{ok:true,maps:all("Maps").filter(function(m){return m.st==="on"}).reverse().slice(0,500).map(function(m){var o=dl[m.id]||{a:0,b:0,c:0};
   return{id:m.id,ts:new Date(+m.ts).toISOString(),by:m.by,av:m.av,t:m.t,p:+m.p,d:m.d,s:m.s,img:m.img,dl:o.a,dl1:o.b,dl7:o.c,got:!!got[m.id],own:!!u&&m.uid===u.id}})}}
 function run(d){var op=d.op,u=who(d.ip,op!=="maps");if(op==="maps")return pub(u);
- if(op==="cos"){var cs={};all("Equip").forEach(function(r){if(r.fr||r.co||r.ic)cs[String(r.by).toLowerCase()]={fr:String(r.fr||""),co:String(r.co||""),ic:String(r.ic||"")}});return{ok:true,cos:cs,own:owned(u.id)}}
+ if(op==="cos"){var cs={};all("Equip").forEach(function(r){if(r.fr||r.co||r.ic)cs[String(r.by).toLowerCase()]={fr:String(r.fr||""),co:String(r.co||""),ic:String(r.ic||"")}});return{ok:true,cos:cs,own:owned(u.id),box:all("Boxes").filter(function(r){return r.uid===u.id&&r.map}).map(function(r){return String(r.map)})}}
  roll(u);var res={ok:true},now=Date.now();
  if(op==="ping"){var dt=Math.min(90,Math.max(0,(now-(+u.lastPing||now))/1000));u.lastPing=now;u.onlSec=+u.onlSec+dt;
   var t=Math.min(C.ONL_MAX,Math.floor(u.onlSec/C.ONL_EVERY));if(t>+u.onlG){u.n=+u.n+t-u.onlG;u.onlG=t}}
@@ -65,7 +65,9 @@ function run(d){var op=d.op,u=who(d.ip,op!=="maps");if(op==="maps")return pub(u)
   if(!had){if(+u.n<C.COST)return err("Không đủ năng lượng (cần ⚡"+C.COST+")");u.n=+u.n-C.COST;put("Downloads",{ts:now,uid:u.id,mid:m.id})}res.u=m.u}
  else if(op==="del"){var m2=all("Maps").filter(function(x){return x.id===d.id})[0];if(!isAd(d))return err("Chỉ admin mới được xóa map");if(!m2)return err("Map không tồn tại");m2.st="del";upd("Maps",m2)}
  else if(op==="spend"){var kd=String(d.kind||"");
-  if(kd==="mystery"){if(+u.n<C.MYST)return err("Không đủ năng lượng (cần ⚡"+C.MYST+")");u.n=+u.n-C.MYST;put("Boxes",{ts:now,uid:u.id})}
+  if(kd==="mystery"){var mp=cl(d.map,80);if(mp.length<2)return err("Thiếu tên map trong hộp");
+   if(all("Boxes").some(function(r){return r.uid===u.id&&String(r.map)===mp}))return err("Bạn đã mở map này rồi");
+   if(+u.n<C.MYST)return err("Không đủ năng lượng (cần ⚡"+C.MYST+")");u.n=+u.n-C.MYST;put("Boxes",{ts:now,uid:u.id,map:mp})}
   else if(kd==="shop"){var it=String(d.item||"");if(!Object.prototype.hasOwnProperty.call(C.SHOP,it))return err("Món đồ không tồn tại");var pr=C.SHOP[it];
    if(owned(u.id).indexOf(it)>=0)return err("Bạn đã sở hữu món này");if(+u.n<pr)return err("Không đủ năng lượng (cần ⚡"+pr+")");
    u.n=+u.n-pr;put("Shop",{ts:now,uid:u.id,item:it,price:pr})}
