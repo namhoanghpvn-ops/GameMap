@@ -468,6 +468,20 @@ body.hc select{cursor:pointer!important}
 .imgprev{display:none;align-items:center;gap:12px;border:1px dashed var(--line);border-radius:12px;padding:8px;background:rgba(139,92,255,.06);font-size:.85rem;color:var(--mute)}
 .imgprev img{width:160px;max-width:45%;aspect-ratio:16/10;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
 @media(max-width:560px){.cmrow{flex-direction:column-reverse;align-items:stretch}.cmth{flex-basis:auto;width:100%}}
+/* dòng hoạt động trực tiếp */
+.tkbar{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;background:rgba(139,92,255,.07);padding:7px 12px;margin:0 0 14px;overflow:hidden}
+.tkbar.fl{animation:tkfl 1.2s}
+@keyframes tkfl{0%{box-shadow:0 0 0 0 var(--p)}100%{box-shadow:0 0 0 14px transparent}}
+.tkl{flex:none;display:flex;align-items:center;gap:6px;font:800 .72rem var(--head);letter-spacing:.12em;color:var(--p)}
+.tkl i{width:8px;height:8px;border-radius:50%;background:var(--p);animation:tkp 1.4s infinite}
+@keyframes tkp{50%{opacity:.25;transform:scale(.7)}}
+.tkv{flex:1;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 22px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,transparent,#000 22px,#000 calc(100% - 22px),transparent)}
+.tkt{display:inline-flex;white-space:nowrap;animation:tkm 30s linear infinite;will-change:transform}
+.tkv:hover .tkt{animation-play-state:paused}
+@keyframes tkm{to{transform:translateX(-50%)}}
+.tki{cursor:pointer;font-size:.88rem}.tki small{color:var(--mute);margin-left:4px}
+.tks{margin:0 18px;color:var(--v)}
+@media (prefers-reduced-motion:reduce){.tkv{overflow-x:auto;-webkit-mask-image:none;mask-image:none}}
 /* bảng xếp hạng người đóng góp */
 .pst{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
 .pst div{border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:rgba(139,92,255,.07);text-align:center;font-size:.8rem;color:var(--mute)}
@@ -547,6 +561,7 @@ body.hc select{cursor:pointer!important}
   <!-- ============ CỘNG ĐỒNG ============ -->
   <section class="sec" id="community" data-n="02">
     <div class="rv"><span class="tag">// Cộng đồng</span><h2>Góc cộng đồng</h2><p style="color:var(--mute);margin:0">Web này là của tất cả người chơi: gửi map, góp ý, bình luận và bình chọn Map Tháng.</p></div>
+    <div class="tkbar" id="tkbar" role="status" aria-label="Hoạt động trực tiếp"><span class="tkl"><i></i>LIVE</span><div class="tkv" id="tkv"></div></div>
     <div class="cbar"><span class="cl2">Chia sẻ web:</span><button class="cb" data-s="cp" type="button">🔗 Chép link</button><span class="cl2 sp2">Phản hồi / Liên hệ:</span><a class="cb ct" id="c-fb" target="_blank" rel="noopener">💬 Facebook của Nam Hoàng</a><a class="cb" id="c-ms" target="_blank" rel="noopener">✉ Messenger</a></div>
         <p class="mt accnote" id="accnote"></p>
         <div class="ctabs" id="ctabs" role="tablist"><button class="ctab on" type="button" data-t="news">📢 Tin tức &amp; Sự kiện</button><button class="ctab" type="button" data-t="req">💡 Góp ý &amp; Yêu cầu</button><button class="ctab" type="button" data-t="sub">⭐ Gửi map của bạn</button><button class="ctab" type="button" data-t="cmt">💬 Bình luận</button><button class="ctab" type="button" data-t="vote">🏆 Bình chọn tháng</button><button class="ctab" type="button" data-t="ppl">👥 BXH người đóng góp</button></div>
@@ -1224,7 +1239,7 @@ function left(){var m=Math.max(0,Math.round((EN.resetAt-Date.now())/60000));retu
 CH.onclick=function(){modal('<h3>⚡ Năng lượng của bạn</h3><p class="big">⚡ <b>'+EN.n+'</b></p><p class="mt">Reset về '+CF.daily+' lúc 00:00 (còn '+left()+').</p><p class="mt">• Online: +⚡1 mỗi 10 phút (hôm nay '+EN.onl+'/'+CF.onlMax+')<br>• Đăng map: +⚡'+CF.postRew+' mỗi lần (hôm nay '+EN.post+'/'+CF.postRewMax+' lần)</p><p class="mt"><small>Mã của bạn: '+esc(U?U.id:"chưa kết nối")+'</small> <button class="cp" id="adm" type="button">🛡 '+(U&&U.admin?"Admin":"Đăng nhập")+'</button></p>'+(U?"":'<p class="mt" style="color:var(--p)">⚠ Chưa kết nối được máy chủ năng lượng: '+esc(ERR||"đang kết nối…")+'<br>Kiểm tra ACC_API đã đúng link /exec và đã «Triển khai phiên bản mới» bằng file .gs mới nhất chưa. Tắt trình chặn quảng cáo nếu có (api.ipify.org bị chặn sẽ không lấy được IP).</p>')+'<button class="btn" id="rtry" type="button">↻ Thử kết nối lại</button>');var ad=$("adm");if(ad)ad.onclick=function(){var k=prompt("Đăng nhập admin: nhập mã admin (để trống = thoát admin):",AK);if(k===null)return;AK=k.trim();try{localStorage.setItem("g_ak",AK)}catch(x){}$("amod").remove();call("me").then(function(j){if(j.ok)setE(j);if(!j.ok)toast("Đăng nhập thất bại");else if(j.user&&j.user.admin)toast("Đăng nhập thành công ✓ Bạn đã là Admin");else if(!AK)toast("Đã thoát admin");else if(j.user&&j.user.admin===undefined)toast("Đăng nhập thất bại");else toast("Đăng nhập thất bại");loadC();var cl0=$("cl");if(cl0&&cur==="cmt")cl0.innerHTML=cList()})};var r=$("rtry");if(r)r.onclick=function(){init2();$("amod").remove()}};
 setInterval(function(){if(!U||document.hidden)return;call("ping").then(function(j){if(j.ok){var o=EN.n;setE(j);if(EN.n>o)toast("⚡ +"+(EN.n-o)+" năng lượng vì bạn online")}})},60000);
 function loadC(){if(!ACC_API)return;call("maps").then(function(j){if(!j.ok)return;CMAPS.length=0;CM0.concat(j.maps.map(function(m){m.cid=m.id;return m})).forEach(function(m){CMAPS.push(m)});
- CFG.games.forEach(function(g){g.items.forEach(function(it){if(it.maps===CMAPS)it.note=CMAPS.length+" map · do người chơi gửi, ghi rõ tên người tạo"})});redraw();if(cur==="sub"||cur==="ppl")render()})}
+ CFG.games.forEach(function(g){g.items.forEach(function(it){if(it.maps===CMAPS)it.note=CMAPS.length+" map · do người chơi gửi, ghi rõ tên người tạo"})});actDiff(CMAPS.filter(function(m){return m.cid}));redraw();if(cur==="sub"||cur==="ppl")render()})}
 function init2(){chip();if(!ACC_API)return;call("me").then(function(j){if(j.ok){ERR="";setE(j)}else{ERR=j.err||"lỗi không rõ";toast("Năng lượng: "+ERR)}loadC()})}
 function cmBy(m){return"👤 "+esc(m.by)}
 function cmDet(m){return'<div class="dlx">Hôm nay <b>+'+(m.dl1||0)+'</b> · 7 ngày <b>+'+(m.dl7||0)+'</b>'+(m.ts?" · đăng "+fd(Date.parse(m.ts)):"")+'</div>'}
@@ -1357,6 +1372,31 @@ $("ctabs").addEventListener("click",function(e){var b=e.target.closest(".ctab");
 P.addEventListener("click",function(e){var b=e.target.closest(".cb[data-v]");if(!b||b.disabled||VS.v!=="")return;
  var M=ym(),k=b.dataset.v,v=ST.vt["m"+M]||(ST.vt["m"+M]={});VS.v=k;v[k]=(v[k]||0)+1;pVote();
  API.vote(VS.ip,M,k).then(function(j){if(j&&j.dup){v[k]--;VS.v=j.v||k;toast("IP của bạn đã bình chọn tháng này rồi")}else toast("Đã ghi nhận phiếu bầu ✓");if(cur==="vote")pVote()})});
+/* ---- DÒNG HOẠT ĐỘNG TRỰC TIẾP: chỉ dùng dữ liệu thật từ máy chủ (đăng map mới, lượt tải tăng) ---- */
+var ACT=[],SNAP=null,TKV=$("tkv");
+function agoT(t){var m=Math.floor((Date.now()-t)/60000);return m<1?"vừa xong":m<60?m+" phút trước":m<1440?Math.floor(m/60)+" giờ trước":Math.floor(m/1440)+" ngày trước"}
+function actPush(k,tx,ts){ACT.unshift({k:k,tx:tx,ts:ts||Date.now()});if(ACT.length>20)ACT.length=20}
+function actDraw(flash){if(!TKV)return;
+ var it=ACT.map(function(a){return'<span class="tki" data-k="'+a.k+'">'+a.tx+(a.ts?"<small>"+agoT(a.ts)+"</small>":"")+"</span>"});
+ var L=ppData();if(L.length){L.sort(function(x,y){return y.dl-x.dl||y.maps.length-x.maps.length});it.push('<span class="tki" data-k="top">👑 '+esc(L[0].n)+" đang dẫn đầu BXH người đóng góp ("+L[0].maps.length+" map)</span>")}
+ if(!it.length)it.push('<span class="tki" data-k="sub">🎮 Chưa có hoạt động nào, hãy là người đầu tiên đăng map!</span>');
+ var sp='<span class="tks">✦</span>',h=it.join(sp)+sp;
+ TKV.innerHTML='<div class="tkt" style="animation-duration:'+Math.max(18,Math.round(h.replace(/<[^>]*>/g,"").length*.22))+'s">'+h+h+"</div>";
+ if(flash){var b=$("tkbar");b.classList.remove("fl");void b.offsetWidth;b.classList.add("fl")}}
+function actDiff(list){var now=Date.now(),fresh=false;
+ if(!SNAP){SNAP={};var wk=now-7*864e5;
+  var posts=list.filter(function(m){return(Date.parse(m.ts)||0)>wk}).sort(function(x,y){return Date.parse(y.ts)-Date.parse(x.ts)}).slice(0,5).map(function(m){return{k:"post",tx:"🌟 "+esc(m.by)+" vừa đăng map «"+esc(m.t)+"»",ts:Date.parse(m.ts)}});
+  var st=list.filter(function(m){return+m.dl1>0}).sort(function(x,y){return y.dl1-x.dl1}).slice(0,3).map(function(m){return{k:"dl",tx:"📈 «"+esc(m.t)+"» có +"+(+m.dl1)+" lượt tải hôm nay",ts:0}});
+  ACT=posts.concat(st);list.forEach(function(m){SNAP[m.id||m.cid]={dl:+m.dl||0}});actDraw(false);return}
+ list.forEach(function(m){var id=m.id||m.cid,o=SNAP[id],d=+m.dl||0;
+  if(!o){SNAP[id]={dl:d};actPush("post","🌟 "+esc(m.by)+" vừa đăng map «"+esc(m.t)+"»",now);fresh=true}
+  else if(d>o.dl){var n=d-o.dl;o.dl=d;actPush("dl","⬇ "+(n>1?n+" người chơi":"Một người chơi")+" vừa tải «"+esc(m.t)+"»",now);fresh=true}
+  else if(d<o.dl)o.dl=d});
+ if(fresh)actDraw(true)}
+if($("tkbar"))$("tkbar").addEventListener("click",function(e){var b=e.target.closest(".tki");if(!b)return;render(b.dataset.k==="top"?"ppl":"sub");var t=$("ctabs");if(t)t.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"})});
+setInterval(function(){if(!ACC_API||document.hidden)return;call("maps").then(function(j){if(!j||!j.ok)return;actDiff(j.maps);if(cur==="ppl")loadC()}).catch(function(){})},45000);
+setInterval(function(){if(!document.hidden)actDraw(false)},300000);
+actDraw(false);
 render("news");load();init2();
 /* ---- mở thẳng map từ link chia sẻ (?map=Tên map) ---- */
 var qm=new URLSearchParams(location.search).get("map");
