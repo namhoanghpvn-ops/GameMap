@@ -457,6 +457,53 @@ body.hc select{cursor:pointer!important}
 .dlx{font-size:.82rem;color:var(--mute);margin:2px 0 6px}.dlx b{color:var(--c)}
 .nw .cdl{padding:.3rem .8rem;font-size:.85rem}
 .nw .cdelc{margin-top:6px;padding:.2rem .7rem;font-size:.8rem}.nw .cdelc:hover{border-color:#ff5b6e;color:#ff5b6e}
+/* ảnh map bên phải dòng map + xem trước ảnh khi dán link */
+.cmrow{display:flex;align-items:center;gap:14px}
+.cmrow .cmi{flex:1;min-width:0}
+.cmth{flex:0 0 200px;display:block;aspect-ratio:16/10;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:rgba(139,92,255,.1)}
+.cmth img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
+.cmth:hover img{transform:scale(1.07)}
+.cmth.no{display:flex;align-items:center;justify-content:center;text-align:center;font-size:.78rem;color:var(--mute);padding:6px}
+.imgprev{display:none;align-items:center;gap:12px;border:1px dashed var(--line);border-radius:12px;padding:8px;background:rgba(139,92,255,.06);font-size:.85rem;color:var(--mute)}
+.imgprev img{width:160px;max-width:45%;aspect-ratio:16/10;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+@media(max-width:560px){.cmrow{flex-direction:column-reverse;align-items:stretch}.cmth{flex-basis:auto;width:100%}}
+/* bảng xếp hạng người đóng góp */
+.pst{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
+.pst div{border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:rgba(139,92,255,.07);text-align:center;font-size:.8rem;color:var(--mute)}
+.pst b{display:block;font:800 1.4rem var(--head);color:var(--c)}
+.psb{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.psb span{font-size:.85rem;color:var(--mute)}
+.psb .cb{padding:.25rem .8rem;font-size:.82rem}
+.pod{display:grid;gap:10px;align-items:end;margin:14px 0}
+.pc{border:1px solid var(--line);border-radius:14px;padding:12px 8px;text-align:center;background:rgba(139,92,255,.07);min-width:0}
+.pc .md{font-size:2rem;line-height:1}
+.pc b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px}
+.pc .pv{font:800 1.25rem var(--head);color:var(--c)}
+.pc small{display:block;color:var(--mute);font-size:.75rem}
+.pc.p1{order:2;padding-top:22px;border-color:#ffb23e;box-shadow:0 0 22px -10px #ffb23e}
+.pc.p2{order:1;border-color:#c0c8d8}
+.pc.p3{order:3;border-color:#cd7f32}
+.pr{border:1px solid var(--line);border-radius:12px;margin:8px 0;background:rgba(139,92,255,.07)}
+.pr.me{border-color:var(--c);box-shadow:0 0 16px -8px var(--c)}
+.pr summary{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;list-style:none}
+.pr summary::-webkit-details-marker{display:none}
+.pr .no{font:800 1.1rem var(--head);color:var(--p);min-width:1.8em;text-align:center}
+.pr .pa{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 1rem var(--head);color:#fff;background:linear-gradient(135deg,var(--v),var(--p));flex:none}
+.pr .pi{flex:1;min-width:0}
+.pr .pi b{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pr .pi b em{font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.lv{font:700 .68rem var(--body);padding:.02rem .5rem;border-radius:99px;border:1px solid var(--line);color:var(--mute)}
+.lv.me{color:var(--c);border-color:var(--c)}
+.pbar{display:block;height:5px;margin-top:5px;border-radius:5px;background:rgba(139,92,255,.15)}
+.pbar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--v),var(--p));min-width:2px}
+.pi .ps{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:4px;font-size:.78rem;color:var(--mute)}
+.pi .ps b{display:inline;color:var(--c)}
+.pr .pv2{font:800 1.05rem var(--head);color:var(--c);text-align:right;min-width:3.2em;line-height:1.1}
+.pr .pv2 small{display:block;font:600 .68rem var(--body);color:var(--mute)}
+.pm{padding:2px 14px 10px 14px;font-size:.85rem}
+.pm div{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-top:1px dashed var(--line)}
+.pm div span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pm div span:last-child{color:var(--mute);white-space:nowrap}
 </style>
 </head>
 <body>
@@ -501,7 +548,7 @@ body.hc select{cursor:pointer!important}
     <div class="rv"><span class="tag">// Cộng đồng</span><h2>Góc cộng đồng</h2><p style="color:var(--mute);margin:0">Web này là của tất cả người chơi: gửi map, góp ý, bình luận và bình chọn Map Tháng.</p></div>
     <div class="cbar"><span class="cl2">Chia sẻ web:</span><button class="cb" data-s="cp" type="button">🔗 Chép link</button><span class="cl2 sp2">Phản hồi / Liên hệ:</span><a class="cb ct" id="c-fb" target="_blank" rel="noopener">💬 Facebook của Nam Hoàng</a><a class="cb" id="c-ms" target="_blank" rel="noopener">✉ Messenger</a></div>
         <p class="mt accnote" id="accnote"></p>
-        <div class="ctabs" id="ctabs" role="tablist"><button class="ctab on" type="button" data-t="news">📢 Tin tức &amp; Sự kiện</button><button class="ctab" type="button" data-t="req">💡 Góp ý &amp; Yêu cầu</button><button class="ctab" type="button" data-t="sub">⭐ Gửi map của bạn</button><button class="ctab" type="button" data-t="cmt">💬 Bình luận</button><button class="ctab" type="button" data-t="vote">🏆 Bình chọn tháng</button><button class="ctab" type="button" data-t="ppl">👥 Người đóng góp</button></div>
+        <div class="ctabs" id="ctabs" role="tablist"><button class="ctab on" type="button" data-t="news">📢 Tin tức &amp; Sự kiện</button><button class="ctab" type="button" data-t="req">💡 Góp ý &amp; Yêu cầu</button><button class="ctab" type="button" data-t="sub">⭐ Gửi map của bạn</button><button class="ctab" type="button" data-t="cmt">💬 Bình luận</button><button class="ctab" type="button" data-t="vote">🏆 Bình chọn tháng</button><button class="ctab" type="button" data-t="ppl">👥 BXH người đóng góp</button></div>
     <div class="cpanel" id="cp" aria-live="polite"></div>
   </section>
   <!-- ============ GAME ============ -->
@@ -1231,11 +1278,19 @@ function toMsgr(text,id){
 function pReq(){P.innerHTML='<div class="cf"><p class="mt">Điền xong bấm gửi: nội dung sẽ được chép sẵn và Messenger của Nam Hoàng sẽ mở ra, bạn chỉ cần dán rồi bấm Gửi.</p><div class="r2"><label>Tên của bạn<input id="rn" maxlength="40" placeholder="Có thể bỏ trống"></label><label>Loại<select id="rk">'+sel(["Yêu cầu map","Yêu cầu mod","Góp ý","Báo lỗi link"])+'</select></label></div><label>Nội dung<textarea id="rc" rows="4" maxlength="600" placeholder="Ghi tên map/mod và link tham khảo nếu có..."></textarea></label><div class="cr"><button class="btn" id="rs" type="button">💡 Gửi góp ý</button></div><p class="mt" id="rm"></p><div id="rx"></div></div>';
  $("rs").onclick=function(){var c=$("rc").value.trim();if(c.length<5){msg("rm","Hãy nhập nội dung (ít nhất 5 ký tự).");return}
   msg("rm","");toMsgr("💡 GÓP Ý TỪ WEB\nLoại: "+$("rk").value+"\nTên: "+($("rn").value.trim()||"Ẩn danh")+"\nNội dung: "+c.slice(0,600),"rx");$("rc").value=""}}
+function cmThumb(m){var im=String(m.img||"").trim();if(!im)return"";return'<a class="cmth" href="'+esc(im)+'" target="_blank" rel="noopener" title="Bấm để xem ảnh lớn"><img src="'+esc(im)+'" alt="Ảnh map '+esc(m.t)+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.className=\'cmth no\';this.parentNode.textContent=\'🖼 Không tải được ảnh\'"></a>'}
+function initPrev(){var ip=$("si"),pv=$("sip"),tm=0;if(!ip||!pv)return;
+ function run(){var v=ip.value.trim();if(!v){pv.style.display="none";pv.innerHTML="";return}pv.style.display="flex";
+  if(!http(v)){pv.innerHTML="<span>⚠ Link ảnh phải bắt đầu bằng http:// hoặc https://</span>";return}
+  pv.innerHTML="<span>⏳ Đang tải ảnh…</span>";var im=new Image();im.referrerPolicy="no-referrer";
+  im.onload=function(){if(ip.value.trim()!==v)return;pv.innerHTML="";pv.appendChild(im);pv.insertAdjacentHTML("beforeend","<span>✓ Ảnh hợp lệ ("+im.naturalWidth+"×"+im.naturalHeight+"). Ảnh sẽ hiện bên phải dòng map sau khi đăng.</span>")};
+  im.onerror=function(){if(ip.value.trim()!==v)return;pv.innerHTML="<span>⚠ Không tải được ảnh. Hãy dùng link ảnh trực tiếp (đuôi .jpg, .png, .webp…).</span>"};im.src=v}
+ ip.addEventListener("input",function(){clearTimeout(tm);tm=setTimeout(run,350)});run()}
 function pSub(){
- var f=ACC_API?'<div class="cf"><p class="mt">Map hiện ngay ở mục «Map cộng đồng» kèm tên bạn nhập. Đăng thành công +⚡'+CF.postRew+' (tối đa '+CF.postRewMax+' lần/ngày, đăng tối đa 5 map/ngày). Map sai link hoặc vi phạm sẽ bị gỡ.</p><div class="r2"><label>Tên người đóng góp<input id="sb" maxlength="40"></label><label>Tên map<input id="sn" maxlength="80"></label></div><div class="r2"><label>Số người<select id="sp">'+sel([2,3,4,5,6,7,8])+'</select></label><label>Độ khó<select id="sd">'+sel(DIFF)+'</select></label><label>Cỡ map<select id="szm">'+sel(SZ)+'</select></label></div><label>Link tải (MediaFire, Drive, Mega…)<input id="su" type="url" placeholder="https://"></label><label>Link ảnh map (nên có, dán link ảnh trực tiếp)<input id="si" type="url" placeholder="https://"></label><div class="cr"><button class="btn" id="sg" type="button">⭐ Đăng map</button></div><p class="mt" id="sm"></p></div>':'<p class="mt">Tính năng chưa được bật (chưa điền ACC_API).</p>';
- var L=CMAPS.map(function(m){return'<div class="nw"><b>'+esc(m.t)+'</b> <span class="by">'+(m.cid?cmBy(m):"👤 "+esc(m.by))+" · "+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+'</span>'+(m.cid?'<div class="dlx">⬇ <b>'+(m.dl||0)+'</b> lượt tải · hôm nay <b>+'+(m.dl1||0)+'</b> · 7 ngày <b>+'+(m.dl7||0)+'</b></div>'+cmAct(m):'<br><a class="cb dlb" data-t="'+esc(m.t)+'" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a>')+'</div>'}).join("");
+ var f=ACC_API?'<div class="cf"><p class="mt">Map hiện ngay ở mục «Map cộng đồng» kèm tên bạn nhập. Đăng thành công +⚡'+CF.postRew+' (tối đa '+CF.postRewMax+' lần/ngày, đăng tối đa 5 map/ngày). Map sai link hoặc vi phạm sẽ bị gỡ.</p><div class="r2"><label>Tên người đóng góp<input id="sb" maxlength="40"></label><label>Tên map<input id="sn" maxlength="80"></label></div><div class="r2"><label>Số người<select id="sp">'+sel([2,3,4,5,6,7,8])+'</select></label><label>Độ khó<select id="sd">'+sel(DIFF)+'</select></label><label>Cỡ map<select id="szm">'+sel(SZ)+'</select></label></div><label>Link tải (MediaFire, Drive, Mega…)<input id="su" type="url" placeholder="https://"></label><label>Link ảnh map (nên có, dán link ảnh trực tiếp)<input id="si" type="url" placeholder="https://"></label><div class="imgprev" id="sip"></div><div class="cr"><button class="btn" id="sg" type="button">⭐ Đăng map</button></div><p class="mt" id="sm"></p></div>':'<p class="mt">Tính năng chưa được bật (chưa điền ACC_API).</p>';
+ var L=CMAPS.map(function(m){return'<div class="nw"><div class="cmrow"><div class="cmi"><b>'+esc(m.t)+'</b> <span class="by">'+(m.cid?cmBy(m):"👤 "+esc(m.by))+" · "+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+'</span>'+(m.cid?'<div class="dlx">⬇ <b>'+(m.dl||0)+'</b> lượt tải · hôm nay <b>+'+(m.dl1||0)+'</b> · 7 ngày <b>+'+(m.dl7||0)+'</b></div>'+cmAct(m):'<br><a class="cb dlb" data-t="'+esc(m.t)+'" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a>')+'</div>'+cmThumb(m)+'</div></div>'}).join("");
  P.innerHTML=f+'<h3 class="sh">🌟 Map cộng đồng đã đăng ('+CMAPS.length+')</h3>'+(L||'<p class="mt">Chưa có map nào. Hãy là người đầu tiên!</p>');
- if(!ACC_API)return;$("sb").value=BY;$("sg").onclick=function(){var by=$("sb").value.trim(),t=$("sn").value.trim(),u=$("su").value.trim(),im=$("si").value.trim();
+ if(!ACC_API)return;$("sb").value=BY;initPrev();$("sg").onclick=function(){var by=$("sb").value.trim(),t=$("sn").value.trim(),u=$("su").value.trim(),im=$("si").value.trim();
   if(by.length<2||t.length<2){msg("sm","Nhập tên người đóng góp và tên map.");return}if(!http(u)){msg("sm","Link tải phải bắt đầu bằng http:// hoặc https://");return}if(im&&!http(im)){msg("sm","Link ảnh chưa đúng.");return}
   BY=by;try{localStorage.setItem("g_by",by)}catch(x){}
   msg("sm","Đang đăng…");call("submit",{by:by,t:t,p:$("sp").value,d:$("sd").value,s:$("szm").value,u:u,img:im}).then(function(j){if(!j.ok){msg("sm",j.err||"Không đăng được");return}setE(j);toast("Đã đăng map ✓"+(j.reward?" +⚡"+j.reward:""));loadC()})}}
@@ -1268,8 +1323,34 @@ function pVote(){var M=ym();if(VS.m!==M)chk(M);var st=VS.v,v=ST.vt["m"+M]||{},na
  '<h3 class="sh">Bảng xếp hạng tháng '+M+"</h3>"+rows.map(function(x,i){return'<div class="rk"><span class="no">'+(i+1)+'</span><div class="rkm"><b>'+esc(x.t)+'</b><i style="width:'+Math.round(x.n/tot*100)+'%"></i></div><span class="vn">'+x.n+'</span><button class="cb'+(st===x.k?" on":"")+'" type="button" data-v="'+esc(x.k)+'"'+(st!==""?" disabled":"")+">"+(st===x.k?"✓ Đã chọn":"Bình chọn")+"</button></div>"}).join("")+
  '<h3 class="sh">💡 Đề xuất map</h3><div class="cf"><label>Map bạn thích (ghi tên, có thể kèm link)<input id="ug" maxlength="120"></label><div><button class="btn" id="ub" type="button">Gửi đề xuất</button></div><p class="mt" id="um"></p><div id="ux"></div></div>';
  $("ub").onclick=function(){var t=$("ug").value.trim();if(t.length<2){msg("um","Nhập tên map bạn muốn đề xuất.");return}msg("um","");toMsgr("🗳 ĐỀ XUẤT MAP TỪ WEB\nMap: "+t,"ux");$("ug").value=""}}
-function pPpl(){var g=Object.create(null);CMAPS.forEach(function(m){if(m.by)(g[m.by]=g[m.by]||[]).push(m.t)});var k=Object.keys(g).sort(function(a,b){return g[b].length-g[a].length});
- P.innerHTML=k.length?k.map(function(n){return'<div class="nw"><b>👤 '+esc(n)+"</b> <small>· "+g[n].length+" map</small><p>"+g[n].map(esc).join(" · ")+"</p></div>"}).join(""):'<p class="mt">Chưa có ai đóng góp. Hãy gửi map đầu tiên ở tab «Gửi map của bạn»!</p>'}
+var PS="dl",PSL={dl:"lượt tải",mp:"map đã đăng",d7:"lượt tải 7 ngày",d1:"lượt tải hôm nay"};
+function ppLv(n){return n>=10?"👑 Huyền thoại":n>=5?"💎 Cao thủ":n>=3?"🔥 Tích cực":"🌱 Tân binh"}
+function ppVal(o,k){return k==="mp"?o.maps.length:o[k]}
+function ppData(){var g=Object.create(null);
+ CMAPS.forEach(function(m){var nm=String(m.by||"").trim();if(!nm)return;var key=nm.toLowerCase(),o=g[key]||(g[key]={n:nm,maps:[],dl:0,d1:0,d7:0,last:0}),ts=Date.parse(m.ts)||0;
+  o.maps.push(m);o.dl+=+m.dl||0;o.d1+=+m.dl1||0;o.d7+=+m.dl7||0;if(ts>o.last)o.last=ts});
+ return Object.keys(g).map(function(k){var o=g[k];o.maps.sort(function(x,y){return(+y.dl||0)-(+x.dl||0)});return o})}
+function pPpl(){var L=ppData(),k=PS;
+ if(!L.length){P.innerHTML='<p class="mt">Chưa có ai đóng góp. Hãy gửi map đầu tiên ở tab «Gửi map của bạn»!</p>';return}
+ L.sort(function(x,y){return ppVal(y,k)-ppVal(x,k)||y.dl-x.dl||y.maps.length-x.maps.length||x.n.localeCompare(y.n)});
+ var tm=0,td=0,t1=0;L.forEach(function(o){tm+=o.maps.length;td+=o.dl;t1+=o.d1});
+ var mx=Math.max(1,ppVal(L[0],k)),me=String(BY||"").trim().toLowerCase(),medal=["🥇","🥈","🥉"];
+ var h='<p class="mt">Bảng xếp hạng những người gửi map cho cộng đồng. Lượt tải do máy chủ đếm, mỗi người chỉ tính cho map do chính họ đăng.</p>'
+  +'<div class="pst"><div><b>'+L.length+'</b>người đóng góp</div><div><b>'+tm+'</b>map đã đăng</div><div><b>'+td+'</b>tổng lượt tải</div><div><b>+'+t1+'</b>lượt tải hôm nay</div></div>'
+  +'<div class="psb"><span>Xếp theo:</span>'+[["dl","⬇ Tổng lượt tải"],["mp","🗺 Số map"],["d7","📈 7 ngày"],["d1","🔥 Hôm nay"]].map(function(x){return'<button type="button" class="cb psort'+(k===x[0]?" on":"")+'" data-k="'+x[0]+'">'+x[1]+'</button>'}).join("")+'</div>';
+ var top=L.slice(0,3);
+ h+='<div class="pod" style="grid-template-columns:repeat('+top.length+',1fr)">'+top.map(function(o,i){return'<div class="pc p'+(i+1)+'"><div class="md">'+medal[i]+'</div><b title="'+esc(o.n)+'">'+esc(o.n)+'</b><div class="pv">'+ppVal(o,k)+'</div><small>'+PSL[k]+'</small><small>'+o.maps.length+' map</small></div>'}).join("")+'</div>';
+ h+='<h3 class="sh">Bảng xếp hạng chi tiết ('+L.length+' người)</h3>';
+ h+=L.map(function(o,i){var mine=o.n.toLowerCase()===me,v=ppVal(o,k),best=o.maps[0];
+  return'<details class="pr'+(mine?" me":"")+'"><summary><span class="no">'+(i<3?medal[i]:i+1)+'</span><span class="pa">'+esc(o.n.charAt(0).toUpperCase())+'</span>'
+   +'<div class="pi"><b><em>'+esc(o.n)+'</em><span class="lv">'+ppLv(o.maps.length)+'</span>'+(mine?'<span class="lv me">Bạn</span>':'')+'</b>'
+   +'<span class="pbar"><i style="width:'+Math.round(v/mx*100)+'%"></i></span>'
+   +'<div class="ps"><span>🗺 <b>'+o.maps.length+'</b> map</span><span>⬇ <b>'+o.dl+'</b> lượt tải</span><span>Hôm nay <b>+'+o.d1+'</b></span><span>7 ngày <b>+'+o.d7+'</b></span>'+(o.last?'<span>Đăng gần nhất '+fd(o.last)+'</span>':'')+'</div></div>'
+   +'<span class="pv2">'+v+'<small>'+PSL[k]+'</small></span></summary>'
+   +'<div class="pm">'+(best&&(+best.dl||0)>0?'<div><span>⭐ Map nổi bật nhất</span><span>'+esc(best.t)+' · ⬇ '+best.dl+'</span></div>':'')
+   +o.maps.map(function(m){return'<div><span>'+esc(m.t)+'</span><span>'+esc(m.d||"")+(m.s?" · "+esc(m.s):"")+' · '+(m.p||"?")+' người · ⬇ '+(+m.dl||0)+'</span></div>'}).join("")+'</div></details>'}).join("");
+ P.innerHTML=h}
+P.addEventListener("click",function(e){var b=e.target.closest(".psort");if(b){PS=b.dataset.k;pPpl()}});
 function render(t){cur=t||cur;document.querySelectorAll(".ctab").forEach(function(b){b.classList.toggle("on",b.dataset.t===cur)});({news:pNews,req:pReq,sub:pSub,cmt:pCmt,vote:pVote,ppl:pPpl})[cur]()}
 $("ctabs").addEventListener("click",function(e){var b=e.target.closest(".ctab");if(b)render(b.dataset.t)});
 P.addEventListener("click",function(e){var b=e.target.closest(".cb[data-v]");if(!b||b.disabled||VS.v!=="")return;
