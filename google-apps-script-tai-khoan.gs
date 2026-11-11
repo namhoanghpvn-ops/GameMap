@@ -12,9 +12,12 @@ var C={SALT:"doi-chuoi-bi-mat-nay",ADMIN_KEY:"", // ĐẶT 1 MẬT KHẨU DÀI, 
  ONL_MAX:5,     // tối đa +5/ngày từ online
  POST_REW:5, POST_REW_MAX:2, // đăng map +5, tối đa 2 lần/ngày được thưởng
  POST_LIMIT:5,  // tối đa 5 map/ngày
+ MYST:2,       // hộp map bí ẩn tốn
+ SHOP:{fr1:6,fr2:6,fr3:12,fr4:20,co1:4,co2:4,co3:8,co4:15,ic1:3,ic2:5,ic3:8,ic4:10,ic5:15}, // GIÁ CỬA HÀNG ⚡ (máy chủ tự kiểm tra giá, không tin số web gửi lên)
  TZ:"Asia/Ho_Chi_Minh"};
 var H={Users:["id","prov","name","av","day","n","onlSec","onlG","posts","postRew","lastPing"],
- Sessions:["h","uid","exp"],Maps:["id","ts","uid","by","av","t","p","d","s","u","img","st"],Downloads:["ts","uid","mid"]};
+ Sessions:["h","uid","exp"],Maps:["id","ts","uid","by","av","t","p","d","s","u","img","st"],Downloads:["ts","uid","mid"],
+ Shop:["ts","uid","item","price"],Equip:["uid","by","fr","co","ic","ts"],Boxes:["ts","uid"]};
 var DF=["Dễ","Trung Bình","Khó","Cực Khó","Siêu Cấp"],SZ=["Nhỏ","Vừa","Rộng"];
 function sh(n){var ss=SpreadsheetApp.getActive(),s=ss.getSheetByName(n);if(!s){s=ss.insertSheet(n);s.appendRow(H[n])}return s}
 function all(n){var v=sh(n).getDataRange().getValues(),h=v.shift();return v.map(function(r,i){var o={_r:i+2};h.forEach(function(k,j){o[k]=r[j]});return o})}
@@ -37,6 +40,7 @@ function who(ip,mk){if(!/^[0-9a-fA-F:.]{3,45}$/.test(String(ip||"")))throw new E
  var id="u"+sha(ip+"|"+C.SALT).slice(0,12),u=all("Users").filter(function(r){return r.id===id})[0];
  if(!u&&mk){u={id:id,prov:"ip",name:"",av:"",day:"",n:0,onlSec:0,onlG:0,posts:0,postRew:0,lastPing:Date.now()};roll(u);put("Users",u);u=all("Users").filter(function(r){return r.id===id})[0]}
  return u||null}
+function owned(uid){return all("Shop").filter(function(r){return r.uid===uid}).map(function(r){return String(r.item)})}
 function doGet(){return J(pub(null))}
 function doPost(e){var l=LockService.getScriptLock();l.waitLock(25000);try{return J(run(JSON.parse(e.postData.contents)))}catch(x){return J(err(String(x.message||x)))}finally{l.releaseLock()}}
 function pub(u){var dl={},t0=new Date(en({n:0}).resetAt-864e5).getTime(),now=Date.now(),got={};
@@ -44,6 +48,7 @@ function pub(u){var dl={},t0=new Date(en({n:0}).resetAt-864e5).getTime(),now=Dat
  return{ok:true,maps:all("Maps").filter(function(m){return m.st==="on"}).reverse().slice(0,500).map(function(m){var o=dl[m.id]||{a:0,b:0,c:0};
   return{id:m.id,ts:new Date(+m.ts).toISOString(),by:m.by,av:m.av,t:m.t,p:+m.p,d:m.d,s:m.s,img:m.img,dl:o.a,dl1:o.b,dl7:o.c,got:!!got[m.id],own:!!u&&m.uid===u.id}})}}
 function run(d){var op=d.op,u=who(d.ip,op!=="maps");if(op==="maps")return pub(u);
+ if(op==="cos"){var cs={};all("Equip").forEach(function(r){if(r.fr||r.co||r.ic)cs[String(r.by).toLowerCase()]={fr:String(r.fr||""),co:String(r.co||""),ic:String(r.ic||"")}});return{ok:true,cos:cs,own:owned(u.id)}}
  roll(u);var res={ok:true},now=Date.now();
  if(op==="ping"){var dt=Math.min(90,Math.max(0,(now-(+u.lastPing||now))/1000));u.lastPing=now;u.onlSec=+u.onlSec+dt;
   var t=Math.min(C.ONL_MAX,Math.floor(u.onlSec/C.ONL_EVERY));if(t>+u.onlG){u.n=+u.n+t-u.onlG;u.onlG=t}}
@@ -59,5 +64,17 @@ function run(d){var op=d.op,u=who(d.ip,op!=="maps");if(op==="maps")return pub(u)
   var had=m.uid===u.id||all("Downloads").some(function(r){return r.uid===u.id&&r.mid===m.id});
   if(!had){if(+u.n<C.COST)return err("Không đủ năng lượng (cần ⚡"+C.COST+")");u.n=+u.n-C.COST;put("Downloads",{ts:now,uid:u.id,mid:m.id})}res.u=m.u}
  else if(op==="del"){var m2=all("Maps").filter(function(x){return x.id===d.id})[0];if(!isAd(d))return err("Chỉ admin mới được xóa map");if(!m2)return err("Map không tồn tại");m2.st="del";upd("Maps",m2)}
+ else if(op==="spend"){var kd=String(d.kind||"");
+  if(kd==="mystery"){if(+u.n<C.MYST)return err("Không đủ năng lượng (cần ⚡"+C.MYST+")");u.n=+u.n-C.MYST;put("Boxes",{ts:now,uid:u.id})}
+  else if(kd==="shop"){var it=String(d.item||"");if(!Object.prototype.hasOwnProperty.call(C.SHOP,it))return err("Món đồ không tồn tại");var pr=C.SHOP[it];
+   if(owned(u.id).indexOf(it)>=0)return err("Bạn đã sở hữu món này");if(+u.n<pr)return err("Không đủ năng lượng (cần ⚡"+pr+")");
+   u.n=+u.n-pr;put("Shop",{ts:now,uid:u.id,item:it,price:pr})}
+  else return err("Loại giao dịch không hợp lệ")}
+ else if(op==="equip"){var nb=cl(d.by,40);if(nb.length<2)return err("Nhập tên hiển thị trước");var ow=owned(u.id),eq=d.eq||{},nw={},sl=["fr","co","ic"];
+  for(var i=0;i<3;i++){var v=String(eq[sl[i]]||"");if(v&&(v.indexOf(sl[i])!==0||ow.indexOf(v)<0))return err("Bạn chưa sở hữu món «"+cl(v,10)+"»");nw[sl[i]]=v}
+  var lo=nb.toLowerCase(),eqs=all("Equip");
+  if(eqs.some(function(r){return r.uid!==u.id&&String(r.by).toLowerCase()===lo&&(r.fr||r.co||r.ic)}))return err("Tên «"+nb+"» đang được người khác dùng cho đồ cửa hàng, hãy chọn tên khác");
+  var mine=eqs.filter(function(r){return r.uid===u.id})[0];
+  if(mine){mine.by=nb;mine.fr=nw.fr;mine.co=nw.co;mine.ic=nw.ic;mine.ts=now;upd("Equip",mine)}else put("Equip",{uid:u.id,by:nb,fr:nw.fr,co:nw.co,ic:nw.ic,ts:now})}
  else if(op!=="me")return err("Thao tác không hợp lệ");
  upd("Users",u);res.user=uv(u,d);res.en=en(u);res.cfg=cfg();return res}
