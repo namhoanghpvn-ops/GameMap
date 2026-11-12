@@ -5,7 +5,7 @@
    Sửa code xong phải "Triển khai phiên bản mới". Admin: đặt ADMIN_KEY, rồi trên web mở ô ⚡ → "🛡 Quản trị" nhập đúng mã đó.
    Lưu ý: IP do trình duyệt gửi lên nên người rành kỹ thuật có thể giả IP để lấy thêm năng lượng.
    ===================================================================== */
-var C={SALT:"doi-chuoi-bi-mat-nay",ADMIN_KEY:"", // ĐẶT 1 MẬT KHẨU DÀI, BÍ MẬT. Chỉ ai nhập đúng mã này trên web mới xóa được map.
+var C={SALT:"doi-chuoi-bi-mat-nay",ADMIN_KEY:"250319", // ĐẶT 1 MẬT KHẨU DÀI, BÍ MẬT. Chỉ ai nhập đúng mã này trên web mới xóa được map.
  DAILY:10,      // năng lượng mỗi ngày (reset 00:00 giờ VN, không cộng dồn)
  COST:4,        // tải 1 map tốn
  ONL_EVERY:600, // online mỗi 600 giây = +1
@@ -40,7 +40,7 @@ function nrm(s){return String(s||"").replace(/\s+/g,"").toUpperCase()}
 function expired(x){if(x===""||x==null)return false;var t=x instanceof Date?x.getTime():Date.parse(String(x));return!isNaN(t)&&Date.now()>t+864e5}
 function khoiTao(){["Shop","Equip","Boxes","Codes","Redeems"].forEach(sh);Logger.log("Đã tạo xong các sheet")} // chạy 1 lần trong trình soạn thảo để tạo sẵn sheet Codes
 function isAd(d){return!!C.ADMIN_KEY&&d.ak===C.ADMIN_KEY}
-function uv(u,d){return{id:u.id,admin:isAd(d)}}
+function uv(u,d){return{id:u.id,admin:isAd(d),name:String(u.name||"")}}
 function who(ip,mk){if(!/^[0-9a-fA-F:.]{3,45}$/.test(String(ip||"")))throw new Error("Không xác định được IP");
  var id="u"+sha(ip+"|"+C.SALT).slice(0,12),u=all("Users").filter(function(r){return r.id===id})[0];
  if(!u&&mk){u={id:id,prov:"ip",name:"",av:"",day:"",n:0,onlSec:0,onlG:0,posts:0,postRew:0,lastPing:Date.now(),bonus:0,codeBad:0};roll(u);put("Users",u);u=all("Users").filter(function(r){return r.id===id})[0]}
@@ -91,5 +91,6 @@ function run(d){var op=d.op,u=who(d.ip,op!=="maps");if(op==="maps")return pub(u)
   if(rds.some(function(r){return r.uid===u.id}))return err("Bạn đã dùng mã này rồi");
   if(+cr2.max>0&&rds.length>=+cr2.max)return err("Mã đã hết lượt sử dụng");
   var gn=Math.min(1000,Math.floor(+cr2.energy));u.n=+u.n+gn;u.bonus=(+u.bonus||0)+gn;put("Redeems",{ts:now,uid:u.id,code:cd});res.gain=gn}
+ else if(op==="setname"){var nn=cl(d.name,40);if(nn.length<2)return err("Tên quá ngắn (ít nhất 2 ký tự)");u.name=nn}
  else if(op!=="me")return err("Thao tác không hợp lệ");
  upd("Users",u);res.user=uv(u,d);res.en=en(u);res.cfg=cfg();return res}
