@@ -491,6 +491,8 @@ body.hc select{cursor:pointer!important}
 .rdr .btn{padding:.45rem 1rem;font-size:.9rem}
 .nmr{display:flex;gap:8px}.nmr input{flex:1;min-width:0;font:600 1rem var(--body);background:#0d0a20;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:.5rem .8rem}
 .nmr .btn{padding:.45rem 1rem;font-size:.9rem}
+.accchip.has{flex-direction:column;align-items:flex-start;gap:2px;border-radius:16px;padding:.35rem .95rem .4rem}
+.acn{max-width:min(210px,60vw);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem;font-weight:700;line-height:1.5}
 /* map bí ẩn */
 .mbx{text-align:center;border:1px solid var(--line);border-radius:14px;padding:18px 14px;background:rgba(139,92,255,.07);margin:10px 0}
 .mbi{font-size:4rem;line-height:1;animation:mbf 2.4s ease-in-out infinite;display:inline-block}
@@ -1273,7 +1275,7 @@ function call(op,d){d=d||{};d.op=op;d.ak=AK;if(!ACC_API)return Promise.resolve({
  return myip().then(function(ip){d.ip=ip;
   return fetch(ACC_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)}).then(function(r){return r.text()}).then(function(t){try{return JSON.parse(t)}catch(x){return{ok:false,err:"Máy chủ không trả về JSON: link ACC_API sai, hoặc lúc triển khai chưa chọn «Bất kỳ ai» được truy cập, hoặc chưa cấp quyền cho script."}}},function(){return{ok:false,err:"Không gọi được ACC_API (sai link hoặc mạng/trình chặn quảng cáo chặn script.google.com)."}})},
   function(){return{ok:false,err:"Không lấy được IP của bạn (ipify/cloudflare bị chặn). Tắt trình chặn quảng cáo/VPN rồi thử lại."}})}
-function chip(){CH.hidden=!ACC_API;CH.innerHTML="⚡ <b>"+EN.n+"</b>";$("accnote").textContent=ACC_API?"Bạn có ⚡"+EN.n+" năng lượng (tự nhận diện theo IP, mỗi ngày nhận ⚡"+CF.daily+"). [bản web v5]":""}
+function chip(){CH.hidden=!ACC_API;var nm=(U&&U.name)||BY||"",nh="";if(nm){try{nh=nmH(nm)}catch(x){nh=esc(nm)}}CH.innerHTML=(nm?'<span class="acn">👤 '+nh+"</span>":"")+"<span>⚡ <b>"+EN.n+"</b></span>";CH.classList.toggle("has",!!nm);$("accnote").textContent=ACC_API?"Bạn có ⚡"+EN.n+" năng lượng (tự nhận diện theo IP, mỗi ngày nhận ⚡"+CF.daily+"). [bản web v5]":""}
 function setE(j){if(j.user){U=j.user;if(U.name&&!BY){BY=U.name;try{localStorage.setItem("g_by",BY)}catch(x){}}}if(j.en)EN=j.en;if(j.cfg)CF=j.cfg;chip();try{document.dispatchEvent(new Event("accchange"))}catch(x){}}
 window.isLiveAdmin=function(){return !!(U&&U.admin)};
 function modal(h){var o=$("amod");if(o)o.remove();o=document.createElement("div");o.id="amod";o.className="amod";o.innerHTML='<div class="abox"><button class="ax" type="button" aria-label="Đóng">✕</button>'+h+'</div>';o.onclick=function(e){if(e.target===o||e.target.classList.contains("ax"))o.remove()};document.body.appendChild(o);return o}
@@ -1434,7 +1436,7 @@ document.addEventListener("click",function(e){var b=e.target.closest(".rdb");if(
 /* ---- TÊN ĐẸP · CỬA HÀNG ⚡ · MAP BÍ ẨN · MẸO PHÁ ĐẢO ---- */
 function jl(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(x){return d}}
 function js_(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(x){}}
-function setBy(n){BY=n;try{localStorage.setItem("g_by",n)}catch(x){}}
+function setBy(n){BY=n;try{localStorage.setItem("g_by",n)}catch(x){}chip()}
 function spErr(j){var m=(j&&j.err)||"Không rõ lỗi";return/\bop\b|unknown|không hỗ trợ|chưa hỗ trợ|Thao tác không hợp lệ/i.test(m)?"Máy chủ năng lượng chưa được cập nhật cho tính năng này ("+m+")":m}
 var SHOP={fr:{t:"🖼 Khung tên",it:[["fr1","Viền neon xanh",6],["fr2","Viền hồng rực",6],["fr3","Viền vàng kim",12],["fr4","Viền cầu vồng",20]]},
  co:{t:"🎨 Màu tên",it:[["co1","Xanh ngọc",4],["co2","Hồng đào",4],["co3","Vàng cam",8],["co4","Gradient tím hồng",15]]},
