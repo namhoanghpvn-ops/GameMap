@@ -12,12 +12,14 @@ var C={SALT:"doi-chuoi-bi-mat-nay",ADMIN_KEY:"", // ĐẶT 1 MẬT KHẨU DÀI, 
  ONL_MAX:5,     // tối đa +5/ngày từ online
  POST_REW:5, POST_REW_MAX:2, // đăng map +5, tối đa 2 lần/ngày được thưởng
  POST_LIMIT:5,  // tối đa 5 map/ngày
+ CODE_BAD:5,    // nhập sai mã quá 5 lần/ngày thì bị khóa nhập mã đến hôm sau
  MYST:2,       // hộp map bí ẩn tốn
  SHOP:{fr1:6,fr2:6,fr3:12,fr4:20,co1:4,co2:4,co3:8,co4:15,ic1:3,ic2:5,ic3:8,ic4:10,ic5:15}, // GIÁ CỬA HÀNG ⚡ (máy chủ tự kiểm tra giá, không tin số web gửi lên)
  TZ:"Asia/Ho_Chi_Minh"};
-var H={Users:["id","prov","name","av","day","n","onlSec","onlG","posts","postRew","lastPing"],
+var H={Users:["id","prov","name","av","day","n","onlSec","onlG","posts","postRew","lastPing","bonus","codeBad"],
  Sessions:["h","uid","exp"],Maps:["id","ts","uid","by","av","t","p","d","s","u","img","st"],Downloads:["ts","uid","mid"],
- Shop:["ts","uid","item","price"],Equip:["uid","by","fr","co","ic","ts"],Boxes:["ts","uid","map"]};
+ Shop:["ts","uid","item","price"],Equip:["uid","by","fr","co","ic","ts"],Boxes:["ts","uid","map"],
+ Codes:["code","energy","max","exp","note"],Redeems:["ts","uid","code"]};
 var DF=["Dễ","Trung Bình","Khó","Cực Khó","Siêu Cấp"],SZ=["Nhỏ","Vừa","Rộng"];
 function sh(n){var ss=SpreadsheetApp.getActive(),s=ss.getSheetByName(n);if(!s){s=ss.insertSheet(n);s.appendRow(H[n])}else if(s.getLastColumn()<H[n].length)s.getRange(1,1,1,H[n].length).setValues([H[n]]);return s}
 function all(n){var v=sh(n).getDataRange().getValues(),h=v.shift();return v.map(function(r,i){var o={_r:i+2};h.forEach(function(k,j){o[k]=r[j]});return o})}
@@ -33,12 +35,15 @@ function inl(a,v){v=String(v||"").normalize("NFC").trim();return a.some(function
 function err(m){return{ok:false,err:m}}
 function cfg(){return{cost:C.COST,daily:C.DAILY,onlMax:C.ONL_MAX,postRew:C.POST_REW,postRewMax:C.POST_REW_MAX}}
 function en(u){var t=new Date(today().slice(1,5)+"-"+today().slice(5,7)+"-"+today().slice(7,9)+"T00:00:00+07:00").getTime()+864e5;return{n:+u.n,resetAt:t,onl:+u.onlG,post:+u.postRew}}
-function roll(u){if(u.day!==today()){u.day=today();u.n=C.DAILY;u.onlSec=0;u.onlG=0;u.posts=0;u.postRew=0}}
+function roll(u){if(u.day!==today()){var cr=Math.min(+u.bonus||0,+u.n||0);u.day=today();u.n=C.DAILY+cr;u.bonus=cr;u.onlSec=0;u.onlG=0;u.posts=0;u.postRew=0;u.codeBad=0}} // cr = ⚡ từ mã quà tặng chưa dùng hết, được giữ sang ngày mới
+function nrm(s){return String(s||"").replace(/\s+/g,"").toUpperCase()}
+function expired(x){if(x===""||x==null)return false;var t=x instanceof Date?x.getTime():Date.parse(String(x));return!isNaN(t)&&Date.now()>t+864e5}
+function khoiTao(){["Shop","Equip","Boxes","Codes","Redeems"].forEach(sh);Logger.log("Đã tạo xong các sheet")} // chạy 1 lần trong trình soạn thảo để tạo sẵn sheet Codes
 function isAd(d){return!!C.ADMIN_KEY&&d.ak===C.ADMIN_KEY}
 function uv(u,d){return{id:u.id,admin:isAd(d)}}
 function who(ip,mk){if(!/^[0-9a-fA-F:.]{3,45}$/.test(String(ip||"")))throw new Error("Không xác định được IP");
  var id="u"+sha(ip+"|"+C.SALT).slice(0,12),u=all("Users").filter(function(r){return r.id===id})[0];
- if(!u&&mk){u={id:id,prov:"ip",name:"",av:"",day:"",n:0,onlSec:0,onlG:0,posts:0,postRew:0,lastPing:Date.now()};roll(u);put("Users",u);u=all("Users").filter(function(r){return r.id===id})[0]}
+ if(!u&&mk){u={id:id,prov:"ip",name:"",av:"",day:"",n:0,onlSec:0,onlG:0,posts:0,postRew:0,lastPing:Date.now(),bonus:0,codeBad:0};roll(u);put("Users",u);u=all("Users").filter(function(r){return r.id===id})[0]}
  return u||null}
 function owned(uid){return all("Shop").filter(function(r){return r.uid===uid}).map(function(r){return String(r.item)})}
 function doGet(){return J(pub(null))}
@@ -78,5 +83,13 @@ function run(d){var op=d.op,u=who(d.ip,op!=="maps");if(op==="maps")return pub(u)
   if(eqs.some(function(r){return r.uid!==u.id&&String(r.by).toLowerCase()===lo&&(r.fr||r.co||r.ic)}))return err("Tên «"+nb+"» đang được người khác dùng cho đồ cửa hàng, hãy chọn tên khác");
   var mine=eqs.filter(function(r){return r.uid===u.id})[0];
   if(mine){mine.by=nb;mine.fr=nw.fr;mine.co=nw.co;mine.ic=nw.ic;mine.ts=now;upd("Equip",mine)}else put("Equip",{uid:u.id,by:nb,fr:nw.fr,co:nw.co,ic:nw.ic,ts:now})}
+ else if(op==="redeem"){var cd=nrm(d.code);if(cd.length<2)return err("Nhập mã quà tặng");
+  if((+u.codeBad||0)>=C.CODE_BAD)return err("Hôm nay bạn nhập sai quá "+C.CODE_BAD+" lần, hãy thử lại vào ngày mai");
+  var cr2=all("Codes").filter(function(r){return nrm(r.code)===cd&&+r.energy>0})[0];
+  if(!cr2||expired(cr2.exp)){u.codeBad=(+u.codeBad||0)+1;upd("Users",u);return err("Mã không đúng hoặc đã hết hạn")}
+  var rds=all("Redeems").filter(function(r){return nrm(r.code)===cd});
+  if(rds.some(function(r){return r.uid===u.id}))return err("Bạn đã dùng mã này rồi");
+  if(+cr2.max>0&&rds.length>=+cr2.max)return err("Mã đã hết lượt sử dụng");
+  var gn=Math.min(1000,Math.floor(+cr2.energy));u.n=+u.n+gn;u.bonus=(+u.bonus||0)+gn;put("Redeems",{ts:now,uid:u.id,code:cd});res.gain=gn}
  else if(op!=="me")return err("Thao tác không hợp lệ");
  upd("Users",u);res.user=uv(u,d);res.en=en(u);res.cfg=cfg();return res}

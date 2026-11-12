@@ -487,6 +487,8 @@ body.hc select{cursor:pointer!important}
 .shb2{padding:.3rem .8rem;font-size:.82rem}
 .shp{display:grid;gap:4px;align-content:end;font-size:.85rem;color:var(--mute)}
 .shp #shv{font-size:1.05rem;color:var(--text);font-weight:700}
+.rdr{display:flex;gap:8px}.rdr .rdc{flex:1;min-width:0;font:600 1rem var(--body);background:#0d0a20;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:.5rem .8rem;text-transform:uppercase}
+.rdr .btn{padding:.45rem 1rem;font-size:.9rem}
 /* map bí ẩn */
 .mbx{text-align:center;border:1px solid var(--line);border-radius:14px;padding:18px 14px;background:rgba(139,92,255,.07);margin:10px 0}
 .mbi{font-size:4rem;line-height:1;animation:mbf 2.4s ease-in-out infinite;display:inline-block}
@@ -760,7 +762,7 @@ var LIVES=[
 ];
 /* ---- NĂNG LƯỢNG THEO IP (xem google-apps-script-tai-khoan.gs) ----
    ACC_API = link Web App của script năng lượng (khác API_URL). Trống = tắt. Không cần đăng nhập. */
-var ACC_API="https://script.google.com/macros/s/AKfycbzXTVVe4QRtBw_wt7v-thQ5xW2XVA5AxCcNreE107ixCEbc0zTXHyQWubwsk2tXNqXwNQ/exec";
+var ACC_API="https://script.google.com/macros/s/AKfycbzwSorYaKeoFEKdEJlCyNmGvFNksHbm6aBzxPhuFjvaZNejRP8V6m7VFGGrkCpTY_Fa/exec";
 /* ---- MAP CỘNG ĐỒNG: khách gửi qua Messenger, bạn kiểm duyệt xong thì thêm 1 dòng vào đây (giống MAPS), by = tên người tạo.
    Ảnh: bỏ vào thư mục mapkhach/ trên GitHub, tên file = đúng tên map + .jpg */
 var CMAPS=[
@@ -1274,7 +1276,7 @@ function setE(j){if(j.user)U=j.user;if(j.en)EN=j.en;if(j.cfg)CF=j.cfg;chip();try
 window.isLiveAdmin=function(){return !!(U&&U.admin)};
 function modal(h){var o=$("amod");if(o)o.remove();o=document.createElement("div");o.id="amod";o.className="amod";o.innerHTML='<div class="abox"><button class="ax" type="button" aria-label="Đóng">✕</button>'+h+'</div>';o.onclick=function(e){if(e.target===o||e.target.classList.contains("ax"))o.remove()};document.body.appendChild(o);return o}
 function left(){var m=Math.max(0,Math.round((EN.resetAt-Date.now())/60000));return Math.floor(m/60)+"g "+m%60+"p"}
-CH.onclick=function(){modal('<h3>⚡ Năng lượng của bạn</h3><p class="big">⚡ <b>'+EN.n+'</b></p><p class="mt">Reset về '+CF.daily+' lúc 00:00 (còn '+left()+').</p><p class="mt">• Online: +⚡1 mỗi 10 phút (hôm nay '+EN.onl+'/'+CF.onlMax+')<br>• Đăng map: +⚡'+CF.postRew+' mỗi lần (hôm nay '+EN.post+'/'+CF.postRewMax+' lần)</p><p class="mt"><small>Mã của bạn: '+esc(U?U.id:"chưa kết nối")+'</small> <button class="cp" id="adm" type="button">🛡 '+(U&&U.admin?"Admin":"Đăng nhập")+'</button></p>'+(U?"":'<p class="mt" style="color:var(--p)">⚠ Chưa kết nối được máy chủ năng lượng: '+esc(ERR||"đang kết nối…")+'<br>Kiểm tra ACC_API đã đúng link /exec và đã «Triển khai phiên bản mới» bằng file .gs mới nhất chưa. Tắt trình chặn quảng cáo nếu có (api.ipify.org bị chặn sẽ không lấy được IP).</p>')+'<button class="btn" id="rtry" type="button">↻ Thử kết nối lại</button>');var ad=$("adm");if(ad)ad.onclick=function(){var k=prompt("Đăng nhập admin: nhập mã admin (để trống = thoát admin):",AK);if(k===null)return;AK=k.trim();try{localStorage.setItem("g_ak",AK)}catch(x){}$("amod").remove();call("me").then(function(j){if(j.ok)setE(j);if(!j.ok)toast("Đăng nhập thất bại");else if(j.user&&j.user.admin)toast("Đăng nhập thành công ✓ Bạn đã là Admin");else if(!AK)toast("Đã thoát admin");else if(j.user&&j.user.admin===undefined)toast("Đăng nhập thất bại");else toast("Đăng nhập thất bại");loadC();var cl0=$("cl");if(cl0&&cur==="cmt")cl0.innerHTML=cList()})};var r=$("rtry");if(r)r.onclick=function(){init2();$("amod").remove()}};
+CH.onclick=function(){modal('<h3>⚡ Năng lượng của bạn</h3><p class="big">⚡ <b>'+EN.n+'</b></p><p class="mt">Reset về '+CF.daily+' lúc 00:00 (còn '+left()+').</p><p class="mt">• Online: +⚡1 mỗi 10 phút (hôm nay '+EN.onl+'/'+CF.onlMax+')<br>• Đăng map: +⚡'+CF.postRew+' mỗi lần (hôm nay '+EN.post+'/'+CF.postRewMax+' lần)</p><p class="mt"><small>Mã của bạn: '+esc(U?U.id:"chưa kết nối")+'</small> <button class="cp" id="adm" type="button">🛡 '+(U&&U.admin?"Admin":"Đăng nhập")+'</button></p>'+rdHtml()+(U?"":'<p class="mt" style="color:var(--p)">⚠ Chưa kết nối được máy chủ năng lượng: '+esc(ERR||"đang kết nối…")+'<br>Kiểm tra ACC_API đã đúng link /exec và đã «Triển khai phiên bản mới» bằng file .gs mới nhất chưa. Tắt trình chặn quảng cáo nếu có (api.ipify.org bị chặn sẽ không lấy được IP).</p>')+'<button class="btn" id="rtry" type="button">↻ Thử kết nối lại</button>');var ad=$("adm");if(ad)ad.onclick=function(){var k=prompt("Đăng nhập admin: nhập mã admin (để trống = thoát admin):",AK);if(k===null)return;AK=k.trim();try{localStorage.setItem("g_ak",AK)}catch(x){}$("amod").remove();call("me").then(function(j){if(j.ok)setE(j);if(!j.ok)toast("Đăng nhập thất bại");else if(j.user&&j.user.admin)toast("Đăng nhập thành công ✓ Bạn đã là Admin");else if(!AK)toast("Đã thoát admin");else if(j.user&&j.user.admin===undefined)toast("Đăng nhập thất bại");else toast("Đăng nhập thất bại");loadC();var cl0=$("cl");if(cl0&&cur==="cmt")cl0.innerHTML=cList()})};var r=$("rtry");if(r)r.onclick=function(){init2();$("amod").remove()}};
 setInterval(function(){if(!U||document.hidden)return;call("ping").then(function(j){if(j.ok){var o=EN.n;setE(j);if(EN.n>o)toast("⚡ +"+(EN.n-o)+" năng lượng vì bạn online")}})},60000);
 function loadC(){if(!ACC_API)return;call("maps").then(function(j){if(!j.ok)return;CMAPS.length=0;CM0.concat(j.maps.map(function(m){m.cid=m.id;return m})).forEach(function(m){CMAPS.push(m)});
  CFG.games.forEach(function(g){g.items.forEach(function(it){if(it.maps===CMAPS)it.note=CMAPS.length+" map · do người chơi gửi, ghi rõ tên người tạo"})});actDiff(CMAPS.filter(function(m){return m.cid}));redraw();if(cur==="sub"||cur==="ppl")render()})}
@@ -1410,11 +1412,20 @@ $("ctabs").addEventListener("click",function(e){var b=e.target.closest(".ctab");
 P.addEventListener("click",function(e){var b=e.target.closest(".cb[data-v]");if(!b||b.disabled||VS.v!=="")return;
  var M=ym(),k=b.dataset.v,v=ST.vt["m"+M]||(ST.vt["m"+M]={});VS.v=k;v[k]=(v[k]||0)+1;pVote();
  API.vote(VS.ip,M,k).then(function(j){if(j&&j.dup){v[k]--;VS.v=j.v||k;toast("IP của bạn đã bình chọn tháng này rồi")}else toast("Đã ghi nhận phiếu bầu ✓");if(cur==="vote")pVote()})});
+/* ---- NHẬP MÃ QUÀ TẶNG ⚡ (mã ghi trong sheet «Codes» của Google Sheet) ---- */
+function rdHtml(){return'<div class="rdf"><p class="mt"><b>🎟 Nhập mã quà tặng</b> <small>(⚡ từ mã được giữ lại, không bị reset 00:00)</small></p><div class="rdr"><input class="rdc" maxlength="40" placeholder="Nhập mã…" autocomplete="off" spellcheck="false"><button type="button" class="btn rdb">Nhận ⚡</button></div><p class="mt rdm"></p></div>'}
+document.addEventListener("click",function(e){var b=e.target.closest(".rdb");if(!b)return;var f=b.closest(".rdf"),i=f.querySelector(".rdc"),m=f.querySelector(".rdm"),c=i.value.trim();
+ if(c.length<2){m.textContent="Nhập mã quà tặng.";return}
+ if(!ACC_API||!U){m.textContent="Đang kết nối máy chủ năng lượng, thử lại sau giây lát.";return}
+ b.disabled=true;m.textContent="Đang kiểm tra…";
+ call("redeem",{code:c}).then(function(j){b.disabled=false;if(!j||!j.ok){m.textContent=spErr(j);return}
+  setE(j);i.value="";m.textContent="🎉 Nhận thành công +⚡"+j.gain+"! Bạn đang có ⚡"+EN.n;toast("+⚡"+j.gain+" từ mã quà tặng");
+  var bg=document.querySelector("#amod .big b");if(bg)bg.textContent=EN.n;var sv=document.querySelector(".shp small b");if(sv)sv.textContent=EN.n})});
 /* ---- TÊN ĐẸP · CỬA HÀNG ⚡ · MAP BÍ ẨN · MẸO PHÁ ĐẢO ---- */
 function jl(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(x){return d}}
 function js_(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(x){}}
 function setBy(n){BY=n;try{localStorage.setItem("g_by",n)}catch(x){}}
-function spErr(j){var m=(j&&j.err)||"Không rõ lỗi";return/\bop\b|unknown|không hỗ trợ|chưa hỗ trợ/i.test(m)?"Máy chủ năng lượng chưa được cập nhật cho tính năng này ("+m+")":m}
+function spErr(j){var m=(j&&j.err)||"Không rõ lỗi";return/\bop\b|unknown|không hỗ trợ|chưa hỗ trợ|Thao tác không hợp lệ/i.test(m)?"Máy chủ năng lượng chưa được cập nhật cho tính năng này ("+m+")":m}
 var SHOP={fr:{t:"🖼 Khung tên",it:[["fr1","Viền neon xanh",6],["fr2","Viền hồng rực",6],["fr3","Viền vàng kim",12],["fr4","Viền cầu vồng",20]]},
  co:{t:"🎨 Màu tên",it:[["co1","Xanh ngọc",4],["co2","Hồng đào",4],["co3","Vàng cam",8],["co4","Gradient tím hồng",15]]},
  ic:{t:"✨ Biểu tượng cạnh tên",it:[["ic1","Ngọn lửa",3],["ic2","Kiếm sĩ",5],["ic3","Rồng",8],["ic4","Kim cương",10],["ic5","Vương miện",15]]}};
@@ -1435,7 +1446,7 @@ function shopCard(g,it){var id=it[0],own=OWN[id],on=EQ[g]===id,e={fr:"",co:"",ic
  return'<div class="shc'+(on?" on":"")+'"><div class="shpv">'+cosHtml("Tên bạn",e)+"</div><small>"+esc(it[1])+'</small><button type="button" class="cb shb2" data-a="'+(own?(on?"off":"use"):"buy")+'" data-g="'+g+'" data-id="'+id+'" data-n="'+esc(it[1])+'">'+(own?(on?"✓ Đang dùng · Bỏ":"Dùng"):"⚡ "+it[2])+"</button></div>"}
 function pShop(){
  var h='<p class="mt">Dùng ⚡ để đổi khung tên, màu tên và biểu tượng. Chúng hiện cạnh tên bạn ở BXH, bình luận, dòng hoạt động và map bạn đăng. Mua một lần, dùng mãi, chỉ hiện khi tên bạn nhập khớp với ô bên dưới.</p>'
-  +'<div class="cf"><div class="r2"><label>Tên hiển thị của bạn<input id="shn" maxlength="40" value="'+esc(BY)+'" placeholder="Tên đóng góp / bình luận của bạn"></label><div class="shp">Xem trước<div id="shv">'+nmH(BY||"Tên bạn")+'</div><small>⚡ của bạn: <b>'+EN.n+"</b></small></div></div></div>";
+  +rdHtml()+'<div class="cf"><div class="r2"><label>Tên hiển thị của bạn<input id="shn" maxlength="40" value="'+esc(BY)+'" placeholder="Tên đóng góp / bình luận của bạn"></label><div class="shp">Xem trước<div id="shv">'+nmH(BY||"Tên bạn")+'</div><small>⚡ của bạn: <b>'+EN.n+"</b></small></div></div></div>";
  Object.keys(SHOP).forEach(function(g){h+='<h3 class="sh">'+SHOP[g].t+'</h3><div class="shg">'+SHOP[g].it.map(function(it){return shopCard(g,it)}).join("")+"</div>"});
  P.innerHTML=h}
 P.addEventListener("input",function(e){if(e.target.id!=="shn")return;setBy(e.target.value.trim());var v=$("shv");if(v)v.innerHTML=nmH(BY||"Tên bạn")});
