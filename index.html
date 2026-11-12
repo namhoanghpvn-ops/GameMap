@@ -443,6 +443,18 @@ body.hc select{cursor:pointer!important}
 :root[data-theme=light] .lvform{background:rgba(255,255,255,.75)}
 :root[data-theme=light] .lvact .btn{color:#fff}
 @media (max-width:760px){.lvgrid{grid-template-columns:1fr}}
+/* ===== GIÁ MAP SINH TỒN ⚡ · ĐĂNG MAP (ADMIN) ===== */
+.admonly[hidden]{display:none!important}
+.mpr{font:700 .78rem var(--head);padding:.12rem .55rem;border-radius:6px;background:rgba(255,178,62,.16);color:#ffb23e;border:1px solid rgba(255,178,62,.45);white-space:nowrap}
+.mpr.own{background:rgba(62,224,138,.14);color:#3ee08a;border-color:rgba(62,224,138,.45)}
+.ma .mbuy{background:linear-gradient(135deg,#ffb23e,var(--p))}
+.ma .mbuy i{font-style:normal;margin-left:.4rem;padding:0 .45rem;border-radius:6px;background:rgba(0,0,0,.28)}
+.ma:has(.mad){flex-wrap:wrap}
+.mad{font:700 .8rem var(--body);padding:.42rem .6rem;border-radius:10px;border:1px dashed var(--c);background:transparent;color:var(--c);cursor:pointer;white-space:nowrap;transition:background .2s}
+.mad:hover{background:rgba(41,240,255,.12)}
+.admf .tpr{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+.admf .adr{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.admf .adr .btn{font-size:.95rem}
 </style>
 <style>
 .accchip{position:fixed;left:14px;bottom:14px;z-index:9991;display:flex;align-items:center;gap:6px;font:700 .95rem var(--body);padding:.4rem .9rem;border-radius:99px;border:1px solid var(--c);background:var(--panel);color:var(--text);cursor:pointer;box-shadow:0 8px 24px -10px #000}
@@ -664,7 +676,10 @@ var MAP_DIR="anh-map/", MAP_EXT=".jpg";
    t = tên map (cũng là tên file ảnh)      p = số người chơi
    d = độ khó: "Dễ" | "Trung Bình" | "Khó" | "Cực Khó" | "Siêu Cấp"
    s = cỡ map: "Nhỏ" | "Vừa" | "Rộng"      u = link tải
-   (Có thể ghi thêm img:"duong/dan/anh.jpg" nếu muốn dùng ảnh khác tên) */
+   (Có thể ghi thêm img:"duong/dan/anh.jpg" nếu muốn dùng ảnh khác tên)
+   GIÁ MỞ KHÓA ⚡ (mọi map sinh tồn đều phải mua bằng năng lượng): tự tính theo độ khó d
+   Dễ 2 · Trung Bình 4 · Khó 6 · Cực Khó 8 · Siêu Cấp 10. Admin đăng nhập rồi sửa giá ngay trên web
+   (mục «Đăng map mới (Admin)» sửa theo độ khó, nút «✎ Giá» trên từng map sửa riêng). */
 var MAPS=[
   {t:"Up Side Down Temp",p:8,d:"Dễ",s:"Vừa",u:"https://www.mediafire.com/file/sscutde5nzunam7/USD+Temp.mpr/file"},
   {t:"Up Side Down Super V1.2",p:8,d:"Trung Bình",s:"Rộng",u:"https://www.mediafire.com/file/km8fqc2ftwhbk7j/upsidedown+super+v1.2.mpr/file"},
@@ -766,7 +781,7 @@ var LIVES=[
 ];
 /* ---- NĂNG LƯỢNG THEO IP (xem google-apps-script-tai-khoan.gs) ----
    ACC_API = link Web App của script năng lượng (khác API_URL). Trống = tắt. Không cần đăng nhập. */
-var ACC_API="https://script.google.com/macros/s/AKfycbxGIUc4b5ORLqW4bOl4ACYxmLgFHaThDP1Fcl068ipp1yzVM8hx7TQrT_oF8M7U38br_A/exec";
+var ACC_API="https://script.google.com/macros/s/AKfycbwE2AsPkjXDBfqtunaMHwBNlk0gM-ILnaH1R9n_EB9nMyhpz05vVbFXL191JmsX3xsuyQ/exec";
 /* ---- MAP CỘNG ĐỒNG: khách gửi qua Messenger, bạn kiểm duyệt xong thì thêm 1 dòng vào đây (giống MAPS), by = tên người tạo.
    Ảnh: bỏ vào thư mục mapkhach/ trên GitHub, tên file = đúng tên map + .jpg */
 var CMAPS=[
@@ -839,6 +854,14 @@ var CFG={
           note:MAPS.length+" map · có ảnh, thông tin và link tải",
           links:[],
           maps:MAPS
+        },
+        {
+          /* Chỉ hiện khi đăng nhập Admin. Ảnh lấy từ thư mục anh-map (tên file = tên map + .jpg) */
+          t:"📮 Đăng map mới (Admin)",
+          note:"Chỉ Admin thấy · ảnh lấy từ thư mục anh-map",
+          links:[],
+          adminOnly:true,
+          adminPost:true
         },
         {
           t:"Map cộng đồng",
@@ -1038,12 +1061,12 @@ function renderGame(gIdx){
   html+='<div class="gh">'+esc(g.name)+' <small>· '+esc(g.note||"")+'</small></div>';
   html+='<div class="item-list">';
   g.items.forEach(function(item,i){
-    html+='<div><div class="item-btn" data-i="'+i+'"><b>'+esc(item.t)+'</b><span>'+esc(item.note||"")+'</span></div>';
+    html+='<div'+(item.adminOnly?' class="admonly"'+((window.isLiveAdmin&&window.isLiveAdmin())?'':' hidden'):'')+'><div class="item-btn" data-i="'+i+'"><b>'+esc(item.t)+'</b><span>'+esc(item.note||"")+'</span></div>';
     html+='<div class="link-list" id="links-'+i+'"><div>';
     (item.links||[]).forEach(function(lnk,j){
       html+='<div class="link-item"><a href="'+esc(lnk.url)+'" target="_blank" rel="noopener">🔗 '+esc(lnk.name)+'</a><span class="desc">'+esc(lnk.desc||"")+'</span></div>';
     });
-    if(item.maps)html+='<div class="mapg"></div>';if(item.servers)html+=srvHtml(item.servers);if(item.guide)html+=guideHtml(item.guide);
+    if(item.maps)html+='<div class="mapg"></div>';if(item.adminPost)html+='<div class="admpost"></div>';if(item.servers)html+=srvHtml(item.servers);if(item.guide)html+=guideHtml(item.guide);
     html+='</div></div></div>';
   });
   html+='</div>';
@@ -1055,7 +1078,7 @@ function renderGame(gIdx){
   // Mở/đóng danh sách link
   document.querySelectorAll(".item-btn").forEach(function(btn){
     btn.onclick=function(){var i=+this.dataset.i;var box=$("links-"+i);var isOn=box.classList.toggle("on");this.style.borderColor=isOn?"var(--c)":"";this.style.background=isOn?"rgba(139,92,255,.15)":"";
-     this.classList.toggle("open",isOn);if(isOn){var it=CFG.games[openG].items[i];if(it.maps)initGallery(box.querySelector(".mapg"),it.maps);box.scrollIntoView({behavior:"smooth",block:"nearest"});openItem=i}else{openItem=-1}};
+     this.classList.toggle("open",isOn);if(isOn){var it=CFG.games[openG].items[i];if(it.maps)initGallery(box.querySelector(".mapg"),it.maps);if(it.adminPost&&window.initAdminPost)window.initAdminPost(box.querySelector(".admpost"));box.scrollIntoView({behavior:"smooth",block:"nearest"});openItem=i}else{openItem=-1}};
   });
 }
 $("chipbox").addEventListener("click",function(e){var b=e.target.closest(".chip");if(!b)return;var i=+b.dataset.g;
@@ -1142,7 +1165,7 @@ window.initGallery=function(box,maps){
    if(st.q&&m.t.toLowerCase().indexOf(st.q)<0)return;
    if(st.pl!=="all"&&bk(m.p)!==st.pl)return;if(st.df!=="all"&&m.d!==st.df)return;if(st.sz!=="all"&&m.s!==st.sz)return;
    var K=m.cid?"c"+m.cid:mkey(m.t),id=((m.u||"").match(/file\/(\w+)/)||[])[1],img=m.img||(MAP_DIR+encodeURIComponent(m.t)+MAP_EXT);
-   h+='<article class="mcard" data-id="'+id+'" data-t="'+esc(m.t)+'" style="animation-delay:'+Math.min(n,24)*40+'ms"><div class="mth"><img src="'+esc(img)+'" alt="Ảnh map '+esc(m.t)+'" loading="lazy" data-i="'+i+'"><span class="pn">👥 '+m.p+'</span><span class="sz">'+esc(m.s)+'</span>'+(ST.champ===K?'<span class="crown">🏆 Map Tháng</span>':'')+'</div><div class="mb"><b>'+esc(m.t)+'</b><div class="mrow"><span class="df '+(DFC[m.d]||"d1")+'">'+esc(m.d)+'</span>'+(m.by?'<span class="by">'+(m.cid?cmBy(m):"👤 "+esc(m.by))+'</span>':'')+'</div><div class="mst"><span class="dlc" data-k="'+esc(K)+'" title="Số lượt tải">⬇ '+(m.cid?(m.dl||0)+" lượt tải":(ST.dl[K]||0))+'</span>'+rateHtml(K)+'</div>'+(m.cid?cmDet(m):"")+'<div class="ma">'+(m.cid?cmAct(m):'<a class="btn dlb" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a><button type="button" class="cp" data-i="'+i+'">Chép link</button>')+(window.tipBtn?window.tipBtn(m.t):"")+'</div></div></article>';n++});
+   h+='<article class="mcard" data-id="'+id+'" data-t="'+esc(m.t)+'" style="animation-delay:'+Math.min(n,24)*40+'ms"><div class="mth"><img src="'+esc(img)+'" alt="Ảnh map '+esc(m.t)+'" loading="lazy" data-i="'+i+'"><span class="pn">👥 '+m.p+'</span><span class="sz">'+esc(m.s)+'</span>'+(ST.champ===K?'<span class="crown">🏆 Map Tháng</span>':'')+'</div><div class="mb"><b>'+esc(m.t)+'</b><div class="mrow"><span class="df '+(DFC[m.d]||"d1")+'">'+esc(m.d)+'</span>'+(!m.cid&&window.mapTag?window.mapTag(m):"")+(m.by?'<span class="by">'+(m.cid?cmBy(m):"👤 "+esc(m.by))+'</span>':'')+'</div><div class="mst"><span class="dlc" data-k="'+esc(K)+'" title="Số lượt tải">⬇ '+(m.cid?(m.dl||0)+" lượt tải":(ST.dl[K]||0))+'</span>'+rateHtml(K)+'</div>'+(m.cid?cmDet(m):"")+'<div class="ma">'+(m.cid?cmAct(m):(window.mapAct?window.mapAct(m,i):'<a class="btn dlb" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a><button type="button" class="cp" data-i="'+i+'">Chép link</button>'))+(window.tipBtn?window.tipBtn(m.t):"")+'</div></div></article>';n++});
   grid.innerHTML=h||'<div class="mempty">Không có map nào khớp bộ lọc.</div>';
   if(first&&!RM){first=false;var t0=performance.now();(function c(t){var k=Math.min(1,(t-t0)/900);cnt.textContent=Math.round(n*k);if(k<1)requestAnimationFrame(c)})(t0)}else cnt.textContent=n}
  box.addEventListener("click",function(e){var c=e.target.closest(".fc");
@@ -1204,7 +1227,7 @@ var gs=$("gs"),res=$("sres"),list=[],act=-1;
 function norm(x){return String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[đĐ]/g,"d").toLowerCase()}
 function build(){var L=[];
  CFG.games.forEach(function(g,gi){L.push({k:"Game",t:g.name,s:g.note||"",gi:gi});
-  g.items.forEach(function(it,ii){L.push({k:g.name,t:it.t,s:it.note||"",gi:gi,ii:ii});
+  g.items.forEach(function(it,ii){if(it.adminOnly&&!(window.isLiveAdmin&&window.isLiveAdmin()))return;L.push({k:g.name,t:it.t,s:it.note||"",gi:gi,ii:ii});
    (it.links||[]).forEach(function(l){L.push({k:"Link",t:l.name,s:it.t+" · "+(l.desc||""),gi:gi,ii:ii})});
    (it.maps||[]).forEach(function(m){L.push({k:"Map",t:m.t,s:m.d+" · "+m.p+" người · "+m.s,gi:gi,ii:ii,map:m.t})});
    (it.servers||[]).forEach(function(v){L.push({k:"Server",t:v.name,s:v.ip+" · "+v.ver,gi:gi,ii:ii,sel:".srv"})});
@@ -1450,7 +1473,7 @@ function cosHtml(name,e){var n=esc(name);if(!e||typeof e!=="object")return n;
  return'<span class="nm'+(fr?" "+fr:"")+'">'+(ic?ic+" ":"")+'<span class="nmt'+(co?" "+co:"")+'">'+n+"</span></span>"}
 function nmH(name){name=String(name||"Ẩn danh");var l=name.trim().toLowerCase(),me=String(BY||"").trim().toLowerCase();return cosHtml(name,me&&l===me?EQ:COS[l])}
 function pubEq(){if(BY&&ACC_API)call("equip",{by:BY,eq:EQ}).then(function(j){if(j&&!j.ok&&j.err)toast(j.err)})}
-function loadCos(){if(!ACC_API)return;call("cos").then(function(j){if(!j||!j.ok||!j.cos)return;var o=Object.create(null);Object.keys(j.cos).forEach(function(k){o[k.toLowerCase()]=j.cos[k]});COS=o;
+function loadCos(){if(!ACC_API)return;call("cos").then(function(j){if(!j||!j.ok||!j.cos)return;admApply(j);var o=Object.create(null);Object.keys(j.cos).forEach(function(k){o[k.toLowerCase()]=j.cos[k]});COS=o;
  if(j.box&&j.box.forEach){MBX=j.box.slice();if(cur==="box")pBox()}
  if(j.own&&j.own.forEach){var ow={};j.own.forEach(function(id){if(PRICE[id]!==undefined)ow[id]=1});OWN=ow;js_("g_own",OWN);["fr","co","ic"].forEach(function(g){if(EQ[g]&&!OWN[EQ[g]])EQ[g]=""});js_("g_eq",EQ)}
  if(cur==="ppl")render();else if(cur==="cmt"){var l=$("cl");if(l)l.innerHTML=cList()}}).catch(function(){})}
@@ -1476,7 +1499,7 @@ var MBX=[];
 function mOpened(){var a=jl("g_myst",[]);if(!Array.isArray(a))a=[];var r=MBX.slice();a.forEach(function(t){if(r.indexOf(t)<0)r.push(t)});return r}
 function mapRow(m){var im=m.img||(MAP_DIR+encodeURIComponent(m.t)+MAP_EXT);
  return'<div class="nw"><div class="cmrow"><div class="cmi"><b>'+esc(m.t)+'</b> <span class="by">👥 '+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+'</span><br><a class="cb dlb" data-t="'+esc(m.t)+'" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a> '+tipBtn(m.t)+"</div>"+cmThumb({t:m.t,img:im})+"</div></div>"}
-function pBox(rev){var op=mOpened(),pool=MAPS.filter(function(m){return op.indexOf(m.t)<0});
+function pBox(rev){var op=mOpened(),pool=MAPS.filter(function(m){return op.indexOf(m.t)<0&&!mpaid(m)});
  P.innerHTML='<div class="mbx"><div class="mbi" id="mbi">🎁</div><h3 class="sh" style="margin:6px 0">Hộp quà map bí ẩn</h3><p class="mt">Mở hộp để nhận ngẫu nhiên <b>1 map trong kho map sinh tồn</b>. Tên và ảnh được giấu cho tới khi bạn mở. Chỉ tốn <b>⚡'+MYST+"</b>, rẻ hơn tải map cộng đồng (⚡"+CF.cost+"). Mỗi hộp luôn ra map bạn chưa từng mở.</p>"
   +'<p class="mt">Còn <b>'+pool.length+"</b>/"+MAPS.length+" map chưa mở · ⚡ của bạn: <b>"+EN.n+'</b></p><button class="btn" id="mbo" type="button"'+(pool.length?"":" disabled")+">"+(pool.length?"🎁 Mở hộp (⚡"+MYST+")":"Bạn đã mở hết kho map")+'</button><div id="mbr">'
   +(rev?'<div class="mrev nw champ"><b>🎉 Bạn nhận được:</b>'+mapRow(rev)+"</div>":"")+"</div></div>"
@@ -1485,7 +1508,7 @@ function pBox(rev){var op=mOpened(),pool=MAPS.filter(function(m){return op.index
  bo.onclick=function(){if(!ACC_API||!U){toast("Đang kết nối máy chủ năng lượng, thử lại sau giây lát");return}
   if(EN.n<MYST){toast("Không đủ năng lượng (cần ⚡"+MYST+", còn ⚡"+EN.n+")");return}
   if(!confirm("Mở hộp bí ẩn tốn ⚡"+MYST+" (bạn còn ⚡"+EN.n+"). Tiếp tục?"))return;
-  var op1=mOpened(),pl0=MAPS.filter(function(m){return op1.indexOf(m.t)<0}),pick=pl0[Math.floor(Math.random()*pl0.length)];if(!pick){toast("Bạn đã mở hết kho map");return}
+  var op1=mOpened(),pl0=MAPS.filter(function(m){return op1.indexOf(m.t)<0&&!mpaid(m)}),pick=pl0[Math.floor(Math.random()*pl0.length)];if(!pick){toast("Bạn đã mở hết kho map");return}
   bo.disabled=true;var bx=$("mbi");bx.classList.add("shk");
   call("spend",{kind:"mystery",cost:MYST,map:pick.t}).then(function(j){bx.classList.remove("shk");if(!j||!j.ok){bo.disabled=false;if(/đã mở map này/.test((j&&j.err)||""))loadCos();toast(spErr(j));return}
    setE(j);var o2=jl("g_myst",[]);if(!Array.isArray(o2))o2=[];if(o2.indexOf(pick.t)<0)o2.push(pick.t);js_("g_myst",o2);if(MBX.indexOf(pick.t)<0)MBX.push(pick.t);pBox(pick)})}}
@@ -1516,6 +1539,103 @@ document.addEventListener("click",function(e){var b;
   var r2={id:nid(),ts:Date.now(),ten:"ID:"+myCid(),map:TIPT,noidung:TL+id};ST.cmt.push(r2);PEND.push(r2);API.add("BinhLuan",r2);tipRefresh();return}
  if(b=e.target.closest(".tpd")){if(!(U&&U.admin)){toast("Cần đăng nhập Admin để xóa");return}if(!confirm("Xóa mẹo này?"))return;var d=b.dataset.id;
   API.del(d).then(function(j){if(j&&j.ok){ST.cmt=ST.cmt.filter(function(x){return x.id!==d});PEND=PEND.filter(function(x){return x.id!==d});tipRefresh();toast("Đã xóa mẹo ✓")}else toast((j&&j.err)||"Không xóa được mẹo")})}});
+/* ---- GIÁ MAP SINH TỒN ⚡ · ĐĂNG MAP MỚI (CHỈ ADMIN) ----
+   Giá mở khóa mặc định theo độ khó: Dễ 2 · Trung Bình 4 · Khó 6 · Cực Khó 8 · Siêu Cấp 10. Admin sửa theo độ khó hoặc riêng từng map.
+   Máy chủ (google-apps-script-tai-khoan.gs) lưu bảng giá + map Admin đăng, tự kiểm tra giá khi trừ ⚡ và chỉ nhận lệnh đăng/sửa/xóa khi đúng mã Admin. */
+var TIER0={"Dễ":2,"Trung Bình":4,"Khó":6,"Cực Khó":8,"Siêu Cấp":10},
+ MAPS0=MAPS.slice(),PCFG={tier:Object.create(null),map:Object.create(null)},MBK=Object.create(null),ASIG="",MOWN=jl("g_mown",{}),LADM=false,APT=0;
+if(!MOWN||typeof MOWN!=="object"||Array.isArray(MOWN))MOWN={};
+function isAdm(){return !!(U&&U.admin)}
+function mfind(t){return MAPS.filter(function(m){return m.t===t})[0]}
+function pnum(v,d){v=Math.round(+v);return isNaN(v)?d:Math.max(0,Math.min(99,v))}
+function mprice(m){var v=PCFG.map[mkey(m.t)];if(v==null)v=PCFG.tier[m.d];if(v==null)v=TIER0[m.d];return pnum(v,2)}
+function mpaid(m){var k=mkey(m.t);return !!(MOWN[k]||MBK[k])}
+function mowned(m){return isAdm()||mpaid(m)||mOpened().indexOf(m.t)>=0}
+window.mapTag=function(m){var o=!isAdm()&&mowned(m);return'<span class="mpr'+(o?" own":"")+'" title="'+(isAdm()?"Admin tải miễn phí":"Giá mở khóa map")+'">'+(o?"✓ Đã mở":"⚡"+mprice(m))+"</span>"};
+window.mapAct=function(m,i){var h;
+ if(mowned(m))h='<a class="btn dlb" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a><button type="button" class="cp" data-i="'+i+'">Chép link</button>';
+ else h='<button type="button" class="btn mbuy" data-t="'+esc(m.t)+'">🔒 Mở khóa<i>⚡'+mprice(m)+"</i></button>";
+ if(isAdm())h+='<button type="button" class="mad mpe" data-t="'+esc(m.t)+'" title="Sửa giá ⚡ của map này">✎ Giá</button>'+(m.rid?'<button type="button" class="mad mpx" data-t="'+esc(m.t)+'" title="Xóa map này">🗑</button>':"");
+ return h};
+/* nhận bảng giá + map Admin đăng + map đã mua từ máy chủ (gọi trong loadCos) */
+function admApply(j){var tr=(j.mp&&j.mp.tier)||{},mp=(j.mp&&j.mp.map)||{},list=[],seen=Object.create(null);
+ MAPS0.forEach(function(m){seen[m.t.toLowerCase()]=1});
+ (j.ms||[]).forEach(function(o){if(!o||typeof o.t!=="string"||!http(o.u)||DIFF.indexOf(o.d)<0||SZ.indexOf(o.s)<0)return;var k=o.t.toLowerCase();if(seen[k])return;seen[k]=1;
+  list.push({t:o.t,p:+o.p,d:o.d,s:o.s,u:String(o.u).trim(),ts:o.ts||"",rid:o.id})});
+ MBK=Object.create(null);(j.mb||[]).forEach(function(k){MBK[k]=1});
+ var sig=JSON.stringify([tr,mp,list.map(function(m){return m.rid}),Object.keys(MBK).length]);if(sig===ASIG)return;ASIG=sig;
+ PCFG={tier:Object.create(null),map:Object.create(null)};
+ DIFF.forEach(function(d){if(tr[d]!=null&&!isNaN(+tr[d]))PCFG.tier[d]=pnum(tr[d],TIER0[d])});
+ Object.keys(mp).forEach(function(k){if(mp[k]!=null&&!isNaN(+mp[k]))PCFG.map[k]=pnum(mp[k],0)});
+ MAPS.length=0;MAPS0.concat(list).forEach(function(m){MAPS.push(m)});
+ CFG.games.forEach(function(g){g.items.forEach(function(it){if(it.maps===MAPS)it.note=MAPS.length+" map · có ảnh, thông tin và link tải"})});
+ redraw();admPanel()}
+/* mua map bằng ⚡ (máy chủ tự tính lại giá và trừ năng lượng) */
+function buyMap(m,b){var pr=mprice(m);
+ if(!ACC_API||!U){toast("Đang kết nối máy chủ năng lượng, thử lại sau giây lát");return}
+ if(EN.n<pr){toast("Không đủ năng lượng (cần ⚡"+pr+", còn ⚡"+EN.n+"). Online thêm hoặc nhập mã quà tặng.");return}
+ if(!confirm("Mở khóa «"+m.t+"» với ⚡"+pr+"? (bạn còn ⚡"+EN.n+")"))return;
+ b.disabled=true;
+ call("spend",{kind:"mapbuy",map:m.t,d:m.d,price:pr}).then(function(j){
+  if(!j||!j.ok){b.disabled=false;toast(spErr(j));if(j&&/vừa đổi|đã mở/.test(j.err||""))loadCos();return}
+  setE(j);MOWN[mkey(m.t)]=1;js_("g_mown",MOWN);toast("Đã mở khóa «"+m.t+"» ✓");redraw()})}
+/* admin: lưu bảng giá lên máy chủ */
+function savePrice(okMsg){return call("mset",{tier:PCFG.tier,map:PCFG.map}).then(function(j){
+ if(!j||!j.ok){toast(spErr(j));loadCos();return}setE(j);toast(okMsg||"Đã lưu giá ✓");loadCos()})}
+function postMap(){var t=($("apn").value||"").trim(),u=($("apu").value||"").trim();
+ if(t.length<2){msg("apm","Nhập tên map (ít nhất 2 ký tự).");return}
+ if(!http(u)){msg("apm","Link tải phải bắt đầu bằng http:// hoặc https://");return}
+ if(MAPS.some(function(m){return m.t.toLowerCase()===t.toLowerCase()})){msg("apm","Đã có map trùng tên «"+t+"». Hãy đặt tên khác.");return}
+ msg("apm","Đang đăng…");
+ call("madd",{t:t,p:+$("app").value,d:$("apd").value,s:$("apsz").value,u:u}).then(function(j){
+  if(!j||!j.ok){msg("apm",spErr(j));return}setE(j);toast("Đã đăng map «"+t+"» ✓");loadCos()})}
+function delMap(m){if(!m||!m.rid||!confirm("Xóa map «"+m.t+"» khỏi Map sinh tồn?"))return;
+ call("mdel",{id:m.rid}).then(function(j){if(!j||!j.ok){toast(spErr(j));return}setE(j);toast("Đã xóa map ✓");loadCos()})}
+function editPrice(m){var k=mkey(m.t),has=PCFG.map[k]!=null,dv=PCFG.tier[m.d]!=null?PCFG.tier[m.d]:TIER0[m.d],
+ v=prompt("Giá ⚡ của map «"+m.t+"» (số nguyên 0-99).\nĐể trống = dùng giá theo độ khó «"+m.d+"» (⚡"+dv+").",has?mprice(m):"");
+ if(v===null)return;v=v.trim();
+ if(v===""){delete PCFG.map[k]}else{if(isNaN(+v)||+v<0||+v>99){toast("Giá phải là số nguyên từ 0 đến 99");return}PCFG.map[k]=Math.round(+v)}
+ savePrice("Đã cập nhật giá ✓")}
+/* giao diện mục «Đăng map mới (Admin)» */
+function admRender(b){var done=MAPS.filter(function(m){return m.rid});
+ b.innerHTML='<div class="cf admf"><p class="mt">Đăng map vào mục «Map sinh tồn». <b>Ảnh:</b> bỏ file vào thư mục <b>anh-map</b>, tên file = đúng tên map + <b>.jpg</b> (ví dụ map «Route 99» → <b>anh-map/Route 99.jpg</b>). Giá mở khóa tự tính theo độ khó, sửa ở bên dưới.</p>'
+  +'<div class="r2"><label>Tên map<input id="apn" maxlength="80" autocomplete="off"></label><label>Link tải (MediaFire, Drive, Mega…)<input id="apu" type="url" placeholder="https://"></label></div>'
+  +'<div class="r2"><label>Số người<select id="app">'+sel([2,3,4,5,6,7,8])+'</select></label><label>Độ khó<select id="apd">'+sel(DIFF)+'</select></label><label>Cỡ map<select id="apsz">'+sel(SZ)+'</select></label></div>'
+  +'<div class="imgprev" id="api"></div><div class="cr"><button class="btn" id="apg" type="button">📮 Đăng map</button></div><p class="mt" id="apm"></p>'
+  +'<h3 class="sh">⚙ Giá ⚡ theo độ khó</h3><div class="tpr">'+DIFF.map(function(d){return'<label>'+esc(d)+'<input class="tpi" data-d="'+esc(d)+'" type="number" min="0" max="99" step="1" value="'+pnum(PCFG.tier[d]!=null?PCFG.tier[d]:TIER0[d],2)+'"></label>'}).join("")+"</div>"
+  +'<div class="adr"><button class="btn" id="apsv" type="button">💾 Lưu giá</button><button class="cp" id="apr" type="button">↺ Về mặc định 2·4·6·8·10</button><button class="cp" id="apc" type="button">Xóa giá riêng từng map ('+Object.keys(PCFG.map).length+")</button></div><p class=\"mt\" id=\"apq\">Muốn đổi giá riêng một map: bấm nút «✎ Giá» trên thẻ map (chỉ Admin thấy).</p>"
+  +'<h3 class="sh">📮 Map đã đăng ('+done.length+")</h3>"
+  +(done.length?done.slice().reverse().map(function(m){return'<div class="nw"><b>'+esc(m.t)+'</b> <span class="by">👥 '+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+" · ⚡"+mprice(m)+'</span><div class="adr" style="margin-top:6px"><button type="button" class="mad mpx" data-t="'+esc(m.t)+'">🗑 Xóa</button><button type="button" class="mad mpc" data-t="'+esc(m.t)+'">📋 Chép dòng code</button></div></div>'}).join(""):'<p class="mt">Chưa đăng map nào.</p>')+"</div>";
+ $("app").value="8"}
+function admPanel(){var b=document.querySelector(".admpost");if(b&&b.dataset.ok&&isAdm())admRender(b)}
+window.initAdminPost=function(b){if(!b)return;b.dataset.ok=1;if(isAdm())admRender(b);else b.innerHTML='<p class="mt">Cần đăng nhập Admin để đăng map.</p>'};
+function apPrev(){var i=$("apn"),pv=$("api");if(!i||!pv)return;var v=i.value.trim();
+ if(!v){pv.style.display="none";pv.innerHTML="";return}
+ pv.style.display="flex";pv.innerHTML="<span>⏳ Đang tìm ảnh…</span>";var im=new Image(),pa=MAP_DIR+v+MAP_EXT;
+ im.onload=function(){if(i.value.trim()!==v)return;pv.innerHTML="";pv.appendChild(im);pv.insertAdjacentHTML("beforeend","<span>✓ Thấy ảnh <b>"+esc(pa)+"</b></span>")};
+ im.onerror=function(){if(i.value.trim()!==v)return;pv.innerHTML="<span>⚠ Chưa thấy ảnh <b>"+esc(pa)+"</b>. Hãy bỏ ảnh vào thư mục anh-map (đúng tên, đúng chữ hoa/thường). Vẫn đăng được, web sẽ hiện ảnh màu thay thế.</span>"};
+ im.src=MAP_DIR+encodeURIComponent(v)+MAP_EXT}
+document.addEventListener("input",function(e){if(e.target.id!=="apn")return;clearTimeout(APT);APT=setTimeout(apPrev,300)});
+document.addEventListener("click",function(e){var b=e.target.closest("#apg,#apsv,#apr,#apc,.mpc,.mpe,.mpx,.mbuy");if(!b)return;
+ var m=b.dataset.t?mfind(b.dataset.t):null;
+ if(b.classList.contains("mbuy")){if(m)buyMap(m,b);return}
+ if(!isAdm()){toast("Cần đăng nhập Admin");return}
+ if(b.id==="apg"){postMap();return}
+ if(b.id==="apsv"){var nt=Object.create(null),bad=false;
+  document.querySelectorAll(".tpi").forEach(function(i){var v=i.value.trim();if(v===""||isNaN(+v)||+v<0||+v>99){bad=true;return}nt[i.dataset.d]=Math.round(+v)});
+  if(bad){msg("apq","Giá phải là số nguyên từ 0 đến 99.");return}
+  PCFG.tier=nt;savePrice("Đã lưu giá ✓ Mọi người chơi sẽ thấy giá mới");return}
+ if(b.id==="apr"){PCFG.tier=Object.create(null);savePrice("Đã về giá mặc định 2·4·6·8·10 ✓");return}
+ if(b.id==="apc"){PCFG.map=Object.create(null);savePrice("Đã xóa giá riêng, mọi map dùng giá theo độ khó ✓");return}
+ if(!m)return;
+ if(b.classList.contains("mpe")){editPrice(m);return}
+ if(b.classList.contains("mpx")){delMap(m);return}
+ if(b.classList.contains("mpc")){var line="{t:"+JSON.stringify(m.t)+",p:"+m.p+",d:"+JSON.stringify(m.d)+",s:"+JSON.stringify(m.s)+",u:"+JSON.stringify(m.u)+"},";
+  copyTxt(line).then(function(ok){if(ok)toast("Đã chép dòng code ✓ Dán vào danh sách MAPS để giữ map vĩnh viễn");else window.prompt("Chép dòng code:",line)})}});
+/* đăng nhập / thoát Admin: hiện-ẩn mục Admin và vẽ lại nút trên thẻ map */
+document.addEventListener("accchange",function(){var a=isAdm();if(a===LADM)return;LADM=a;
+ document.querySelectorAll(".admonly").forEach(function(el){el.hidden=!a});
+ redraw();var ap=document.querySelector(".admpost");if(ap&&ap.dataset.ok){if(a)admRender(ap);else ap.innerHTML='<p class="mt">Cần đăng nhập Admin để đăng map.</p>'}});
 setTimeout(loadCos,1500);setInterval(function(){if(!document.hidden)loadCos()},180000);
 /* ---- DÒNG HOẠT ĐỘNG TRỰC TIẾP: chỉ dùng dữ liệu thật từ máy chủ (đăng map mới, lượt tải tăng) ---- */
 var ACT=[],SNAP=null,TKV=$("tkv");
