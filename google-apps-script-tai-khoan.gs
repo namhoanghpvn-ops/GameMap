@@ -95,7 +95,9 @@ function run(d){var op=d.op,u=who(d.ip,op!=="maps");if(op==="maps")return pub(u)
  else if(op==="mdl"){var mn=cl(d.map,80),ky=mk(mn);if(mn.length<2)return err("Thiếu tên map");
   if(!isAd(d)&&mbOwned(u.id).indexOf(ky)<0)return err("Bạn chưa mở khóa map này");
   var sm2=all("SMaps").filter(function(x){return x.st==="on"&&String(x.t).toLowerCase()===mn.toLowerCase()})[0],lnk=sm2?String(sm2.u):"";
-  if(!lnk){var sl=all("SLinks").filter(function(x){return String(x.key)===ky})[0];lnk=sl?String(sl.u):""}
+  if(!lnk){var sl=all("SLinks").filter(function(x){return String(x.key)===ky})[0];
+   if(!sl&&all("SLinks").length<SEEDN){nhapLinkMap(true);sl=all("SLinks").filter(function(x){return String(x.key)===ky})[0]} // tự nạp link lần đầu nếu quên chạy nhapLinkMap
+   lnk=sl?String(sl.u):""}
   if(!lnk)return err("Map này chưa có link trên máy chủ (Admin cần chạy nhapLinkMap hoặc điền sheet SLinks)");res.u=lnk}
  else if(op==="mlink"){if(!isAd(d))return err("Chỉ admin mới được sửa link");var tl=cl(d.t,80),ul=String(d.u||"").trim();if(tl.length<2||!/^https?:\/\/\S{4,480}$/.test(ul))return err("Tên map hoặc link không hợp lệ");
   var kl=mk(tl),ex=all("SLinks").filter(function(x){return String(x.key)===kl})[0];if(ex){ex.u=ul;ex.t=tl;upd("SLinks",ex)}else put("SLinks",{key:kl,t:tl,u:ul})}
@@ -130,7 +132,8 @@ function run(d){var op=d.op,u=who(d.ip,op!=="maps");if(op==="maps")return pub(u)
 
 /* CHẠY 1 LẦN trong trình soạn thảo Apps Script (chọn hàm nhapLinkMap → Chạy): nạp link tải của 76 map sinh tồn vào sheet SLinks.
    Sau đó link không còn nằm trong trang web nữa. Muốn đổi link 1 map: sửa trực tiếp ô trong sheet SLinks (cột u). */
-function nhapLinkMap(){var L=[
+var SEEDN=76; // số map có sẵn trong nhapLinkMap
+function nhapLinkMap(keep){var L=[
   ["Up Side Down Temp","https://www.mediafire.com/file/sscutde5nzunam7/USD+Temp.mpr/file"],
   ["Up Side Down Super V1.2","https://www.mediafire.com/file/km8fqc2ftwhbk7j/upsidedown+super+v1.2.mpr/file"],
   ["Up Side Down Super Water Lv2","https://www.mediafire.com/file/pz8h6pkeg3sjl2p/upsidedown+super+water++Lv2.mpr/file"],
@@ -207,6 +210,8 @@ function nhapLinkMap(){var L=[
   ["Super 8","https://www.mediafire.com/file/qzr4c5thixco01q/super8.mpr/file"],
   ["Hot Map 4","https://www.mediafire.com/file/76jg2797hji7y9g/hot+map+4.mpr/file"],
   ["USD Super Water Remake","https://www.mediafire.com/file/cxo3iv8mvv54ves/upsidedown+super+water++Lv6.1+Remake.mpr/file"]
- ],have={};all("SLinks").forEach(function(r){have[String(r.key)]=r});
- L.forEach(function(x){var k=mk(x[0]),r=have[k];if(r){r.t=x[0];r.u=x[1];upd("SLinks",r)}else put("SLinks",{key:k,t:x[0],u:x[1]})});
- Logger.log("Đã nạp "+L.length+" link vào sheet SLinks")}
+ ],s=sh("SLinks"),m={},ord=[],add=0;
+ all("SLinks").forEach(function(r){var k=String(r.key);if(!k)return;if(!m[k])ord.push(k);m[k]=[k,r.t,r.u]});
+ L.forEach(function(x){var k=mk(x[0]);if(m[k]){if(keep)return}else{ord.push(k);add++}m[k]=[k,x[0],x[1]]});
+ var rows=ord.map(function(k){return m[k]});if(rows.length)s.getRange(2,1,rows.length,3).setValues(rows);
+ Logger.log("Đã nạp "+L.length+" link vào sheet SLinks (thêm mới "+add+")");return L.length}
