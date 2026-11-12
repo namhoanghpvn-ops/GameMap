@@ -675,88 +675,88 @@ var MAP_DIR="anh-map/", MAP_EXT=".jpg";
    THÊM MAP MỚI: copy 1 dòng bên dưới, sửa các thông số rồi thêm ảnh vào thư mục anh-map
    t = tên map (cũng là tên file ảnh)      p = số người chơi
    d = độ khó: "Dễ" | "Trung Bình" | "Khó" | "Cực Khó" | "Siêu Cấp"
-   s = cỡ map: "Nhỏ" | "Vừa" | "Rộng"      u = link tải
+   s = cỡ map: "Nhỏ" | "Vừa" | "Rộng"      (link tải KHÔNG ghi ở đây nữa: nằm trong sheet SLinks của máy chủ, nạp bằng hàm nhapLinkMap trong file .gs)
    (Có thể ghi thêm img:"duong/dan/anh.jpg" nếu muốn dùng ảnh khác tên)
    GIÁ MỞ KHÓA ⚡ (mọi map sinh tồn đều phải mua bằng năng lượng): tự tính theo độ khó d
    Dễ 2 · Trung Bình 4 · Khó 6 · Cực Khó 8 · Siêu Cấp 10. Admin đăng nhập rồi sửa giá ngay trên web
    (mục «Đăng map mới (Admin)» sửa theo độ khó, nút «✎ Giá» trên từng map sửa riêng). */
 var MAPS=[
-  {t:"Up Side Down Temp",p:8,d:"Dễ",s:"Vừa",u:"https://www.mediafire.com/file/sscutde5nzunam7/USD+Temp.mpr/file"},
-  {t:"Up Side Down Super V1.2",p:8,d:"Trung Bình",s:"Rộng",u:"https://www.mediafire.com/file/km8fqc2ftwhbk7j/upsidedown+super+v1.2.mpr/file"},
-  {t:"Up Side Down Super Water Lv2",p:8,d:"Khó",s:"Rộng",u:"https://www.mediafire.com/file/pz8h6pkeg3sjl2p/upsidedown+super+water++Lv2.mpr/file"},
-  {t:"Up Side Down Super Water Lv6.1",p:8,d:"Khó",s:"Rộng",u:"https://www.mediafire.com/file/nmy4hwj435x4bja/upsidedown+super+water++Lv6.1.mpr/file"},
-  {t:"Up Side Down Super Water Lv6.1 Snow",p:8,d:"Cực Khó",s:"Rộng",u:"https://www.mediafire.com/file/7hfd12vephhvuxt/upsidedown+super+water++Lv6.1_Snow.mpr/file"},
-  {t:"Up Side Down Super Water Speed Up",p:8,d:"Cực Khó",s:"Rộng",u:"https://www.mediafire.com/file/9qsnvv7sdparzvu/upsidedown+super+water++Speed+Up.mpr/file"},
-  {t:"Up Side Down Super Water Lv7",p:8,d:"Cực Khó",s:"Rộng",u:"https://www.mediafire.com/file/k1wwuacrvpirhzv/upsidedown+super+water++Lv7.mpr/file"},
-  {t:"Up Side Down NH V2.2",p:8,d:"Dễ",s:"Vừa",u:"https://www.mediafire.com/file/yruxuv3j5ln1bld/upsidedownnh+ver2.2.mpr/file"},
-  {t:"Up Side Down NH V2.3",p:8,d:"Dễ",s:"Vừa",u:"https://www.mediafire.com/file/jfg1jty6etkeybt/upsidedownnh+ver2.3+Warter.mpr/file"},
-  {t:"USD City War",p:8,d:"Trung Bình",s:"Vừa",u:"https://www.mediafire.com/file/wnzpoqcfm0i28yq/USD+City+War.mpr/file"},
-  {t:"USD Snow",p:8,d:"Trung Bình",s:"Vừa",u:"https://www.mediafire.com/file/h47mn9xjzf17e8t/USD+Snow.mpr/file"},
-  {t:"USD Super War Ship Easy Temp",p:8,d:"Khó",s:"Rộng",u:"https://www.mediafire.com/file/lfd6gxsh8kbl8m4/USD+Super+War+Ship+Snow+Easy+Temp.mpr/file"},
-  {t:"USD Super War Ship Snow Finish",p:8,d:"Cực Khó",s:"Rộng",u:"https://www.mediafire.com/file/upbuhmwgj3kv37i/USD+Super+War+Ship+Snow+Finish.mpr/file"},
-  {t:"USD Super V1.3 Snow",p:8,d:"Khó",s:"Rộng",u:"https://www.mediafire.com/file/rcjvm9cx29moxam/upsidedown+super+v1.3+Snow.mpr/file"},
-  {t:"Transil Vanie V1",p:6,d:"Khó",s:"Vừa",u:"https://www.mediafire.com/file/rxd3ka82mb8h3s4/transilvanie+v1.mpr/file"},
-  {t:"Up Side Down City",p:8,d:"Dễ",s:"Vừa",u:"https://www.mediafire.com/file/u4mcqv2d81rvekq/UP+SiDE+Down+City.mpr/file"},
-  {t:"No Hope NH",p:4,d:"Khó",s:"Nhỏ",u:"https://www.mediafire.com/file/bpclx15atp55iiy/No+Hope+NH.mpr/file"},
-  {t:"AFG Speed",p:5,d:"Dễ",s:"Nhỏ",u:"https://www.mediafire.com/file/5abjq6hu1w98pkv/afg+speed+5pl.mpr/file"},
-  {t:"Snapper Solo 1-1",p:2,d:"Trung Bình",s:"Vừa",u:"https://www.mediafire.com/file/mt5cuizxzy6lpjn/downtown+snapper+solo+1-1.mpr/file"},
-  {t:"Delivery Country 6",p:6,d:"Trung Bình",s:"Vừa",u:"https://www.mediafire.com/file/wot5ny4ejm56ihu/Delivery+country+6.mpr/file"},
-  {t:"Route 66",p:8,d:"Dễ",s:"Rộng",u:"https://www.mediafire.com/file/938de8y6wn42g24/Route+66.mpr/file"},
-  {t:"Valley Of Death",p:8,d:"Khó",s:"Rộng",u:"https://www.mediafire.com/file/78z7l99xqd6iumh/valley+of+death.mpr/file"},
-  {t:"Up Side Down Snow Super",p:8,d:"Khó",s:"Vừa",u:"https://www.mediafire.com/file/ewljv25l9qghy4o/USD+Snow+Super.mpr/file"},
-  {t:"Valley Of Death Super",p:8,d:"Cực Khó",s:"Rộng",u:"https://www.mediafire.com/file/qeooccd5vdkn5uz/valley+of+death+Super.mpr/file"},
-  {t:"Arctic Circle By NamHoang [8]",p:8,d:"Khó",s:"Vừa",u:"https://www.mediafire.com/file/arruu3d88se0q42/Arctic+Circle+By+NamHoang+[8].mpr/file"},
-  {t:"Arctic Circle By NamHoang Super [8]",p:8,d:"Cực Khó",s:"Vừa",u:"https://www.mediafire.com/file/1ob5h25p1bea1u5/Arctic+Circle+By+NamHoang+Super+[8].mpr/file"},
-  {t:"Heck_Freezes_Over_NH Super",p:8,d:"Khó",s:"Nhỏ",u:"https://www.mediafire.com/file/8pt6k5i7oky6cv2/Heck_Freezes_Over_NH+Super.mpr/file"},
-  {t:"War Pro 3 NamHoang",p:8,d:"Dễ",s:"Vừa",u:"https://www.mediafire.com/file/v2ajczr0e5h8fi8/War+Pro+3+Nam+Hoang.mpr/file"},
-  {t:"Blaze Of Glory",p:4,d:"Trung Bình",s:"Nhỏ",u:"https://www.mediafire.com/file/39fn5z5rxgskj5n/Blaze+of+Glory.mpr/file"},
-  {t:"Viet Nam Medium NH",p:8,d:"Khó",s:"Vừa",u:"https://www.mediafire.com/file/ld1ux6uxv8m7gpc/vietnam+Medium+NH.mpr/file"},
-  {t:"Viet Nam Super NH",p:8,d:"Cực Khó",s:"Vừa",u:"https://www.mediafire.com/file/6p8qbhmq5lc0phs/vietnam+Super+NH.mpr/file"},
-  {t:"USD War Ship Temp 3",p:8,d:"Khó",s:"Rộng",u:"https://www.mediafire.com/file/qu2uxtcc6uz5o4u/USD+War+Ship+Temp+3.mpr/file"},
-  {t:"USD War Ship Temp 3 Super",p:8,d:"Cực Khó",s:"Rộng",u:"https://www.mediafire.com/file/en2u1ty59dze15u/USD+War+Ship+Temp+3++Super.mpr/file"},
-  {t:"USD Dark",p:8,d:"Khó",s:"Vừa",u:"https://www.mediafire.com/file/ivs3i00x51ecbpo/USD+Dark.mpr/file"},
-  {t:"sota 3 NamHoang Mod",p:8,d:"Khó",s:"Nhỏ",u:"https://www.mediafire.com/file/mi0evq2zj00bezt/sota+ai+3p+vn-NamHoang+Mod.mpr/file"},
-  {t:"Heck_Freezes_Over_NH Super 2",p:8,d:"Khó",s:"Vừa",u:"https://www.mediafire.com/file/ofxjhjm56sp2d9e/Heck_Freezes_Over_NH+Super+2.mpr/file"},
-  {t:"Inland NH Super",p:4,d:"Dễ",s:"Nhỏ",u:"https://www.mediafire.com/file/bptj1w15d7ewutc/Inland+NH+Super.mpr/file"},
-  {t:"USD final terro",p:8,d:"Dễ",s:"Nhỏ",u:"https://www.mediafire.com/file/l74pm4st7fbnorm/USD++final+terro.mpr/file"},
-  {t:"x 8 blocks namhoang tryhard",p:8,d:"Trung Bình",s:"Nhỏ",u:"https://www.mediafire.com/file/2m87p0sbcqh4qek/x+8+blocks+namhoang+tryhard.mpr/file"},
-  {t:"Attack Kirov NH",p:8,d:"Dễ",s:"Vừa",u:"https://www.mediafire.com/file/bo8xo2ngltcnmhc/Attack+Kirov+NH.mpr/file"},
-  {t:"The Ivory Throne- winter NH",p:8,d:"Cực Khó",s:"Vừa",u:"https://www.mediafire.com/file/61y74iiknpudeqm/The+Ivory+Throne-+winter+NH.mpr/file"},
-  {t:"War Pro 4 Super",p:8,d:"Siêu Cấp",s:"Vừa",u:"https://www.mediafire.com/file/mysiie8ze2c55bs/War+Pro+4+Super+_NamHoang.mpr/file"},
-  {t:"War City Super",p:3,d:"Siêu Cấp",s:"Nhỏ",u:"https://www.mediafire.com/file/cj6y6oy47edvi99/War+City+Super.mpr/file"},
-  {t:"USD No Hope",p:8,d:"Siêu Cấp",s:"Vừa",u:"https://www.mediafire.com/file/hc5tphrltb67na8/USD+No+Hope.mpr/file"},
-  {t:"Inland Death Infinity",p:4,d:"Siêu Cấp",s:"Nhỏ",u:"https://www.mediafire.com/file/25fcty23tzq8a9q/Inland+Death+Infinity.mpr/file"},
-  {t:"(~.~)",p:4,d:"Siêu Cấp",s:"Nhỏ",u:"https://www.mediafire.com/file/h6krfsz2b12l5qu/(~.~).mpr/file"},
-  {t:"Tropical Technology",p:8,d:"Khó",s:"Vừa",u:"https://www.mediafire.com/file/wep05zm71dsg31r/Tropical+Technology+(2-8).mpr/file"},
-  {t:"Ultimate island AI",p:8,d:"Siêu Cấp",s:"Vừa",u:"https://www.mediafire.com/file/1mgwv8omkzrlnte/Ultimate+island+AI.mpr/file"},
-  {t:"Ultimate island Easy",p:8,d:"Cực Khó",s:"Vừa",u:"https://www.mediafire.com/file/00hgfdlktca1kce/Ultimate+island+Easy.mpr/file"},
-  {t:"heck freez ( The Silent Hell 2 Super)",p:8,d:"Cực Khó",s:"Vừa",u:"https://www.mediafire.com/file/qzc6l5uyyscm4bp/heck+freez+(+the+silent+hell+2+Super).mpr/file"},
-  {t:"War Ship",p:8,d:"Cực Khó",s:"Rộng",u:"https://www.mediafire.com/file/8qo5nbpezpubthl/War+Ship.mpr/file"},
-  {t:"Mountain",p:8,d:"Dễ",s:"Nhỏ",u:"https://www.mediafire.com/file/o7j2n64f6h8e7rx/Mountain.mpr/file"},
-  {t:"Wild animal park snow",p:6,d:"Trung Bình",s:"Vừa",u:"https://www.mediafire.com/file/0zvsttkjth804jo/wild+animal+park+snow.mpr/file"},
-  {t:"Heck_Freezes_Over_NH Solo Star",p:8,d:"Dễ",s:"Vừa",u:"https://www.mediafire.com/file/u92wcin7jp10f6u/Heck_Freezes_Over_NH+Solo+Star.mpr/file"},
-  {t:"hazard by affenjunge",p:4,d:"Khó",s:"Nhỏ",u:"https://www.mediafire.com/file/rkzn5ioxrt0h51r/hazard+by+affenjunge.mpr/file"},
-  {t:"Jungle v3",p:4,d:"Khó",s:"Nhỏ",u:"https://www.mediafire.com/file/e54c0kccvj0ugjq/Jungle+v3.mpr/file"},
-  {t:"urban-desert",p:8,d:"Khó",s:"Vừa",u:"https://www.mediafire.com/file/rdq5tx36a3lyy2b/urban-desert.mpr/file"},
-  {t:"War Ship 2",p:8,d:"Cực Khó",s:"Rộng",u:"https://www.mediafire.com/file/xxs9ax2sde97z4k/War+Ship+2.mpr/file"},
-  {t:"War Pro 5 By Nam Hoang",p:8,d:"Cực Khó",s:"Vừa",u:"https://www.mediafire.com/file/n0c219xvn9nzl4x/War+Pro+5+By+Nam+Hoang.mpr/file"},
-  {t:"Fake Map",p:8,d:"Khó",s:"Vừa",u:"https://www.mediafire.com/file/0og071wb8t52a53/fake+map.mpr/file"},
-  {t:"War Pro 4 Sample",p:8,d:"Khó",s:"Vừa",u:"https://www.mediafire.com/file/r81pbn64s5gf0qm/War+pro+4+Sample.mpr/file"},
-  {t:"War Pro 5 Sample",p:8,d:"Khó",s:"Vừa",u:"https://www.mediafire.com/file/nqwujw6eg91tzi7/War+Pro+5+Sample.MPR/file"},
-  {t:"USD Easy",p:8,d:"Khó",s:"Vừa",u:"https://www.mediafire.com/file/l953mj8qetju7ty/USD+Easy.mpr/file"},
-  {t:"War Pro 6",p:8,d:"Khó",s:"Vừa",u:"https://www.mediafire.com/file/mdnujy6lq7xrdsa/War+Pro+6.mpr/file"},
-  {t:"War Ship 3",p:8,d:"Cực Khó",s:"Rộng",u:"https://www.mediafire.com/file/rk6w3f9dwj1vq0s/War+Ship+3.mpr/file"},
-  {t:"Ultimate island AI 2.0",p:8,d:"Siêu Cấp",s:"Vừa",u:"https://www.mediafire.com/file/i4ibcvm8hlb5u9z/Ultimate+island+AI+2.0.mpr/file"},
-  {t:"War Pro 7",p:8,d:"Dễ",s:"Vừa",u:"https://www.mediafire.com/file/top29fpyxtmbkxk/War_Pro_7.mpr/file"},
-  {t:"War Pro 8",p:8,d:"Dễ",s:"Vừa",u:"https://www.mediafire.com/file/qqtfx3biz69jwr3/War+Pro+8.mpr/file"},
-  {t:"War Pro 9",p:8,d:"Dễ",s:"Vừa",u:"https://www.mediafire.com/file/rq33w5gzmo7wlmq/War+Pro+9.mpr/file"},
-  {t:"Iland War",p:8,d:"Trung Bình",s:"Vừa",u:"https://www.mediafire.com/file/61ncj441nbj7g4s/iland+war.mpr/file"},
-  {t:"War Ship 5",p:8,d:"Cực Khó",s:"Rộng",u:"https://www.mediafire.com/file/n4qqzxh4mjv83l3/War+Ship+5.mpr/file"},
-  {t:"Skira IsLand",p:8,d:"Khó",s:"Vừa",u:"https://www.mediafire.com/file/3epwgc4s4jxyvyl/Skira+island.mpr/file"},
-  {t:"Allvsone5",p:8,d:"Khó",s:"Nhỏ",u:"https://www.mediafire.com/file/65k7w9iloe7w0p1/allvsone5.mpr/file"},
-  {t:"Super 8",p:8,d:"Khó",s:"Nhỏ",u:"https://www.mediafire.com/file/qzr4c5thixco01q/super8.mpr/file"},
-  {t:"Hot Map 4",p:4,d:"Khó",s:"Nhỏ",u:"https://www.mediafire.com/file/76jg2797hji7y9g/hot+map+4.mpr/file"},
-  {t:"USD Super Water Remake",p:8,d:"Khó",s:"Rộng",u:"https://www.mediafire.com/file/cxo3iv8mvv54ves/upsidedown+super+water++Lv6.1+Remake.mpr/file"},
+  {t:"Up Side Down Temp",p:8,d:"Dễ",s:"Vừa"},
+  {t:"Up Side Down Super V1.2",p:8,d:"Trung Bình",s:"Rộng"},
+  {t:"Up Side Down Super Water Lv2",p:8,d:"Khó",s:"Rộng"},
+  {t:"Up Side Down Super Water Lv6.1",p:8,d:"Khó",s:"Rộng"},
+  {t:"Up Side Down Super Water Lv6.1 Snow",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"Up Side Down Super Water Speed Up",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"Up Side Down Super Water Lv7",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"Up Side Down NH V2.2",p:8,d:"Dễ",s:"Vừa"},
+  {t:"Up Side Down NH V2.3",p:8,d:"Dễ",s:"Vừa"},
+  {t:"USD City War",p:8,d:"Trung Bình",s:"Vừa"},
+  {t:"USD Snow",p:8,d:"Trung Bình",s:"Vừa"},
+  {t:"USD Super War Ship Easy Temp",p:8,d:"Khó",s:"Rộng"},
+  {t:"USD Super War Ship Snow Finish",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"USD Super V1.3 Snow",p:8,d:"Khó",s:"Rộng"},
+  {t:"Transil Vanie V1",p:6,d:"Khó",s:"Vừa"},
+  {t:"Up Side Down City",p:8,d:"Dễ",s:"Vừa"},
+  {t:"No Hope NH",p:4,d:"Khó",s:"Nhỏ"},
+  {t:"AFG Speed",p:5,d:"Dễ",s:"Nhỏ"},
+  {t:"Snapper Solo 1-1",p:2,d:"Trung Bình",s:"Vừa"},
+  {t:"Delivery Country 6",p:6,d:"Trung Bình",s:"Vừa"},
+  {t:"Route 66",p:8,d:"Dễ",s:"Rộng"},
+  {t:"Valley Of Death",p:8,d:"Khó",s:"Rộng"},
+  {t:"Up Side Down Snow Super",p:8,d:"Khó",s:"Vừa"},
+  {t:"Valley Of Death Super",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"Arctic Circle By NamHoang [8]",p:8,d:"Khó",s:"Vừa"},
+  {t:"Arctic Circle By NamHoang Super [8]",p:8,d:"Cực Khó",s:"Vừa"},
+  {t:"Heck_Freezes_Over_NH Super",p:8,d:"Khó",s:"Nhỏ"},
+  {t:"War Pro 3 NamHoang",p:8,d:"Dễ",s:"Vừa"},
+  {t:"Blaze Of Glory",p:4,d:"Trung Bình",s:"Nhỏ"},
+  {t:"Viet Nam Medium NH",p:8,d:"Khó",s:"Vừa"},
+  {t:"Viet Nam Super NH",p:8,d:"Cực Khó",s:"Vừa"},
+  {t:"USD War Ship Temp 3",p:8,d:"Khó",s:"Rộng"},
+  {t:"USD War Ship Temp 3 Super",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"USD Dark",p:8,d:"Khó",s:"Vừa"},
+  {t:"sota 3 NamHoang Mod",p:8,d:"Khó",s:"Nhỏ"},
+  {t:"Heck_Freezes_Over_NH Super 2",p:8,d:"Khó",s:"Vừa"},
+  {t:"Inland NH Super",p:4,d:"Dễ",s:"Nhỏ"},
+  {t:"USD final terro",p:8,d:"Dễ",s:"Nhỏ"},
+  {t:"x 8 blocks namhoang tryhard",p:8,d:"Trung Bình",s:"Nhỏ"},
+  {t:"Attack Kirov NH",p:8,d:"Dễ",s:"Vừa"},
+  {t:"The Ivory Throne- winter NH",p:8,d:"Cực Khó",s:"Vừa"},
+  {t:"War Pro 4 Super",p:8,d:"Siêu Cấp",s:"Vừa"},
+  {t:"War City Super",p:3,d:"Siêu Cấp",s:"Nhỏ"},
+  {t:"USD No Hope",p:8,d:"Siêu Cấp",s:"Vừa"},
+  {t:"Inland Death Infinity",p:4,d:"Siêu Cấp",s:"Nhỏ"},
+  {t:"(~.~)",p:4,d:"Siêu Cấp",s:"Nhỏ"},
+  {t:"Tropical Technology",p:8,d:"Khó",s:"Vừa"},
+  {t:"Ultimate island AI",p:8,d:"Siêu Cấp",s:"Vừa"},
+  {t:"Ultimate island Easy",p:8,d:"Cực Khó",s:"Vừa"},
+  {t:"heck freez ( The Silent Hell 2 Super)",p:8,d:"Cực Khó",s:"Vừa"},
+  {t:"War Ship",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"Mountain",p:8,d:"Dễ",s:"Nhỏ"},
+  {t:"Wild animal park snow",p:6,d:"Trung Bình",s:"Vừa"},
+  {t:"Heck_Freezes_Over_NH Solo Star",p:8,d:"Dễ",s:"Vừa"},
+  {t:"hazard by affenjunge",p:4,d:"Khó",s:"Nhỏ"},
+  {t:"Jungle v3",p:4,d:"Khó",s:"Nhỏ"},
+  {t:"urban-desert",p:8,d:"Khó",s:"Vừa"},
+  {t:"War Ship 2",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"War Pro 5 By Nam Hoang",p:8,d:"Cực Khó",s:"Vừa"},
+  {t:"Fake Map",p:8,d:"Khó",s:"Vừa"},
+  {t:"War Pro 4 Sample",p:8,d:"Khó",s:"Vừa"},
+  {t:"War Pro 5 Sample",p:8,d:"Khó",s:"Vừa"},
+  {t:"USD Easy",p:8,d:"Khó",s:"Vừa"},
+  {t:"War Pro 6",p:8,d:"Khó",s:"Vừa"},
+  {t:"War Ship 3",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"Ultimate island AI 2.0",p:8,d:"Siêu Cấp",s:"Vừa"},
+  {t:"War Pro 7",p:8,d:"Dễ",s:"Vừa"},
+  {t:"War Pro 8",p:8,d:"Dễ",s:"Vừa"},
+  {t:"War Pro 9",p:8,d:"Dễ",s:"Vừa"},
+  {t:"Iland War",p:8,d:"Trung Bình",s:"Vừa"},
+  {t:"War Ship 5",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"Skira IsLand",p:8,d:"Khó",s:"Vừa"},
+  {t:"Allvsone5",p:8,d:"Khó",s:"Nhỏ"},
+  {t:"Super 8",p:8,d:"Khó",s:"Nhỏ"},
+  {t:"Hot Map 4",p:4,d:"Khó",s:"Nhỏ"},
+  {t:"USD Super Water Remake",p:8,d:"Khó",s:"Rộng"},
 ];
 /* ---- CỘNG ĐỒNG ----
    Góp ý và gửi map của khách được chuyển thẳng vào Messenger của bạn (không lưu trên web).
@@ -781,7 +781,7 @@ var LIVES=[
 ];
 /* ---- NĂNG LƯỢNG THEO IP (xem google-apps-script-tai-khoan.gs) ----
    ACC_API = link Web App của script năng lượng (khác API_URL). Trống = tắt. Không cần đăng nhập. */
-var ACC_API="https://script.google.com/macros/s/AKfycbwE2AsPkjXDBfqtunaMHwBNlk0gM-ILnaH1R9n_EB9nMyhpz05vVbFXL191JmsX3xsuyQ/exec";
+var ACC_API="https://script.google.com/macros/s/AKfycbxqu_zcWCS2pr1PTquiAMIo_eWtK3cTOXmdwlPrWKsCU59SzKnuW0bNR-4KJTaS0PoOKw/exec";
 /* ---- MAP CỘNG ĐỒNG: khách gửi qua Messenger, bạn kiểm duyệt xong thì thêm 1 dòng vào đây (giống MAPS), by = tên người tạo.
    Ảnh: bỏ vào thư mục mapkhach/ trên GitHub, tên file = đúng tên map + .jpg */
 var CMAPS=[
@@ -1170,7 +1170,7 @@ window.initGallery=function(box,maps){
   if(first&&!RM){first=false;var t0=performance.now();(function c(t){var k=Math.min(1,(t-t0)/900);cnt.textContent=Math.round(n*k);if(k<1)requestAnimationFrame(c)})(t0)}else cnt.textContent=n}
  box.addEventListener("click",function(e){var c=e.target.closest(".fc");
   if(c){var g=c.parentNode;g.querySelectorAll(".fc").forEach(function(x){x.classList.toggle("on",x===c)});st[g.dataset.k]=c.dataset.v;draw();return}
-  var p=e.target.closest(".cp");if(p){var u=maps[+p.dataset.i].u,ok=function(){p.textContent="Đã chép ✓";setTimeout(function(){p.textContent="Chép link"},1400)},no=function(){window.prompt("Sao chép link:",u)};
+  var p=e.target.closest(".cp[data-i]");if(p){var u=maps[+p.dataset.i].u,ok=function(){p.textContent="Đã chép ✓";setTimeout(function(){p.textContent="Chép link"},1400)},no=function(){window.prompt("Sao chép link:",u)};
    try{navigator.clipboard.writeText(u).then(ok,no)}catch(x){no()}}});
  grid.addEventListener("error",function(e){var im=e.target;if(im.tagName!=="IMG"||im.dataset.f)return;var i=+im.dataset.i,mm=maps[i];if(mm.img2&&!mm.t2){mm.t2=1;im.src=mm.img2;return}im.dataset.f=1;im.src=art(mm.t,i)},true);
  box.querySelector(".mq").addEventListener("input",function(){st.q=this.value.toLowerCase().trim();draw()});
@@ -1498,7 +1498,7 @@ var MYST=2;
 var MBX=[];
 function mOpened(){var a=jl("g_myst",[]);if(!Array.isArray(a))a=[];var r=MBX.slice();a.forEach(function(t){if(r.indexOf(t)<0)r.push(t)});return r}
 function mapRow(m){var im=m.img||(MAP_DIR+encodeURIComponent(m.t)+MAP_EXT);
- return'<div class="nw"><div class="cmrow"><div class="cmi"><b>'+esc(m.t)+'</b> <span class="by">👥 '+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+'</span><br><a class="cb dlb" data-t="'+esc(m.t)+'" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a> '+tipBtn(m.t)+"</div>"+cmThumb({t:m.t,img:im})+"</div></div>"}
+ return'<div class="nw"><div class="cmrow"><div class="cmi"><b>'+esc(m.t)+'</b> <span class="by">👥 '+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+'</span><br><button type="button" class="cb dlb mget" data-t="'+esc(m.t)+'">⬇ Tải map</button> '+tipBtn(m.t)+"</div>"+cmThumb({t:m.t,img:im})+"</div></div>"}
 function pBox(rev){var op=mOpened(),pool=MAPS.filter(function(m){return op.indexOf(m.t)<0&&!mpaid(m)});
  P.innerHTML='<div class="mbx"><div class="mbi" id="mbi">🎁</div><h3 class="sh" style="margin:6px 0">Hộp quà map bí ẩn</h3><p class="mt">Mở hộp để nhận ngẫu nhiên <b>1 map trong kho map sinh tồn</b>. Tên và ảnh được giấu cho tới khi bạn mở. Chỉ tốn <b>⚡'+MYST+"</b>, rẻ hơn tải map cộng đồng (⚡"+CF.cost+"). Mỗi hộp luôn ra map bạn chưa từng mở.</p>"
   +'<p class="mt">Còn <b>'+pool.length+"</b>/"+MAPS.length+" map chưa mở · ⚡ của bạn: <b>"+EN.n+'</b></p><button class="btn" id="mbo" type="button"'+(pool.length?"":" disabled")+">"+(pool.length?"🎁 Mở hộp (⚡"+MYST+")":"Bạn đã mở hết kho map")+'</button><div id="mbr">'
@@ -1553,15 +1553,15 @@ function mpaid(m){var k=mkey(m.t);return !!(MOWN[k]||MBK[k])}
 function mowned(m){return isAdm()||mpaid(m)||mOpened().indexOf(m.t)>=0}
 window.mapTag=function(m){var o=!isAdm()&&mowned(m);return'<span class="mpr'+(o?" own":"")+'" title="'+(isAdm()?"Admin tải miễn phí":"Giá mở khóa map")+'">'+(o?"✓ Đã mở":"⚡"+mprice(m))+"</span>"};
 window.mapAct=function(m,i){var h;
- if(mowned(m))h='<a class="btn dlb" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a><button type="button" class="cp" data-i="'+i+'">Chép link</button>';
+ if(mowned(m))h='<button type="button" class="btn dlb mget" data-t="'+esc(m.t)+'">⬇ Tải map</button><button type="button" class="cp mcl" data-t="'+esc(m.t)+'">Chép link</button>';
  else h='<button type="button" class="btn mbuy" data-t="'+esc(m.t)+'">🔒 Mở khóa<i>⚡'+mprice(m)+"</i></button>";
  if(isAdm())h+='<button type="button" class="mad mpe" data-t="'+esc(m.t)+'" title="Sửa giá ⚡ của map này">✎ Giá</button>'+(m.rid?'<button type="button" class="mad mpx" data-t="'+esc(m.t)+'" title="Xóa map này">🗑</button>':"");
  return h};
 /* nhận bảng giá + map Admin đăng + map đã mua từ máy chủ (gọi trong loadCos) */
 function admApply(j){var tr=(j.mp&&j.mp.tier)||{},mp=(j.mp&&j.mp.map)||{},list=[],seen=Object.create(null);
  MAPS0.forEach(function(m){seen[m.t.toLowerCase()]=1});
- (j.ms||[]).forEach(function(o){if(!o||typeof o.t!=="string"||!http(o.u)||DIFF.indexOf(o.d)<0||SZ.indexOf(o.s)<0)return;var k=o.t.toLowerCase();if(seen[k])return;seen[k]=1;
-  list.push({t:o.t,p:+o.p,d:o.d,s:o.s,u:String(o.u).trim(),ts:o.ts||"",rid:o.id})});
+ (j.ms||[]).forEach(function(o){if(!o||typeof o.t!=="string"||DIFF.indexOf(o.d)<0||SZ.indexOf(o.s)<0)return;var k=o.t.toLowerCase();if(seen[k])return;seen[k]=1;
+  list.push({t:o.t,p:+o.p,d:o.d,s:o.s,u:String(o.u||"").trim(),ts:o.ts||"",rid:o.id})});
  MBK=Object.create(null);(j.mb||[]).forEach(function(k){MBK[k]=1});
  var sig=JSON.stringify([tr,mp,list.map(function(m){return m.rid}),Object.keys(MBK).length]);if(sig===ASIG)return;ASIG=sig;
  PCFG={tier:Object.create(null),map:Object.create(null)};
@@ -1579,6 +1579,10 @@ function buyMap(m,b){var pr=mprice(m);
  call("spend",{kind:"mapbuy",map:m.t,d:m.d,price:pr}).then(function(j){
   if(!j||!j.ok){b.disabled=false;toast(spErr(j));if(j&&/vừa đổi|đã mở/.test(j.err||""))loadCos();return}
   setE(j);MOWN[mkey(m.t)]=1;js_("g_mown",MOWN);toast("Đã mở khóa «"+m.t+"» ✓");redraw()})}
+/* lấy link tải từ máy chủ (chỉ trả về khi đã mở khóa hoặc là Admin) */
+var LK=Object.create(null);
+function getLink(m){if(LK[m.t])return Promise.resolve(LK[m.t]);
+ return call("mdl",{map:m.t}).then(function(j){if(!j||!j.ok||!j.u){toast(spErr(j));return""}LK[m.t]=j.u;return j.u})}
 /* admin: lưu bảng giá lên máy chủ */
 function savePrice(okMsg){return call("mset",{tier:PCFG.tier,map:PCFG.map}).then(function(j){
  if(!j||!j.ok){toast(spErr(j));loadCos();return}setE(j);toast(okMsg||"Đã lưu giá ✓");loadCos()})}
@@ -1605,7 +1609,7 @@ function admRender(b){var done=MAPS.filter(function(m){return m.rid});
   +'<h3 class="sh">⚙ Giá ⚡ theo độ khó</h3><div class="tpr">'+DIFF.map(function(d){return'<label>'+esc(d)+'<input class="tpi" data-d="'+esc(d)+'" type="number" min="0" max="99" step="1" value="'+pnum(PCFG.tier[d]!=null?PCFG.tier[d]:TIER0[d],2)+'"></label>'}).join("")+"</div>"
   +'<div class="adr"><button class="btn" id="apsv" type="button">💾 Lưu giá</button><button class="cp" id="apr" type="button">↺ Về mặc định 2·4·6·8·10</button><button class="cp" id="apc" type="button">Xóa giá riêng từng map ('+Object.keys(PCFG.map).length+")</button></div><p class=\"mt\" id=\"apq\">Muốn đổi giá riêng một map: bấm nút «✎ Giá» trên thẻ map (chỉ Admin thấy).</p>"
   +'<h3 class="sh">📮 Map đã đăng ('+done.length+")</h3>"
-  +(done.length?done.slice().reverse().map(function(m){return'<div class="nw"><b>'+esc(m.t)+'</b> <span class="by">👥 '+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+" · ⚡"+mprice(m)+'</span><div class="adr" style="margin-top:6px"><button type="button" class="mad mpx" data-t="'+esc(m.t)+'">🗑 Xóa</button><button type="button" class="mad mpc" data-t="'+esc(m.t)+'">📋 Chép dòng code</button></div></div>'}).join(""):'<p class="mt">Chưa đăng map nào.</p>')+"</div>";
+  +(done.length?done.slice().reverse().map(function(m){return'<div class="nw"><b>'+esc(m.t)+'</b> <span class="by">👥 '+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+" · ⚡"+mprice(m)+'</span><div class="adr" style="margin-top:6px"><button type="button" class="mad mpx" data-t="'+esc(m.t)+'">🗑 Xóa</button></div></div>'}).join(""):'<p class="mt">Chưa đăng map nào.</p>')+"</div>";
  $("app").value="8"}
 function admPanel(){var b=document.querySelector(".admpost");if(b&&b.dataset.ok&&isAdm())admRender(b)}
 window.initAdminPost=function(b){if(!b)return;b.dataset.ok=1;if(isAdm())admRender(b);else b.innerHTML='<p class="mt">Cần đăng nhập Admin để đăng map.</p>'};
@@ -1616,9 +1620,13 @@ function apPrev(){var i=$("apn"),pv=$("api");if(!i||!pv)return;var v=i.value.tri
  im.onerror=function(){if(i.value.trim()!==v)return;pv.innerHTML="<span>⚠ Chưa thấy ảnh <b>"+esc(pa)+"</b>. Hãy bỏ ảnh vào thư mục anh-map (đúng tên, đúng chữ hoa/thường). Vẫn đăng được, web sẽ hiện ảnh màu thay thế.</span>"};
  im.src=MAP_DIR+encodeURIComponent(v)+MAP_EXT}
 document.addEventListener("input",function(e){if(e.target.id!=="apn")return;clearTimeout(APT);APT=setTimeout(apPrev,300)});
-document.addEventListener("click",function(e){var b=e.target.closest("#apg,#apsv,#apr,#apc,.mpc,.mpe,.mpx,.mbuy");if(!b)return;
+document.addEventListener("click",function(e){var b=e.target.closest("#apg,#apsv,#apr,#apc,.mpe,.mpx,.mbuy,.mget,.mcl");if(!b)return;
  var m=b.dataset.t?mfind(b.dataset.t):null;
  if(b.classList.contains("mbuy")){if(m)buyMap(m,b);return}
+ if(b.classList.contains("mget")){if(!m)return;if(!ACC_API||!U){toast("Đang kết nối máy chủ năng lượng, thử lại sau giây lát");return}
+  var w=window.open("","_blank");getLink(m).then(function(u){if(!u){if(w)w.close();return}
+   if(w&&!w.closed)w.location=u;else modal('<h3>Link tải map</h3><a class="btn" href="'+esc(u)+'" target="_blank" rel="noopener">⬇ Mở link tải</a>')});return}
+ if(b.classList.contains("mcl")){if(!m)return;getLink(m).then(function(u){if(!u)return;copyTxt(u).then(function(ok){if(ok)toast("Đã chép link ✓");else window.prompt("Sao chép link:",u)})});return}
  if(!isAdm()){toast("Cần đăng nhập Admin");return}
  if(b.id==="apg"){postMap();return}
  if(b.id==="apsv"){var nt=Object.create(null),bad=false;
@@ -1630,8 +1638,7 @@ document.addEventListener("click",function(e){var b=e.target.closest("#apg,#apsv
  if(!m)return;
  if(b.classList.contains("mpe")){editPrice(m);return}
  if(b.classList.contains("mpx")){delMap(m);return}
- if(b.classList.contains("mpc")){var line="{t:"+JSON.stringify(m.t)+",p:"+m.p+",d:"+JSON.stringify(m.d)+",s:"+JSON.stringify(m.s)+",u:"+JSON.stringify(m.u)+"},";
-  copyTxt(line).then(function(ok){if(ok)toast("Đã chép dòng code ✓ Dán vào danh sách MAPS để giữ map vĩnh viễn");else window.prompt("Chép dòng code:",line)})}});
+});
 /* đăng nhập / thoát Admin: hiện-ẩn mục Admin và vẽ lại nút trên thẻ map */
 document.addEventListener("accchange",function(){var a=isAdm();if(a===LADM)return;LADM=a;
  document.querySelectorAll(".admonly").forEach(function(el){el.hidden=!a});
