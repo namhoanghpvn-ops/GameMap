@@ -13,10 +13,12 @@ var C={SALT:"doi-chuoi-bi-mat-nay",ADMIN_KEY:"250319", // ĐẶT 1 MẬT KHẨU 
  POST_REW:5, POST_REW_MAX:2, // đăng map +5, tối đa 2 lần/ngày được thưởng
  POST_LIMIT:5,  // tối đa 5 map/ngày
  CODE_BAD:5,    // nhập sai mã quá 5 lần/ngày thì bị khóa nhập mã đến hôm sau
+ CHECKIN:[1,1,2,2,3,3,5], // ⚡ thưởng điểm danh ngày thứ 1..7 của chuỗi (nên khớp CHECKIN trong index.html)
+ CHECKIN_KEEP:true, // true = ⚡ điểm danh được giữ sang ngày sau (như mã quà tặng); false = reset 00:00 như ⚡ thường
  MYST:2,       // hộp map bí ẩn tốn
  SHOP:{fr1:6,fr2:6,fr3:12,fr4:20,co1:4,co2:4,co3:8,co4:15,ic1:3,ic2:5,ic3:8,ic4:10,ic5:15}, // GIÁ CỬA HÀNG ⚡ (máy chủ tự kiểm tra giá, không tin số web gửi lên)
  TZ:"Asia/Ho_Chi_Minh"};
-var H={Users:["id","prov","name","av","day","n","onlSec","onlG","posts","postRew","lastPing","bonus","codeBad"],
+var H={Users:["id","prov","name","av","day","n","onlSec","onlG","posts","postRew","lastPing","bonus","codeBad","ciLast","ciStreak"],
  Sessions:["h","uid","exp"],Maps:["id","ts","uid","by","av","t","p","d","s","u","img","st"],Downloads:["ts","uid","mid"],
  Shop:["ts","uid","item","price"],Equip:["uid","by","fr","co","ic","ts"],Boxes:["ts","uid","map"],
  Codes:["code","energy","max","exp","note"],Redeems:["ts","uid","code"],
@@ -126,6 +128,10 @@ function run(d){var op=d.op,u=who(d.ip,op!=="maps");if(op==="maps")return pub(u)
   if(rds.some(function(r){return r.uid===u.id}))return err("Bạn đã dùng mã này rồi");
   if(+cr2.max>0&&rds.length>=+cr2.max)return err("Mã đã hết lượt sử dụng");
   var gn=Math.min(1000,Math.floor(+cr2.energy));u.n=+u.n+gn;u.bonus=(+u.bonus||0)+gn;put("Redeems",{ts:now,uid:u.id,code:cd});res.gain=gn}
+ else if(op==="checkin"){var td=today(),yd="d"+Utilities.formatDate(new Date(Date.now()-864e5),C.TZ,"yyyyMMdd");
+  if(String(u.ciLast)===td)return err("Hôm nay bạn đã điểm danh rồi");
+  var cs=String(u.ciLast)===yd?(+u.ciStreak||0)+1:1,rw=C.CHECKIN[(cs-1)%C.CHECKIN.length];
+  u.ciLast=td;u.ciStreak=cs;u.n=+u.n+rw;if(C.CHECKIN_KEEP)u.bonus=(+u.bonus||0)+rw;res.checkin={streak:cs,reward:rw}}
  else if(op==="setname"){var nn=cl(d.name,40);if(nn.length<2)return err("Tên quá ngắn (ít nhất 2 ký tự)");u.name=nn}
  else if(op!=="me")return err("Thao tác không hợp lệ");
  upd("Users",u);res.user=uv(u,d);res.en=en(u);res.cfg=cfg();return res}
