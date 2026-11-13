@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="vi" translate="no">
+<head>
+<meta charset="utf-8">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="vi">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0816">
+<link rel="icon" type="image/png" href="favicon.png">
+<title>Nam Hoàng · Góc game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<script>try{var _t=localStorage.getItem("g_theme");if(_t)document.documentElement.dataset.theme=_t}catch(e){}</script>
+<style>
+:root{--bg:#0a0816;--panel:#14102a;--line:#2b2250;--text:#efeaff;--mute:#9a92c4;--v:#8b5cff;--p:#ff3d81;--c:#29f0ff;
+--head:"Orbitron","Segoe UI",system-ui,sans-serif;--body:"Rajdhani","Segoe UI",system-ui,sans-serif;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:600 1.1rem/1.6 var(--body);overflow-x:hidden}
+canvas#fx{position:fixed;inset:0;z-index:0;pointer-events:none}
+.glow{position:fixed;width:420px;height:420px;border-radius:50%;left:0;top:0;z-index:0;pointer-events:none;background:radial-gradient(circle,rgba(139,92,255,.28),transparent 65%);transform:translate(-50%,-50%)}
+.wrap{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:0 20px}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:3px solid var(--c);outline-offset:3px;border-radius:8px}
+h2{font:800 clamp(1.5rem,4.5vw,2.3rem)/1.15 var(--head);margin:0 0 .4rem;letter-spacing:.02em}
+.tag{font:600 .8rem var(--head);color:var(--c);letter-spacing:.3em;text-transform:uppercase}
+.sec{padding:70px 0 30px}
+.rv{opacity:0;transform:translateY(40px);transition:opacity .8s,transform .8s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+.btn{font:700 1rem var(--body);letter-spacing:.04em;color:var(--text);background:linear-gradient(135deg,var(--v),var(--p));border:0;border-radius:12px;padding:.65rem 1.2rem;cursor:pointer;transition:transform .2s,box-shadow .25s;display:inline-flex;align-items:center;gap:.5rem}
+.btn:hover{transform:translateY(-3px);box-shadow:0 10px 28px -8px var(--p)}
+.btn.ghost{background:transparent;border:1px solid var(--line)}
+.btn.ghost:hover{border-color:var(--c);box-shadow:0 10px 28px -12px var(--c)}
+/* BANNER */
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:40px 0 30px;position:relative}
+.hello{color:var(--mute);letter-spacing:.2em;text-transform:uppercase;font-size:.95rem;margin:0}
+.clock{font:800 clamp(2.6rem,13vw,7.5rem)/1 var(--head);display:flex;gap:.04em;align-items:center;margin:.3em 0 .1em;background:linear-gradient(120deg,var(--c),var(--v),var(--p),var(--c));background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 6s linear infinite;filter:drop-shadow(0 0 22px rgba(139,92,255,.5))}
+.clock .s{animation:flow 6s linear infinite,blink 1s steps(2) infinite}
+.clock .colon{animation:blink 1s steps(2) infinite}
+@keyframes flow{to{background-position:300% 0}}
+@keyframes blink{50%{opacity:.25}}
+.date{font:600 1.05rem var(--head);color:var(--mute);margin:0 0 1.4rem}
+.glitch{position:relative;display:inline-block}
+.glitch::before,.glitch::after{content:attr(data-t);position:absolute;inset:0;overflow:hidden}
+.glitch::before{color:var(--p);animation:gl1 3s infinite steps(1);clip-path:inset(0 0 55% 0)}
+.glitch::after{color:var(--c);animation:gl2 3s infinite steps(1);clip-path:inset(55% 0 0 0)}
+@keyframes gl1{0%,92%,100%{transform:none}93%{transform:translate(-4px,1px)}96%{transform:translate(3px,-1px)}}
+@keyframes gl2{0%,90%,100%{transform:none}91%{transform:translate(4px,-1px)}95%{transform:translate(-3px,1px)}}
+.type{font:600 1.15rem var(--head);color:var(--text);min-height:1.8em}
+.type::after{content:"▌";color:var(--c);animation:blink .8s steps(2) infinite}
+/* NHẠC */
+.music{display:flex;flex-direction:column;gap:16px;margin-top:22px;border:1px solid var(--line);background:rgba(20,16,42,.82);border-radius:18px;padding:14px;backdrop-filter:blur(8px);position:relative;overflow:hidden}
+.music::before{content:"";position:absolute;inset:-2px;border-radius:20px;padding:2px;background:conic-gradient(from var(--a,0deg),var(--v),var(--c),var(--p),var(--v));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:spin 6s linear infinite;pointer-events:none}
+@property --a{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes spin{to{--a:360deg}}
+.player{width:100%;aspect-ratio:16/7;border-radius:12px;overflow:hidden;background:#000}
+.player iframe{width:100%;height:100%;border:0;display:block}
+.pl{display:flex;flex-direction:column;min-height:0}
+.pl h3{margin:0 0 8px;font:700 .95rem var(--head);color:var(--c)}
+.list{list-style:none;margin:0;padding:0;overflow:auto;max-height:230px;display:flex;flex-direction:column;gap:6px;flex:1}
+.list li{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--line);border-radius:10px;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.list li:hover{transform:translateX(4px);border-color:var(--v)}
+.list li.on{background:rgba(139,92,255,.2);border-color:var(--c)}
+.list img{width:52px;height:30px;object-fit:cover;border-radius:5px;flex:none}
+.list span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.95rem}
+.list button{background:none;border:0;color:var(--mute);cursor:pointer;font-size:1.1rem}
+.list button:hover{color:var(--p)}
+.add{display:flex;gap:6px;margin-top:8px}
+.add input,.add .btn{font-size:.95rem}
+input{font:600 1rem var(--body);background:#0d0a20;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:.5rem .8rem;min-width:0;flex:1}
+.scroll{align-self:center;margin-top:26px;color:var(--mute);font:600 .8rem var(--head);letter-spacing:.3em;animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(8px)}}
+/* HỒ SƠ */
+.me{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;margin-top:20px}
+.avatar{width:min(220px,40vw);aspect-ratio:1;border-radius:28% 72% 63% 37%/40% 40% 60% 60%;overflow:hidden;position:relative;animation:morph 8s ease-in-out infinite;box-shadow:0 0 0 3px var(--v),0 0 40px -4px var(--p)}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+@keyframes morph{50%{border-radius:63% 37% 30% 70%/50% 60% 40% 50%}}
+.me h3{font:800 1.7rem var(--head);margin:0}
+.me p{color:var(--mute);margin:.3rem 0 1rem;max-width:30em}
+.socials{display:flex;gap:10px;flex-wrap:wrap}
+.soc{display:flex;align-items:center;gap:8px;padding:.55rem 1rem;border-radius:12px;border:1px solid var(--line);background:var(--panel);transition:transform .25s,border-color .25s,box-shadow .25s;font-weight:700}
+.soc svg{width:20px;height:20px;fill:currentColor}
+.soc:hover{transform:translateY(-4px) rotate(-1.5deg);border-color:var(--c);box-shadow:0 12px 30px -14px var(--c);color:var(--c)}
+/* GAME */
+.open{margin-top:18px}
+.chips{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s cubic-bezier(.2,.7,.2,1)}
+.chips.on{grid-template-rows:1fr}
+.chips>div{overflow:hidden;display:flex;gap:10px;flex-wrap:wrap;padding:6px 2px}
+.chip{font:700 1rem var(--head);letter-spacing:.04em;padding:.7rem 1.2rem;border-radius:14px;border:1px solid var(--line);background:var(--panel);color:var(--text);cursor:pointer;opacity:0;transform:translateY(16px) scale(.9);transition:transform .3s,border-color .3s,background .3s}
+.chips.on .chip{animation:chipin .5s cubic-bezier(.2,1.3,.4,1) forwards;animation-delay:calc(var(--i)*80ms + 150ms)}
+@keyframes chipin{to{opacity:1;transform:none}}
+.chip:hover{border-color:var(--c);transform:translateY(-4px)!important}
+.chip[aria-expanded="true"]{background:linear-gradient(135deg,var(--v),var(--p));border-color:transparent}
+.gpanel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s cubic-bezier(.2,.7,.2,1)}
+.gpanel.on{grid-template-rows:1fr}
+.gpanel>div{overflow:hidden}
+.gh{margin:18px 0 12px;font:800 1.3rem var(--head);color:var(--c)}
+.gh small{color:var(--mute);font:600 .95rem var(--body)}
+/* Danh sách link chi tiết */
+.item-list{display:flex;flex-direction:column;gap:10px;margin:16px 0 24px;padding-left:8px}
+.item-btn{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--panel);transition:all .25s;cursor:pointer}
+.item-btn:hover{border-color:var(--c);transform:translateX(6px);box-shadow:0 8px 20px -10px var(--c)}
+.item-btn b{font-size:1rem}
+.item-btn span{color:var(--mute);font-size:.9rem}
+.link-list{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s ease}
+.link-list.on{grid-template-rows:1fr}
+.link-list>div{overflow:hidden;padding-left:12px;border-left:2px solid var(--v);margin:4px 0 4px 8px}
+.link-item{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:6px 0;border-radius:10px;background:rgba(139,92,255,.08);transition:all .2s}
+.link-item:hover{background:rgba(139,92,255,.18);transform:translateX(4px)}
+.link-item a{color:var(--c);font-weight:600;font-size:.95rem}
+.link-item .desc{color:var(--mute);font-size:.85rem;margin-left:auto}
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;margin-bottom:14px;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--mute);cursor:pointer;transition:all .2s}
+.back-btn:hover{border-color:var(--p);color:var(--p)}
+/* DONATE */
+.donate-card{text-align:center;padding:32px 24px;border:1px solid var(--line);border-radius:20px;background:var(--panel);margin:20px 0}
+.donate-card h3{font:700 1.4rem var(--head);color:var(--p);margin:0 0 8px}
+.donate-card p{color:var(--mute);margin:0 0 24px;max-width:400px;margin-left:auto;margin-right:auto}
+.qr-wrap{width:min(280px,70%);margin:0 auto;border-radius:16px;overflow:hidden;border:3px solid var(--v);box-shadow:0 0 30px -8px var(--p)}
+.qr-wrap img{width:100%;height:auto;display:block}
+.qr-note{margin-top:16px;color:var(--mute);font-size:.9rem}
+footer{padding:50px 0 40px;text-align:center;color:var(--mute);font-size:.95rem}
+@media (max-width:760px){.socials{justify-content:center}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.chip{opacity:1;transform:none}}
+
+
+/* ===== TRANG TRÍ + HIỆU ỨNG (thêm mới) ===== */
+.sec{position:relative}
+#me{--k:var(--c)}#games{--k:var(--p)}#donate{--k:#ffb23e}
+.tag{color:var(--k,var(--c))}
+.sec::before{content:attr(data-n);position:absolute;right:-4px;top:24px;font:800 clamp(5rem,18vw,12rem)/1 var(--head);color:transparent;-webkit-text-stroke:1px rgba(139,92,255,.28);transform:translateY(var(--py,0px));pointer-events:none;z-index:-1}
+.deco{position:absolute;z-index:-1;width:var(--s);height:var(--s);border:2px solid var(--k,var(--c));border-radius:22%;opacity:.2;pointer-events:none;translate:0 var(--dy,0px);animation:dspin 20s linear infinite}
+@keyframes dspin{to{rotate:360deg}}
+h2{perspective:600px}
+.rv h2{position:relative;padding-bottom:.4em}
+.rv h2::after{content:"";position:absolute;left:0;bottom:0;height:3px;width:0;border-radius:3px;background:linear-gradient(90deg,var(--k,var(--c)),transparent);transition:width 1.1s .5s cubic-bezier(.2,.7,.2,1)}
+.rv.in h2::after{width:min(240px,60%)}
+.w{display:inline-block;white-space:nowrap}
+.ch{display:inline-block;opacity:0;transform:translateY(.7em) rotateX(-85deg) scale(.7);filter:blur(10px);transition:opacity .6s var(--d),transform .8s cubic-bezier(.2,1.3,.4,1) var(--d),filter .7s var(--d)}
+.in .ch{opacity:1;transform:none;filter:none;animation:chg 1.4s var(--d) both}
+@keyframes chg{0%{text-shadow:0 0 0 transparent}35%{text-shadow:0 0 22px var(--k,var(--c)),0 0 4px #fff}100%{text-shadow:0 0 0 transparent}}
+.hud{background-image:linear-gradient(var(--k,var(--c)),var(--k,var(--c))),linear-gradient(var(--k,var(--c)),var(--k,var(--c))),linear-gradient(var(--k,var(--c)),var(--k,var(--c))),linear-gradient(var(--k,var(--c)),var(--k,var(--c))),linear-gradient(var(--k,var(--c)),var(--k,var(--c))),linear-gradient(var(--k,var(--c)),var(--k,var(--c))),linear-gradient(var(--k,var(--c)),var(--k,var(--c))),linear-gradient(var(--k,var(--c)),var(--k,var(--c))));background-repeat:no-repeat;background-position:0 0,0 0,100% 0,100% 0,0 100%,0 100%,100% 100%,100% 100%;background-size:22px 2px,2px 22px,22px 2px,2px 22px,22px 2px,2px 22px,22px 2px,2px 22px}
+.me.hud{padding:26px;border:1px solid var(--line);border-radius:18px;background-color:rgba(20,16,42,.6)}
+.item-btn{position:relative;overflow:hidden}
+.item-btn::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(139,92,255,.25) 50%,transparent 70%);transform:translateX(-100%);transition:transform .6s}
+.item-btn:hover::before{transform:translateX(100%)}
+.item-btn::after{content:"▾";margin-left:12px;color:var(--c);transition:transform .3s}
+.item-btn.open::after{transform:rotate(180deg)}
+#prog{position:fixed;left:0;top:0;height:3px;width:100%;transform-origin:0 0;transform:scaleX(0);background:linear-gradient(90deg,var(--c),var(--v),var(--p));z-index:9997;box-shadow:0 0 12px var(--v)}
+.dots{position:fixed;right:14px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:14px;z-index:50}
+.dt{position:relative;width:12px;height:12px;border-radius:50%;border:2px solid var(--mute);transition:all .3s}
+.dt::after{content:attr(data-l);position:absolute;right:22px;top:50%;transform:translateY(-50%) translateX(8px);opacity:0;white-space:nowrap;font:700 .75rem var(--head);padding:.15rem .6rem;border-radius:6px;background:var(--panel);border:1px solid var(--line);transition:all .25s;pointer-events:none}
+.dt:hover::after{opacity:1;transform:translateY(-50%)}
+.dt.on{background:var(--c);border-color:var(--c);box-shadow:0 0 12px var(--c);transform:scale(1.25)}
+.totop{position:fixed;right:18px;bottom:18px;width:46px;height:46px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--v),var(--p));color:#fff;font:800 1.3rem var(--head);cursor:pointer;z-index:60;opacity:0;transform:translateY(20px) scale(.8);pointer-events:none;transition:all .35s}
+.totop.on{opacity:1;transform:none;pointer-events:auto}
+.totop:hover{box-shadow:0 10px 26px -6px var(--p)}
+body.hc,body.hc *{cursor:none!important}
+body.hc input,body.hc textarea{cursor:text!important}
+.cdot{position:fixed;left:0;top:0;width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:var(--c);z-index:9999;pointer-events:none;box-shadow:0 0 12px var(--c)}
+.cring{position:fixed;left:0;top:0;width:38px;height:38px;margin:-19px 0 0 -19px;border:2px solid var(--v);border-radius:50%;z-index:9999;pointer-events:none;transition:width .25s,height .25s,margin .25s,border-color .25s,background .25s}
+.cring.hv{width:60px;height:60px;margin:-30px 0 0 -30px;border-color:var(--p);background:rgba(255,61,129,.12)}
+.cring.dn{width:26px;height:26px;margin:-13px 0 0 -13px;border-color:var(--c)}
+.sp{position:fixed;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;pointer-events:none;z-index:9998;animation:spk .7s ease-out forwards}
+@keyframes spk{to{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+/* Thư viện map */
+.mapg{margin:4px 0 8px}
+.mapbar{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:14px;margin:6px 0 14px;border:1px solid var(--line);border-radius:14px;background:rgba(139,92,255,.07)}
+.mtot{display:flex;align-items:baseline;gap:8px}.mtot b{font:800 2rem var(--head);color:var(--p)}.mtot span{color:var(--mute);font-size:.95rem}
+.mq{flex:1 1 180px;min-width:150px}
+.fl{display:flex;flex-wrap:wrap;gap:6px;align-items:center;flex:1 1 100%}
+.fl small{color:var(--mute);min-width:64px;font-size:.85rem}
+.fg{display:flex;flex-wrap:wrap;gap:6px}
+.fc{font:700 .85rem var(--body);padding:.28rem .75rem;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;transition:all .2s}
+.fc:hover{border-color:var(--c)}
+.fc.on{background:linear-gradient(135deg,var(--v),var(--p));border-color:transparent}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:14px}
+.mcard{border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden;display:flex;flex-direction:column;animation:cin .55s cubic-bezier(.2,.7,.2,1) backwards;transition:transform .3s,border-color .3s,box-shadow .3s}
+.mcard:hover{transform:translateY(-6px);border-color:var(--c);box-shadow:0 18px 36px -18px var(--c)}
+.mth{position:relative;display:block;aspect-ratio:16/9;overflow:hidden;background:#000}
+.mth img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s}
+.mcard:hover .mth img{transform:scale(1.05)}
+.mth img{filter:contrast(1.05) saturate(1.06)}
+.mth::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(10,8,22,.75))}
+.pn,.sz{position:absolute;z-index:1;font:700 .75rem var(--body);padding:.1rem .55rem;border-radius:99px;background:rgba(10,8,22,.8);border:1px solid var(--line)}
+.pn{left:8px;top:8px}.sz{right:8px;top:8px}
+.mb{padding:10px 12px 12px;display:flex;flex-direction:column;gap:7px;flex:1}
+.mb b{font-size:1.02rem;line-height:1.25;overflow-wrap:anywhere}
+.df{font:700 .78rem var(--head);padding:.12rem .6rem;border-radius:6px;letter-spacing:.03em}
+.d0{background:rgba(62,224,138,.15);color:#3ee08a}.d1{background:rgba(41,240,255,.13);color:var(--c)}.d2{background:rgba(255,178,62,.15);color:#ffb23e}.d3{background:rgba(255,61,129,.16);color:var(--p)}
+.d4{background:rgba(139,92,255,.25);color:#c9b3ff;animation:pls 2s ease-in-out infinite}
+@keyframes pls{0%,100%{box-shadow:0 0 8px -2px var(--v)}50%{box-shadow:0 0 20px 1px var(--v)}}
+.mu{font-size:.78rem;color:var(--c);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mu:hover{text-decoration:underline}
+.ma{display:flex;gap:6px;margin-top:auto}
+.ma .btn{flex:1;justify-content:center;font-size:.88rem;padding:.42rem .6rem}
+.cp{font:700 .8rem var(--body);padding:.42rem .65rem;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;transition:all .2s}
+.cp:hover{border-color:var(--c);color:var(--c)}
+.mempty{grid-column:1/-1;text-align:center;color:var(--mute);padding:30px 0}
+@media (max-width:760px){.dots{display:none}.sec::before{opacity:.6}}
+@media (prefers-reduced-motion:reduce){.ch{opacity:1!important;transform:none!important;filter:none!important}.deco{display:none}#prog{transition:none}}
+.mrow{display:flex;justify-content:space-between;align-items:center;gap:8px}
+
+html{overflow-x:hidden}
+/* ===== V3: THANH MENU CỐ ĐỊNH · PLAYER · NÚT GAME · DI ĐỘNG ===== */
+.topnav{position:fixed;left:0;right:0;top:0;z-index:9990;padding-top:env(safe-area-inset-top,0px);background:rgba(10,8,22,.5);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:background .3s,border-color .3s,box-shadow .3s}
+.topnav.sc{background:rgba(10,8,22,.9);border-color:var(--line);box-shadow:0 10px 30px -12px #000}
+.tn{max-width:1040px;margin:0 auto;padding:0 20px;height:58px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.tn .brand{font:800 1.05rem var(--head);letter-spacing:.06em;background:linear-gradient(90deg,var(--c),var(--p));-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.tn ul{display:flex;gap:4px;list-style:none;margin:0;padding:0}
+.nl{display:block;padding:.45rem .95rem;border-radius:10px;font:700 .9rem var(--head);letter-spacing:.04em;color:var(--mute);transition:color .25s,background .25s,transform .25s}
+.nl:hover{color:#fff;background:rgba(139,92,255,.22);transform:translateY(-2px)}
+.nl.on{color:#fff;background:rgba(139,92,255,.2);box-shadow:inset 0 -2px 0 var(--c)}
+.burger{display:none;width:44px;height:44px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);font-size:1.3rem;cursor:pointer;place-items:center}
+.sec,.hero{scroll-margin-top:64px}
+.hero{padding-top:84px}
+.player{position:relative}
+.cover{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;padding:14px;cursor:pointer;background:radial-gradient(circle at 15% 20%,rgba(41,240,255,.3),transparent 45%),radial-gradient(circle at 85% 85%,rgba(255,61,129,.35),transparent 50%),linear-gradient(135deg,#1a1240,#0d0a20);transition:opacity .6s,visibility .6s}
+.cover.off{opacity:0;visibility:hidden;pointer-events:none}
+.cover .big{font-size:clamp(2rem,8vw,3.2rem);animation:flt 3s ease-in-out infinite}
+.cover b{font:800 clamp(1rem,3.6vw,1.4rem) var(--head);letter-spacing:.08em}
+.cover span{color:var(--mute);font-size:.95rem;max-width:90%}
+.eq{display:flex;gap:4px;height:22px;align-items:flex-end;margin-top:6px}
+.eq em{display:block;width:5px;height:100%;border-radius:2px;background:linear-gradient(var(--c),var(--p));transform-origin:bottom;animation:eq 1s ease-in-out infinite}
+.eq em:nth-child(2){animation-delay:.2s}.eq em:nth-child(3){animation-delay:.4s}.eq em:nth-child(4){animation-delay:.6s}
+@keyframes eq{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+@keyframes flt{50%{transform:translateY(-8px) rotate(-6deg)}}
+.unm{position:absolute;right:10px;bottom:10px;z-index:3;font:700 .9rem var(--body);padding:.45rem .9rem;border-radius:999px;border:0;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--v),var(--p));animation:pul 1.6s infinite}
+.unm[hidden]{display:none}
+@keyframes pul{0%,100%{box-shadow:0 0 0 0 rgba(255,61,129,.6)}50%{box-shadow:0 0 0 10px rgba(255,61,129,0)}}
+.pl h3{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ctl{display:flex;gap:6px}
+.ctl button{width:34px;height:30px;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);cursor:pointer}
+.ctl button:hover{border-color:var(--c)}
+.list li.bad{opacity:.45}
+.chips>div{gap:14px}
+.chip{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:160px;padding:1rem 1.4rem;border-radius:18px;background:linear-gradient(160deg,rgba(139,92,255,.16),var(--panel))}
+.chip .ci{font-size:2rem;line-height:1.2;transition:transform .3s}
+.chip small{font:600 .8rem var(--body);letter-spacing:0;color:var(--mute);text-transform:none}
+.chip:hover{box-shadow:0 14px 34px -12px var(--v),0 0 0 1px var(--c) inset}
+.chip:hover .ci{transform:scale(1.25) rotate(-8deg)}
+.chip[aria-expanded="true"] small{color:#fff}
+@media(max-width:760px){
+ .burger{display:grid}
+ .tn ul{position:absolute;left:0;right:0;top:100%;flex-direction:column;gap:2px;background:rgba(10,8,22,.97);padding:10px 16px 16px;border-bottom:1px solid var(--line);opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .25s,transform .25s}
+ .topnav.open ul{opacity:1;transform:none;pointer-events:auto}
+ .nl{padding:.85rem 1rem;font-size:1rem}
+ .wrap{padding:0 16px}.sec{padding:56px 0 20px}
+ .player{aspect-ratio:16/9}
+ input{font-size:16px!important}
+ .add{flex-wrap:wrap}.add input{flex:1 1 160px}
+ .chips>div{gap:10px}.chip{flex:1 1 calc(50% - 10px);min-width:0;padding:.9rem .6rem}
+ .list{max-height:200px}
+}
+
+/* ===== HIỆU ỨNG · RAINBOW · SÁNG/TỐI · HỖ TRỢ NHỎ ===== */
+:root{--rl:68%;--rb:linear-gradient(90deg,hsl(0 100% var(--rl)),hsl(45 100% var(--rl)),hsl(90 100% var(--rl)),hsl(160 100% var(--rl)),hsl(200 100% var(--rl)),hsl(250 100% var(--rl)),hsl(300 100% var(--rl)),hsl(345 100% var(--rl)),hsl(0 100% var(--rl)))}
+:root[data-theme=light]{--bg:#f5f2ff;--panel:#fff;--line:#d8cff8;--text:#1d1540;--mute:#665c99;--v:#6d3bff;--p:#e0206a;--c:#0b8bb0;--rl:42%;color-scheme:light}
+:root[data-theme=light] .music,:root[data-theme=light] .me.hud{background:rgba(255,255,255,.82)}
+:root[data-theme=light] input{background:#fff}
+:root[data-theme=light] .topnav{background:rgba(245,242,255,.7)}
+:root[data-theme=light] .topnav.sc{background:rgba(245,242,255,.93);box-shadow:0 10px 30px -14px rgba(60,30,140,.35)}
+@media(max-width:760px){:root[data-theme=light] .tn ul{background:rgba(250,248,255,.98)}}
+:root[data-theme=light] .cover b{color:#fff}
+:root[data-theme=light] .nl:hover,:root[data-theme=light] .nl.on{color:var(--text)}
+:root[data-theme=light] .btn,:root[data-theme=light] .chip[aria-expanded="true"],:root[data-theme=light] .fc.on{color:#fff}
+:root[data-theme=light] .cover span{color:#c9c0f2}
+:root[data-theme=light] .glow{opacity:.55}
+:root[data-theme=light] .sec::before{-webkit-text-stroke:1px rgba(109,59,255,.2)}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.9s;animation-timing-function:ease-in-out}
+html.tfade,html.tfade *,html.tfade *::before,html.tfade *::after{transition:background-color .8s,color .8s,border-color .8s,box-shadow .8s,fill .8s!important}
+.themebtn{width:40px;height:40px;margin-left:6px;padding:0;display:grid;place-items:center;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--c);cursor:pointer;position:relative;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s}
+.themebtn:hover{border-color:var(--c);box-shadow:0 0 18px -4px var(--c);transform:rotate(-12deg) scale(1.08)}
+.themebtn svg{grid-area:1/1;width:21px;height:21px;transition:transform .6s cubic-bezier(.2,1.2,.3,1),opacity .4s}
+.themebtn .sun{transform:rotate(-90deg) scale(0);opacity:0;color:#ffb23e}
+:root[data-theme=light] .themebtn .sun{transform:none;opacity:1}
+:root[data-theme=light] .themebtn .moon{transform:rotate(90deg) scale(0);opacity:0}
+/* chữ rainbow */
+@keyframes flow{to{background-position:200% 0}}
+@keyframes hue{to{filter:hue-rotate(360deg)}}
+.clock,#myname,.donate-card h3,.gh,.brand,.date,#foot,.cl b{background-image:var(--rb)!important;background-size:200% 100%!important;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:flow 6s linear infinite!important}
+.gh small{-webkit-text-fill-color:var(--mute)}
+.glitch{background-image:var(--rb);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:flow 6s linear infinite}
+.glitch::before,.glitch::after{-webkit-text-fill-color:currentColor}
+.sec h2{animation:hue 10s linear infinite}
+.hello{color:var(--p)}.item-btn b,.mb b{color:hsl(45 100% var(--rl))}.item-btn span{color:hsl(190 100% var(--rl))}.link-item a{color:var(--c)}.link-item .desc{color:hsl(330 100% var(--rl))}
+/* hiệu ứng chuyển trang / click / cuộn */
+.curtain{position:fixed;inset:0;z-index:99998;pointer-events:none;display:grid;grid-template-columns:repeat(5,1fr)}
+.curtain i{background:linear-gradient(180deg,#1a1240,#0a0816);transform:scaleY(0);transform-origin:bottom;transition:transform .4s cubic-bezier(.77,0,.18,1);transition-delay:calc(var(--k)*50ms);border-right:1px solid rgba(139,92,255,.3);box-shadow:inset 0 -3px 0 var(--c)}
+.curtain.in i{transform:scaleY(1);transform-origin:top}
+.curtain.boot{animation:cfail .3s 4.5s forwards}
+@keyframes cfail{to{opacity:0;visibility:hidden}}
+.cl{position:absolute;inset:0;display:none;place-items:center;align-content:center;gap:14px;z-index:2}
+.curtain.boot .cl{display:grid}.curtain.boot:not(.in) .cl{opacity:0;transition:opacity .3s}
+.cl b{font:800 clamp(1.4rem,6vw,2.4rem) var(--head);letter-spacing:.2em}
+.bar{width:min(240px,60vw);height:4px;border-radius:4px;background:rgba(255,255,255,.12);overflow:hidden}
+.bar em{display:block;height:100%;width:100%;transform-origin:left;background:var(--rb);animation:ld 1s ease-out forwards}
+@keyframes ld{from{transform:scaleX(0)}}
+.shock{position:fixed;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;border:2px solid var(--c);pointer-events:none;z-index:99996;animation:shock .7s ease-out forwards}
+@keyframes shock{to{transform:scale(9);opacity:0;border-width:0}}
+.btn,.chip,.soc,.item-btn,.fc,.cp,.nl,.burger,.ctl button{position:relative;overflow:hidden}
+.rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.35);transform:scale(0);animation:rip .6s ease-out forwards;pointer-events:none}
+@keyframes rip{to{transform:scale(1);opacity:0}}
+.btn,.soc{transition:transform .25s,border-color .25s,box-shadow .25s,filter .25s,translate .2s ease-out}
+.rv[data-a]{transition:opacity .9s,transform .9s cubic-bezier(.2,.7,.2,1),filter .9s}
+.rv[data-a=l]{transform:translateX(-70px)}.rv[data-a=r]{transform:translateX(70px)}.rv[data-a=z]{transform:scale(.82)}.rv[data-a=f]{transform:perspective(800px) rotateX(22deg) translateY(50px);filter:blur(6px)}
+.rv.in[data-a]{opacity:1;transform:none;filter:none}
+.rv.in .soc{animation:pop .55s cubic-bezier(.2,1.3,.4,1) backwards;animation-delay:calc(var(--n)*90ms + .3s)}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.8)}}
+/* mục hỗ trợ nhỏ gọn */
+#donate{padding-top:36px}
+.donate-card{max-width:360px;margin:12px auto;padding:18px 16px;border-radius:16px}
+.donate-card h3{font-size:1.1rem}.donate-card p{font-size:.95rem;margin:.3rem 0 .8rem}
+.qr-wrap{width:min(150px,55%);border-width:2px}.qr-note{margin-top:8px;font-size:.8rem}
+@media(max-width:760px){.themebtn{width:100%;margin:6px 0 0}}
+/* dòng chữ chạy ngang */
+.mqb{width:100vw;margin:34px 0 0 calc(50% - 50vw);overflow:hidden;padding:14px 0;border-block:1px solid var(--line);background:linear-gradient(90deg,rgba(139,92,255,.12),rgba(255,61,129,.1),rgba(41,240,255,.12));position:relative;z-index:1}
+.mqt{display:flex;width:max-content;animation:mqm 30s linear infinite}
+.mqb:hover .mqt{animation-play-state:paused}
+.mqt span.t{font:800 clamp(1.1rem,3.4vw,1.7rem) var(--head);letter-spacing:.08em;white-space:nowrap;text-transform:uppercase;background-image:var(--rb);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:flow 6s linear infinite}
+.mqt span.msep{margin:0 1.4rem;color:var(--c);font-size:1.1rem;align-self:center;animation:spin 6s linear infinite}
+@keyframes mqm{to{transform:translateX(-25%)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* server minecraft */
+.srvs{display:grid;gap:12px;margin:8px 0 4px}
+.srv{border:1px solid var(--line);border-radius:14px;padding:14px 16px;background:linear-gradient(160deg,rgba(62,224,138,.1),var(--panel))}
+.srv-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.srv-h b{font:800 1.1rem var(--head);color:var(--text)}
+.ver{margin-left:auto;font:700 .8rem var(--head);padding:.15rem .65rem;border-radius:999px;background:rgba(41,240,255,.15);color:var(--c)}
+.live{width:10px;height:10px;border-radius:50%;background:#3ee08a;animation:livep 1.6s infinite}
+@keyframes livep{0%{box-shadow:0 0 0 0 rgba(62,224,138,.7)}70%,100%{box-shadow:0 0 0 10px rgba(62,224,138,0)}}
+.srv-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px}
+.srv-r small{min-width:62px;color:var(--mute);font:700 .8rem var(--head);text-transform:uppercase;letter-spacing:.06em}
+.srv-r code{font:700 1rem ui-monospace,Consolas,monospace;padding:.2rem .6rem;border-radius:8px;background:rgba(139,92,255,.14);color:var(--text);overflow-wrap:anywhere}
+.srv-r a{color:var(--c);font-weight:700}.nomod{color:var(--mute)}
+.cpip{font:700 .85rem var(--body);padding:.3rem .8rem;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);cursor:pointer;transition:border-color .2s,transform .2s}
+.cpip:hover{border-color:var(--c);transform:translateY(-2px)}
+/* thanh tìm kiếm */
+.sli{margin-right:6px}
+.sbox{position:relative;width:clamp(120px,15vw,190px);transition:width .35s cubic-bezier(.2,.7,.2,1)}
+.sbox:focus-within{width:min(300px,34vw)}
+.sbox input{width:100%;height:40px;padding:0 .8rem 0 2.3rem;border-radius:12px;font:600 .95rem var(--body)}
+.sbox input:focus{border-color:var(--c);box-shadow:0 0 0 3px rgba(41,240,255,.18);outline:none}
+.sbox>svg{position:absolute;left:.75rem;top:50%;width:16px;height:16px;transform:translateY(-50%);color:var(--c);pointer-events:none}
+.sres{position:absolute;top:calc(100% + 8px);left:0;width:max(100%,340px);max-height:60vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 50px -14px #000;padding:6px;display:none;z-index:5}
+.sres.on{display:block;animation:sin .25s ease-out}
+@keyframes sin{from{opacity:0;transform:translateY(-6px)}}
+.sr{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;cursor:pointer}
+.sr:hover,.sr.act{background:rgba(139,92,255,.22)}
+.sr .k{flex:none;font:700 .68rem var(--head);padding:.12rem .5rem;border-radius:6px;background:rgba(41,240,255,.15);color:var(--c);white-space:nowrap;max-width:96px;overflow:hidden;text-overflow:ellipsis}
+.sr>span:last-child{min-width:0}
+.sr b{display:block;font-size:.98rem;line-height:1.25;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sr small{display:block;color:var(--mute);font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sr mark{background:rgba(255,200,61,.4);color:inherit;border-radius:3px}
+.sempty{padding:12px;color:var(--mute)}
+@keyframes hit{0%,100%{box-shadow:0 0 0 0 transparent}30%,70%{box-shadow:0 0 0 3px var(--c),0 0 30px var(--c)}}
+.hit{animation:hit 1.8s ease 1;border-radius:12px}
+:root[data-theme=light] .sres{box-shadow:0 20px 50px -14px rgba(60,30,140,.35)}
+@media(max-width:760px){.sli{width:100%;margin:0 0 6px}.sbox,.sbox:focus-within{width:100%}.sres{position:static;width:100%;margin-top:6px;max-height:40vh;box-shadow:none}}
+/* hướng dẫn từng bước */
+.gdl{display:grid;gap:10px;margin:8px 0 4px}
+.gd{display:flex;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(139,92,255,.08)}
+.gd>i{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font:800 .95rem var(--head);font-style:normal;color:#fff;background:linear-gradient(135deg,var(--v),var(--p))}
+.gd b{color:var(--c);font:700 1rem var(--head)}
+.gd p{margin:.2rem 0 0;color:var(--text);font-size:1rem;line-height:1.5}
+.gdb{display:inline-block;margin-top:.55rem;padding:.35rem .95rem;border-radius:10px;font:700 .85rem var(--head);letter-spacing:.03em;color:#fff;background:linear-gradient(135deg,var(--v),var(--p));transition:transform .25s,box-shadow .25s}
+.gdb:hover{transform:translateY(-2px);box-shadow:0 10px 22px -10px var(--p)}
+.rp{margin:8px 0 0 12px;padding:6px 10px;border-left:2px solid var(--v);background:rgba(139,92,255,.06);border-radius:0 8px 8px 0}.rpf .cf{margin:8px 0 0}
+/* ===== V4: CỘNG ĐỒNG · SẮP XẾP MAP · CHIA SẺ ===== */
+#community{--k:var(--v)}
+.mst{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.82rem;color:var(--mute)}
+.dlc{font-weight:700;color:var(--c)}
+.rate{display:inline-flex;align-items:center;gap:1px}.rate em{font-style:normal;margin-left:5px;font-size:.78rem}
+.rate .st{border:0;background:none;padding:0 1px;font-size:1rem;line-height:1;color:var(--line);cursor:pointer;transition:transform .15s,color .15s}
+.rate .st.on{color:#ffb23e}.rate .st:hover{transform:scale(1.3);color:#ffb23e}
+.msh{display:flex;gap:6px}
+.shb{flex:1;font:700 .75rem var(--body);padding:.3rem .5rem;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--mute);cursor:pointer;transition:all .2s}
+.shb:hover{color:var(--text);border-color:var(--c)}.shb[data-s=zl]:hover{border-color:#0068ff}.shb[data-s=fb]:hover{border-color:#1877f2}
+.by{font-size:.78rem;color:var(--mute)}
+.crown{position:absolute;z-index:1;left:8px;bottom:8px;font:800 .75rem var(--head);padding:.15rem .6rem;border-radius:99px;background:linear-gradient(135deg,#ffb23e,#ff3d81);color:#fff;box-shadow:0 0 14px -2px #ffb23e}
+.cbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0}
+.cl2{color:var(--mute);font-size:.9rem}.cl2.sp2{margin-left:10px}
+.cb{font:700 .9rem var(--body);display:inline-flex;align-items:center;gap:6px;padding:.45rem .95rem;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--text);cursor:pointer;transition:all .2s}
+.cb:hover{border-color:var(--c);transform:translateY(-2px)}
+.cb.zl{border-color:#0068ff}.cb.fb{border-color:#1877f2}
+.cb.ct,.cb.on{background:linear-gradient(135deg,var(--v),var(--p));border-color:transparent;color:#fff}
+.cb:disabled{opacity:.55;cursor:default;transform:none}
+.cnote{padding:10px 14px;border:1px dashed #ffb23e;border-radius:12px;color:#ffb23e;font-size:.9rem;margin:0 0 12px}
+.ctabs{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+.ctab{font:700 .9rem var(--head);padding:.55rem 1rem;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--text);cursor:pointer;transition:all .2s}
+.ctab:hover{border-color:var(--c)}.ctab.on{background:linear-gradient(135deg,var(--v),var(--p));border-color:transparent;color:#fff}
+.cpanel{border:1px solid var(--line);border-radius:16px;padding:16px;background:rgba(20,16,42,.6);min-height:120px}
+.cf{display:grid;gap:10px;margin-bottom:14px}
+.cf label{display:grid;gap:4px;color:var(--mute);font-size:.9rem}
+.cf input{width:100%;flex:none}
+.cf textarea,.cf select{font:600 1rem var(--body);background:#0d0a20;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:.5rem .8rem;width:100%;min-width:0}
+.cf textarea{resize:vertical}
+.cf .r2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.cr{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mt{color:var(--mute);margin:.2rem 0}
+.sh{font:700 1.05rem var(--head);color:var(--c);margin:16px 0 6px}
+.nw{border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:8px 0;background:rgba(139,92,255,.07)}
+.nw p{margin:.25rem 0 0}.nw small{color:var(--mute)}.nw .cb{padding:.2rem .7rem;font-size:.8rem;margin-top:6px}
+.nw.champ{border-color:#ffb23e;box-shadow:0 0 22px -10px #ffb23e}
+.rk{display:flex;align-items:center;gap:10px;padding:8px 10px;margin:6px 0;border:1px solid var(--line);border-radius:12px;background:rgba(139,92,255,.07)}
+.rk .no{font:800 1.1rem var(--head);color:var(--p);min-width:1.6em;text-align:center}
+.rkm{flex:1;min-width:0}.rkm b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rkm i{display:block;height:4px;margin-top:4px;border-radius:4px;background:linear-gradient(90deg,var(--v),var(--p));min-width:2px}
+.rk .vn{font:700 .95rem var(--head);color:var(--c)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:99999;padding:.6rem 1.1rem;border-radius:12px;background:var(--panel);border:1px solid var(--c);color:var(--text);box-shadow:0 10px 30px -10px #000;animation:sin .25s ease-out}
+body.hc select{cursor:pointer!important}
+:root[data-theme=light] .cf textarea,:root[data-theme=light] .cf select{background:#fff}
+:root[data-theme=light] .cpanel{background:rgba(255,255,255,.7)}
+:root[data-theme=light] .cb.ct,:root[data-theme=light] .cb.on,:root[data-theme=light] .ctab.on{color:#fff}
+.sendrow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.nw .sendrow .cb{padding:.4rem .9rem;font-size:.9rem;margin-top:0}
+.clist{max-height:560px;overflow:auto;padding-right:4px}
+
+/* ===== LIVE TIKTOK ===== */
+#live{--k:#ff2d55}
+.lvbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:14px 0}
+.lvcount{font:700 .95rem var(--head);color:var(--mute)}.lvcount b{color:#ff2d55}
+.lvgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin:6px 0 18px}
+.lvcard{position:relative;border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:14px 14px 12px;display:flex;flex-direction:column;gap:8px;transition:transform .25s,border-color .25s,box-shadow .25s}
+.lvcard:hover{transform:translateY(-5px);border-color:#ff2d55;box-shadow:0 16px 34px -18px #ff2d55}
+.lvon{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;font:800 .78rem var(--head);letter-spacing:.08em;color:#fff;background:#ff2d55;border-radius:99px;padding:.15rem .7rem}
+.lvon::before{content:"";width:8px;height:8px;border-radius:50%;background:#fff;animation:lvp 1.2s ease-in-out infinite}
+@keyframes lvp{50%{opacity:.25;transform:scale(.7)}}
+.lvcard h3{margin:0;font:700 1.05rem/1.3 var(--body);overflow-wrap:anywhere}
+.lvu{color:var(--c);font-weight:700;overflow-wrap:anywhere}
+.lvmeta{color:var(--mute);font-size:.85rem}
+.lvact{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.lvact .btn{flex:1;text-align:center;font-size:.9rem;padding:.5rem .8rem;background:linear-gradient(135deg,#ff2d55,var(--v))}
+.lvact .cp{font:700 .8rem var(--body);padding:.42rem .65rem;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer}
+.lvact .cp:hover{border-color:var(--c);color:var(--c)}
+.lvact .cp.end:hover,.lvact .cp.adm:hover{border-color:#ff5b6e;color:#ff5b6e}
+.lvempty{grid-column:1/-1;text-align:center;color:var(--mute);padding:26px 0;border:1px dashed var(--line);border-radius:14px}
+.lvform{border:1px solid var(--line);border-radius:16px;background:rgba(20,16,42,.6);padding:16px;margin:8px 0 6px}
+.lvform[hidden]{display:none}
+.lvform h3{margin:0 0 4px;font:700 1.1rem var(--head);color:var(--c)}
+.lvform .cf{margin:10px 0 0}
+.lvnote{color:var(--mute);font-size:.88rem;margin:6px 0 0}
+:root[data-theme=light] .lvform{background:rgba(255,255,255,.75)}
+:root[data-theme=light] .lvact .btn{color:#fff}
+@media (max-width:760px){.lvgrid{grid-template-columns:1fr}}
+/* ===== GIÁ MAP SINH TỒN ⚡ · ĐĂNG MAP (ADMIN) ===== */
+.admonly[hidden]{display:none!important}
+.mpr{font:700 .78rem var(--head);padding:.12rem .55rem;border-radius:6px;background:rgba(255,178,62,.16);color:#ffb23e;border:1px solid rgba(255,178,62,.45);white-space:nowrap}
+.mpr.own{background:rgba(62,224,138,.14);color:#3ee08a;border-color:rgba(62,224,138,.45)}
+.ma .mbuy{background:linear-gradient(135deg,#ffb23e,var(--p))}
+.ma .mbuy i{font-style:normal;margin-left:.4rem;padding:0 .45rem;border-radius:6px;background:rgba(0,0,0,.28)}
+.ma:has(.mad){flex-wrap:wrap}
+.mad{font:700 .8rem var(--body);padding:.42rem .6rem;border-radius:10px;border:1px dashed var(--c);background:transparent;color:var(--c);cursor:pointer;white-space:nowrap;transition:background .2s}
+.mad:hover{background:rgba(41,240,255,.12)}
+.admf .tpr{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+.admf .adr{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.admf .adr .btn{font-size:.95rem}
+</style>
+<style>
+.accchip{position:fixed;left:14px;bottom:14px;z-index:9991;display:flex;align-items:center;gap:6px;font:700 .95rem var(--body);padding:.4rem .9rem;border-radius:99px;border:1px solid var(--c);background:var(--panel);color:var(--text);cursor:pointer;box-shadow:0 8px 24px -10px #000}
+.accchip img,.by .av{width:22px;height:22px;border-radius:50%;object-fit:cover;vertical-align:middle}
+.accnote{font-size:.9rem}
+.amod{position:fixed;inset:0;z-index:9995;background:rgba(5,3,14,.72);display:grid;place-items:center;padding:16px}
+.abox{position:relative;width:min(420px,100%);background:var(--panel);border:1px solid var(--c);border-radius:16px;padding:22px 20px;box-shadow:0 20px 60px -20px var(--v)}
+.abox h3{margin:0 0 8px;font:700 1.15rem var(--head);color:var(--c)}.abox .big{font-size:1.4rem;margin:.2rem 0}
+.ax{position:absolute;right:10px;top:8px;border:0;background:none;color:var(--mute);font-size:1.1rem;cursor:pointer}
+.pv{justify-content:center}.fbb{background:#1877f2}.zlb{background:#0068ff}
+.cdl i{font-style:normal;font-size:.78rem;opacity:.9;background:rgba(0,0,0,.28);padding:0 .45rem;border-radius:99px}
+.dlx{font-size:.82rem;color:var(--mute);margin:2px 0 6px}.dlx b{color:var(--c)}
+.nw .cdl{padding:.3rem .8rem;font-size:.85rem}
+.nw .cdelc{margin-top:6px;padding:.2rem .7rem;font-size:.8rem}.nw .cdelc:hover{border-color:#ff5b6e;color:#ff5b6e}
+/* ảnh map bên phải dòng map + xem trước ảnh khi dán link */
+.cmrow{display:flex;align-items:center;gap:14px}
+.cmrow .cmi{flex:1;min-width:0}
+.cmth{flex:0 0 200px;display:block;aspect-ratio:16/10;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:rgba(139,92,255,.1)}
+.cmth img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
+.cmth:hover img{transform:scale(1.07)}
+.cmth.no{display:flex;align-items:center;justify-content:center;text-align:center;font-size:.78rem;color:var(--mute);padding:6px}
+.imgtool{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px 12px;margin:-4px 0 0}.imgtool .cb{padding:.25rem .8rem;font-size:.82rem;white-space:nowrap}.imgtool small{flex:1 1 240px;min-width:0;color:var(--mute);font-size:.78rem;line-height:1.5}.imgtool small b{color:var(--c)}
+.imgprev{display:none;align-items:center;gap:12px;border:1px dashed var(--line);border-radius:12px;padding:8px;background:rgba(139,92,255,.06);font-size:.85rem;color:var(--mute)}
+.imgprev img{width:160px;max-width:45%;aspect-ratio:16/10;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+@media(max-width:560px){.cmrow{flex-direction:column-reverse;align-items:stretch}.cmth{flex-basis:auto;width:100%}}
+/* tên đẹp từ cửa hàng ⚡ */
+.nm{display:inline-block;line-height:1.35}
+.nm.fr1,.nm.fr2,.nm.fr3,.nm.fr4{padding:0 8px;border-radius:9px;border:1px solid}
+.nm.fr1{border-color:#29f0ff;box-shadow:0 0 10px -3px #29f0ff}
+.nm.fr2{border-color:#ff3d81;box-shadow:0 0 10px -3px #ff3d81}
+.nm.fr3{border-color:#ffb23e;box-shadow:0 0 12px -2px #ffb23e;background:rgba(255,178,62,.1)}
+.nm.fr4{border-color:#ff3d81;box-shadow:0 0 12px -2px #ff3d81;animation:nmr 3s linear infinite}
+@keyframes nmr{to{filter:hue-rotate(360deg)}}
+.nmt.co1{color:var(--c)}.nmt.co2{color:var(--p)}.nmt.co3{color:#e69500}
+.nmt.co4{background:linear-gradient(90deg,#8b5cff,#ff3d81,#ffb23e);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+/* cửa hàng ⚡ */
+.shg{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.shc{border:1px solid var(--line);border-radius:12px;padding:10px;background:rgba(139,92,255,.07);display:grid;gap:6px;text-align:center;justify-items:center}
+.shc.on{border-color:var(--c);box-shadow:0 0 16px -8px var(--c)}
+.shpv{min-height:2em;display:flex;align-items:center;justify-content:center;font-weight:700;max-width:100%;overflow:hidden}
+.shc small{color:var(--mute)}
+.shb2{padding:.3rem .8rem;font-size:.82rem}
+.shp{display:grid;gap:4px;align-content:end;font-size:.85rem;color:var(--mute)}
+.shp #shv{font-size:1.05rem;color:var(--text);font-weight:700}
+.rdr{display:flex;gap:8px}.rdr .rdc{flex:1;min-width:0;font:600 1rem var(--body);background:#0d0a20;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:.5rem .8rem;text-transform:uppercase}
+.rdr .btn{padding:.45rem 1rem;font-size:.9rem}
+.nmr{display:flex;gap:8px}.nmr input{flex:1;min-width:0;font:600 1rem var(--body);background:#0d0a20;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:.5rem .8rem}
+.nmr .btn{padding:.45rem 1rem;font-size:.9rem}
+.accchip.has{flex-direction:column;align-items:flex-start;gap:2px;border-radius:16px;padding:.35rem .95rem .4rem}
+.acn{max-width:min(210px,60vw);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem;font-weight:700;line-height:1.5}
+/* map bí ẩn */
+.mbx{text-align:center;border:1px solid var(--line);border-radius:14px;padding:18px 14px;background:rgba(139,92,255,.07);margin:10px 0}
+.mbi{font-size:4rem;line-height:1;animation:mbf 2.4s ease-in-out infinite;display:inline-block}
+@keyframes mbf{50%{transform:translateY(-8px) rotate(-4deg)}}
+.mbi.shk{animation:mbs .35s linear infinite}
+@keyframes mbs{25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
+.mrev{animation:mrp .6s cubic-bezier(.2,.9,.3,1.3);text-align:left;margin-top:14px}
+@keyframes mrp{from{transform:scale(.7);opacity:0}}
+/* mẹo phá đảo */
+.mtip{font:700 .8rem var(--body);padding:.42rem .65rem;border-radius:10px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;white-space:nowrap;transition:all .2s}
+.mtip:hover{border-color:#ffb23e;color:#ffb23e}
+.abox.wide{width:min(560px,100%);max-height:88vh;overflow:auto}
+.tp{border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin:8px 0;background:rgba(139,92,255,.07)}
+.tp.pin{border-color:#ffb23e;box-shadow:0 0 16px -10px #ffb23e}
+.tp p{margin:.2rem 0;word-break:break-word}.tp a{color:var(--c);text-decoration:underline}
+.tpb{font:800 .72rem var(--head);color:#ffb23e}
+.tpf{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.tpf small{color:var(--mute)}
+.tpl.on{border-color:var(--c);color:var(--c)}
+/* dòng hoạt động trực tiếp */
+.tkbar{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;background:rgba(139,92,255,.07);padding:7px 12px;margin:0 0 14px;overflow:hidden}
+.tkbar.fl{animation:tkfl 1.2s}
+@keyframes tkfl{0%{box-shadow:0 0 0 0 var(--p)}100%{box-shadow:0 0 0 14px transparent}}
+.tkl{flex:none;display:flex;align-items:center;gap:6px;font:800 .72rem var(--head);letter-spacing:.12em;color:var(--p)}
+.tkl i{width:8px;height:8px;border-radius:50%;background:var(--p);animation:tkp 1.4s infinite}
+@keyframes tkp{50%{opacity:.25;transform:scale(.7)}}
+.tkv{flex:1;min-width:0;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 22px,#000 calc(100% - 22px),transparent);mask-image:linear-gradient(90deg,transparent,#000 22px,#000 calc(100% - 22px),transparent)}
+.tkt{display:inline-flex;white-space:nowrap;animation:tkm 30s linear infinite;will-change:transform}
+.tkv:hover .tkt{animation-play-state:paused}
+@keyframes tkm{to{transform:translateX(-50%)}}
+.tki{cursor:pointer;font-size:.88rem}.tki small{color:var(--mute);margin-left:4px}
+.tks{margin:0 18px;color:var(--v)}
+@media (prefers-reduced-motion:reduce){.tkv{overflow-x:auto;-webkit-mask-image:none;mask-image:none}}
+/* bảng xếp hạng người đóng góp */
+.pst{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
+.pst div{border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:rgba(139,92,255,.07);text-align:center;font-size:.8rem;color:var(--mute)}
+.pst b{display:block;font:800 1.4rem var(--head);color:var(--c)}
+.psb{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+.psb span{font-size:.85rem;color:var(--mute)}
+.psb .cb{padding:.25rem .8rem;font-size:.82rem}
+.pod{display:grid;gap:10px;align-items:end;margin:14px 0}
+.pc{border:1px solid var(--line);border-radius:14px;padding:12px 8px;text-align:center;background:rgba(139,92,255,.07);min-width:0}
+.pc .md{font-size:2rem;line-height:1}
+.pc b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:4px}
+.pc .pv{font:800 1.25rem var(--head);color:var(--c)}
+.pc small{display:block;color:var(--mute);font-size:.75rem}
+.pc.p1{order:2;padding-top:22px;border-color:#ffb23e;box-shadow:0 0 22px -10px #ffb23e}
+.pc.p2{order:1;border-color:#c0c8d8}
+.pc.p3{order:3;border-color:#cd7f32}
+.pr{border:1px solid var(--line);border-radius:12px;margin:8px 0;background:rgba(139,92,255,.07)}
+.pr.me{border-color:var(--c);box-shadow:0 0 16px -8px var(--c)}
+.pr summary{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;list-style:none}
+.pr summary::-webkit-details-marker{display:none}
+.pr .no{font:800 1.1rem var(--head);color:var(--p);min-width:1.8em;text-align:center}
+.pr .pa{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 1rem var(--head);color:#fff;background:linear-gradient(135deg,var(--v),var(--p));flex:none}
+.pr .pi{flex:1;min-width:0}
+.pr .pi b{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.pr .pi b em{font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.lv{font:700 .68rem var(--body);padding:.02rem .5rem;border-radius:99px;border:1px solid var(--line);color:var(--mute)}
+.lv.me{color:var(--c);border-color:var(--c)}
+.pbar{display:block;height:5px;margin-top:5px;border-radius:5px;background:rgba(139,92,255,.15)}
+.pbar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--v),var(--p));min-width:2px}
+.pi .ps{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:4px;font-size:.78rem;color:var(--mute)}
+.pi .ps b{display:inline;color:var(--c)}
+.pr .pv2{font:800 1.05rem var(--head);color:var(--c);text-align:right;min-width:3.2em;line-height:1.1}
+.pr .pv2 small{display:block;font:600 .68rem var(--body);color:var(--mute)}
+.pm{padding:2px 14px 10px 14px;font-size:.85rem}
+.pm div{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-top:1px dashed var(--line)}
+.pm div span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pm div span:last-child{color:var(--mute);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="curtain in boot" id="curtain" aria-hidden="true"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i><i style="--k:4"></i><div class="cl"><b id="cln">NAM HOÀNG</b><span class="bar"><em></em></span></div></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="glow" id="glow" aria-hidden="true"></div>
+<div id="prog" aria-hidden="true"></div>
+<nav class="topnav" id="topnav" aria-label="Menu chính"><div class="tn"><a class="brand" id="brand" href="#top">NAM HOÀNG</a><button class="burger" id="burger" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="nl">☰</button><ul id="nl"><li class="sli"><div class="sbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="gs" type="search" placeholder="Tìm kiếm… ( / )" autocomplete="off" aria-label="Tìm kiếm nội dung trang"><div class="sres" id="sres" role="listbox"></div></div></li><li><a class="nl" href="#top">Trang chủ</a></li><li><a class="nl" href="#me">Liên hệ</a></li><li><a class="nl" href="#community">Cộng đồng</a></li><li><a class="nl" href="#games">Game</a></li><li><a class="nl" href="#live">Live</a></li><li><a class="nl" href="#donate">Hỗ trợ</a></li><li><button class="themebtn" id="theme" type="button" aria-label="Chuyển giao diện sáng hoặc tối" title="Sáng / Tối"><svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" fill="currentColor"/></svg><svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="currentColor"/><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7L7 17M17 7l1.7-1.7"/></g></svg></button></li></ul></div></nav>
+<button class="totop" id="totop" type="button" aria-label="Lên đầu trang">↑</button>
+<!-- ============ BANNER GIỜ + NHẠC ============ -->
+<header class="hero" id="top"><div class="wrap">
+  <p class="hello" id="hello">Xin chào</p>
+  <div class="clock" id="clock" role="timer" aria-label="Giờ hiện tại"><span id="hh">00</span><span class="colon">:</span><span id="mm">00</span><span class="colon">:</span><span class="s" id="ss">00</span></div>
+  <p class="date" id="date"></p>
+  <h1 style="margin:0;font:800 clamp(1.4rem,4vw,2.2rem) var(--head)"><span class="glitch" data-t="CHÀO MỪNG ĐẾN GÓC GAME">CHÀO MỪNG ĐẾN GÓC GAME</span></h1>
+  <div class="type" id="type"></div>
+  <div class="music hud" id="music">
+    <div class="player"><div id="yt"></div><div class="cover" id="cover" role="button" tabindex="0" aria-label="Bấm để phát nhạc"><div class="big">🎮🎧</div><b>GÓC NHẠC GAME</b><span id="cvs">Đang tải nhạc…</span><i class="eq"><em></em><em></em><em></em><em></em></i></div><button class="unm" id="unm" type="button" hidden>🔊 Bật tiếng</button></div>
+    <div class="pl">
+      <h3><span>♪ DANH SÁCH NHẠC</span><span class="ctl"><button id="prv" type="button" aria-label="Bài trước">⏮</button><button id="nxt" type="button" aria-label="Bài tiếp">⏭</button></span></h3>
+      <ul class="list" id="list"></ul>
+      <div class="add"><input id="url" placeholder="Dán link YouTube..." aria-label="Link YouTube"><button class="btn" id="addbtn" type="button">Thêm</button></div>
+    </div>
+  </div>
+  <div class="scroll">CUỘN XUỐNG ↓</div>
+</div></header>
+<main class="wrap">
+  <!-- ============ THÔNG TIN CỦA TÔI ============ -->
+  <section class="sec" id="me" data-n="01">
+    <div class="rv"><span class="tag">// Liên Hệ</span><h2>Thông tin của tôi</h2></div>
+    <div class="me rv hud">
+      <div class="avatar"><img id="av" alt="Ảnh đại diện" src="images/avatar.jpg"></div>
+      <div>
+        <h3 id="myname">Nam Hoàng</h3><p id="mybio">Game thủ chính hiệu. Thích chơi game, nghe nhạc và chia sẻ mod, tips cho anh em.</p>
+        <div class="socials" id="socials"></div>
+      </div>
+    </div>
+  </section>
+  <div class="mqb" id="mqb" aria-hidden="true"><div class="mqt" id="mqt"></div></div>
+  <!-- ============ CỘNG ĐỒNG ============ -->
+  <section class="sec" id="community" data-n="02">
+    <div class="rv"><span class="tag">// Cộng đồng</span><h2>Góc cộng đồng</h2><p style="color:var(--mute);margin:0">Web này là của tất cả người chơi: gửi map, góp ý, bình luận và bình chọn Map Tháng.</p></div>
+    <div class="tkbar" id="tkbar" role="status" aria-label="Hoạt động trực tiếp"><span class="tkl"><i></i>LIVE</span><div class="tkv" id="tkv"></div></div>
+    <div class="cbar"><span class="cl2">Chia sẻ web:</span><button class="cb" data-s="cp" type="button">🔗 Chép link</button><span class="cl2 sp2">Phản hồi / Liên hệ:</span><a class="cb ct" id="c-fb" target="_blank" rel="noopener">💬 Facebook của Nam Hoàng</a><a class="cb" id="c-ms" target="_blank" rel="noopener">✉ Messenger</a></div>
+        <p class="mt accnote" id="accnote"></p>
+        <div class="ctabs" id="ctabs" role="tablist"><button class="ctab on" type="button" data-t="news">📢 Tin tức &amp; Sự kiện</button><button class="ctab" type="button" data-t="req">💡 Góp ý &amp; Yêu cầu</button><button class="ctab" type="button" data-t="sub">⭐ Gửi map của bạn</button><button class="ctab" type="button" data-t="cmt">💬 Bình luận</button><button class="ctab" type="button" data-t="vote">🏆 Bình chọn tháng</button><button class="ctab" type="button" data-t="ppl">👥 BXH người đóng góp</button><button class="ctab" type="button" data-t="box">🎁 Map bí ẩn</button><button class="ctab" type="button" data-t="shop">🛒 Cửa hàng ⚡</button></div>
+    <div class="cpanel" id="cp" aria-live="polite"></div>
+  </section>
+  <!-- ============ GAME ============ -->
+  <section class="sec" id="games" data-n="03">
+    <div class="rv"><span class="tag">// Game</span><h2>Kho game của tôi</h2><p style="color:var(--mute);margin:0">Bấm chọn game → chọn mục → xem danh sách link tải.</p></div>
+    <button class="btn open rv" id="open" type="button" aria-expanded="false" aria-controls="chips">🎮 Chọn game</button>
+    <div class="chips" id="chips"><div id="chipbox" role="list"></div></div>
+    <div class="gpanel" id="gp"><div id="gcontent"></div></div>
+  </section>
+  <!-- ============ LIVE TIKTOK ============ -->
+  <section class="sec" id="live" data-n="04">
+    <div class="rv"><span class="tag">// Trực tiếp</span><h2>Live TikTok</h2><p style="color:var(--mute);margin:0">Đang live game trên TikTok? Chia sẻ ở đây để mọi người vào xem và cổ vũ cùng bạn.</p></div>
+    <div class="lvbar"><span class="lvcount" id="lvcount" aria-live="polite"></span><button class="cb" id="lvrf" type="button">🔄 Làm mới</button><button class="cb ct" id="lvtog" type="button" aria-expanded="false" aria-controls="lvform">📡 Chia sẻ live của tôi</button></div>
+    <div class="lvform" id="lvform" hidden>
+      <h3>📡 Chia sẻ live của bạn</h3>
+      <p class="lvnote">Hãy <b>bật live trên TikTok trước</b>, rồi dán link hoặc @username vào đây. Người xem bấm nút sẽ mở thẳng phòng live của bạn trên TikTok.</p>
+      <div class="cf">
+        <div class="r2"><label>Link TikTok hoặc @username<input id="lvu" maxlength="120" placeholder="@tenban hoặc tiktok.com/@tenban" autocomplete="off"></label><label>Bạn đang chơi game gì?<select id="lvg"></select></label></div>
+        <label>Tiêu đề live<input id="lvt" maxlength="60" placeholder="VD: Solo map War Pro 9, ai vào thách đấu"></label>
+        <div><button class="btn" id="lvsend" type="button">🔴 Đăng live</button></div>
+        <p class="mt" id="lvmsg" aria-live="polite"></p>
+      </div>
+    </div>
+    <div class="lvgrid" id="lvgrid"></div>
+    <p class="lvnote">TikTok không cho nhúng phòng live vào web khác, nên bấm «Xem live» sẽ mở TikTok. Live tự ẩn sau <span id="lvttl"></span> giờ kể từ lúc đăng, hoặc khi Admin kết thúc.</p>
+  </section>
+  <!-- ============ DONATE ============ -->
+  <section class="sec rv" id="donate" data-n="05">
+    <span class="tag">// Hỗ trợ</span>
+    <h2>💖 Hỗ trợ tôi</h2>
+    <div class="donate-card hud">
+      <h3>Ủng hộ cà phê</h3>
+      <p>Nếu thấy chia sẻ hữu ích, bạn có thể ủng hộ mình qua mã QR bên dưới. Mình rất cảm kích! ❤️</p>
+      <div class="qr-wrap">
+        <img id="qr-img" src="images/qr.jpg" alt="Mã QR ủng hộ">
+      </div>
+      <p class="qr-note">Quét mã QR để ủng hộ</p>
+    </div>
+  </section>
+</main>
+<footer>© <span id="yr"></span> <span id="foot">Nam Hoàng</span> · Chúc bạn chơi game vui vẻ · <a href="https://www.facebook.com/kun.lee.3348/" target="_blank" rel="noopener" style="color:var(--c)">Phản hồi qua Facebook</a></footer>
+<script>
+/* =====================================================================
+   CẤU HÌNH – CHỈ CẦN SỬA PHẦN NÀY
+   ===================================================================== */
+/* ---- ẢNH MAP: tự lấy từ thư mục, KHÔNG nhúng trong code ----
+   Ảnh của map nằm trong thư mục MAP_DIR, tên file = đúng tên map (t) + .jpg
+   Ví dụ: t:"Route 66"  ->  anh-map/Route 66.jpg
+   Không có ảnh thì web tự hiện ảnh màu thay thế, không bị lỗi. */
+var MAP_DIR="anh-map/", MAP_EXT=".jpg";
+/* ---- DANH SÁCH MAP SINH TỒN (Red Alert 2) ----
+   THÊM MAP MỚI: copy 1 dòng bên dưới, sửa các thông số rồi thêm ảnh vào thư mục anh-map
+   t = tên map (cũng là tên file ảnh)      p = số người chơi
+   d = độ khó: "Dễ" | "Trung Bình" | "Khó" | "Cực Khó" | "Siêu Cấp"
+   s = cỡ map: "Nhỏ" | "Vừa" | "Rộng"      (link tải KHÔNG ghi ở đây nữa: nằm trong sheet SLinks của máy chủ, nạp bằng hàm nhapLinkMap trong file .gs)
+   (Có thể ghi thêm img:"duong/dan/anh.jpg" nếu muốn dùng ảnh khác tên)
+   GIÁ MỞ KHÓA ⚡ (mọi map sinh tồn đều phải mua bằng năng lượng): tự tính theo độ khó d
+   Dễ 2 · Trung Bình 4 · Khó 6 · Cực Khó 8 · Siêu Cấp 10. Admin đăng nhập rồi sửa giá ngay trên web
+   (mục «Đăng map mới (Admin)» sửa theo độ khó, nút «✎ Giá» trên từng map sửa riêng). */
+var MAPS=[
+  {t:"Up Side Down Temp",p:8,d:"Dễ",s:"Vừa"},
+  {t:"Up Side Down Super V1.2",p:8,d:"Trung Bình",s:"Rộng"},
+  {t:"Up Side Down Super Water Lv2",p:8,d:"Khó",s:"Rộng"},
+  {t:"Up Side Down Super Water Lv6.1",p:8,d:"Khó",s:"Rộng"},
+  {t:"Up Side Down Super Water Lv6.1 Snow",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"Up Side Down Super Water Speed Up",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"Up Side Down Super Water Lv7",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"Up Side Down NH V2.2",p:8,d:"Dễ",s:"Vừa"},
+  {t:"Up Side Down NH V2.3",p:8,d:"Dễ",s:"Vừa"},
+  {t:"USD City War",p:8,d:"Trung Bình",s:"Vừa"},
+  {t:"USD Snow",p:8,d:"Trung Bình",s:"Vừa"},
+  {t:"USD Super War Ship Easy Temp",p:8,d:"Khó",s:"Rộng"},
+  {t:"USD Super War Ship Snow Finish",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"USD Super V1.3 Snow",p:8,d:"Khó",s:"Rộng"},
+  {t:"Transil Vanie V1",p:6,d:"Khó",s:"Vừa"},
+  {t:"Up Side Down City",p:8,d:"Dễ",s:"Vừa"},
+  {t:"No Hope NH",p:4,d:"Khó",s:"Nhỏ"},
+  {t:"AFG Speed",p:5,d:"Dễ",s:"Nhỏ"},
+  {t:"Snapper Solo 1-1",p:2,d:"Trung Bình",s:"Vừa"},
+  {t:"Delivery Country 6",p:6,d:"Trung Bình",s:"Vừa"},
+  {t:"Route 66",p:8,d:"Dễ",s:"Rộng"},
+  {t:"Valley Of Death",p:8,d:"Khó",s:"Rộng"},
+  {t:"Up Side Down Snow Super",p:8,d:"Khó",s:"Vừa"},
+  {t:"Valley Of Death Super",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"Arctic Circle By NamHoang [8]",p:8,d:"Khó",s:"Vừa"},
+  {t:"Arctic Circle By NamHoang Super [8]",p:8,d:"Cực Khó",s:"Vừa"},
+  {t:"Heck_Freezes_Over_NH Super",p:8,d:"Khó",s:"Nhỏ"},
+  {t:"War Pro 3 NamHoang",p:8,d:"Dễ",s:"Vừa"},
+  {t:"Blaze Of Glory",p:4,d:"Trung Bình",s:"Nhỏ"},
+  {t:"Viet Nam Medium NH",p:8,d:"Khó",s:"Vừa"},
+  {t:"Viet Nam Super NH",p:8,d:"Cực Khó",s:"Vừa"},
+  {t:"USD War Ship Temp 3",p:8,d:"Khó",s:"Rộng"},
+  {t:"USD War Ship Temp 3 Super",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"USD Dark",p:8,d:"Khó",s:"Vừa"},
+  {t:"sota 3 NamHoang Mod",p:8,d:"Khó",s:"Nhỏ"},
+  {t:"Heck_Freezes_Over_NH Super 2",p:8,d:"Khó",s:"Vừa"},
+  {t:"Inland NH Super",p:4,d:"Dễ",s:"Nhỏ"},
+  {t:"USD final terro",p:8,d:"Dễ",s:"Nhỏ"},
+  {t:"x 8 blocks namhoang tryhard",p:8,d:"Trung Bình",s:"Nhỏ"},
+  {t:"Attack Kirov NH",p:8,d:"Dễ",s:"Vừa"},
+  {t:"The Ivory Throne- winter NH",p:8,d:"Cực Khó",s:"Vừa"},
+  {t:"War Pro 4 Super",p:8,d:"Siêu Cấp",s:"Vừa"},
+  {t:"War City Super",p:3,d:"Siêu Cấp",s:"Nhỏ"},
+  {t:"USD No Hope",p:8,d:"Siêu Cấp",s:"Vừa"},
+  {t:"Inland Death Infinity",p:4,d:"Siêu Cấp",s:"Nhỏ"},
+  {t:"(~.~)",p:4,d:"Siêu Cấp",s:"Nhỏ"},
+  {t:"Tropical Technology",p:8,d:"Khó",s:"Vừa"},
+  {t:"Ultimate island AI",p:8,d:"Siêu Cấp",s:"Vừa"},
+  {t:"Ultimate island Easy",p:8,d:"Cực Khó",s:"Vừa"},
+  {t:"heck freez ( The Silent Hell 2 Super)",p:8,d:"Cực Khó",s:"Vừa"},
+  {t:"War Ship",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"Mountain",p:8,d:"Dễ",s:"Nhỏ"},
+  {t:"Wild animal park snow",p:6,d:"Trung Bình",s:"Vừa"},
+  {t:"Heck_Freezes_Over_NH Solo Star",p:8,d:"Dễ",s:"Vừa"},
+  {t:"hazard by affenjunge",p:4,d:"Khó",s:"Nhỏ"},
+  {t:"Jungle v3",p:4,d:"Khó",s:"Nhỏ"},
+  {t:"urban-desert",p:8,d:"Khó",s:"Vừa"},
+  {t:"War Ship 2",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"War Pro 5 By Nam Hoang",p:8,d:"Cực Khó",s:"Vừa"},
+  {t:"Fake Map",p:8,d:"Khó",s:"Vừa"},
+  {t:"War Pro 4 Sample",p:8,d:"Khó",s:"Vừa"},
+  {t:"War Pro 5 Sample",p:8,d:"Khó",s:"Vừa"},
+  {t:"USD Easy",p:8,d:"Khó",s:"Vừa"},
+  {t:"War Pro 6",p:8,d:"Khó",s:"Vừa"},
+  {t:"War Ship 3",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"Ultimate island AI 2.0",p:8,d:"Siêu Cấp",s:"Vừa"},
+  {t:"War Pro 7",p:8,d:"Dễ",s:"Vừa"},
+  {t:"War Pro 8",p:8,d:"Dễ",s:"Vừa"},
+  {t:"War Pro 9",p:8,d:"Dễ",s:"Vừa"},
+  {t:"Iland War",p:8,d:"Trung Bình",s:"Vừa"},
+  {t:"War Ship 5",p:8,d:"Cực Khó",s:"Rộng"},
+  {t:"Skira IsLand",p:8,d:"Khó",s:"Vừa"},
+  {t:"Allvsone5",p:8,d:"Khó",s:"Nhỏ"},
+  {t:"Super 8",p:8,d:"Khó",s:"Nhỏ"},
+  {t:"Hot Map 4",p:4,d:"Khó",s:"Nhỏ"},
+  {t:"USD Super Water Remake",p:8,d:"Khó",s:"Rộng"},
+];
+/* ---- CỘNG ĐỒNG ----
+   Góp ý và gửi map của khách được chuyển thẳng vào Messenger của bạn (không lưu trên web).
+   API_URL = link Google Apps Script (xem file google-apps-script.gs), dùng để lưu bình luận, lượt tải, sao và bình chọn theo IP.
+   Để trống = chế độ thử (chỉ lưu trên máy từng người). */
+var API_URL="https://script.google.com/macros/s/AKfycbyJsmgMSIlLinS16Yhjqp9YYHWxjBsd5N9UFTygTdZ79lQx393hvw0s0d76tldRV45s/exec";
+/* ---- GỬI GÓP Ý / GỬI MAP KHÔNG CẦN MESSENGER (tùy chọn, rất nên điền) ----
+   FORM_KEY: vào https://web3forms.com, nhập email của bạn, nhận "Access Key" (miễn phí) rồi dán vào đây.
+             Khách bấm Gửi là nội dung bay thẳng về email bạn, không phải mở Messenger nữa.
+   CONTACT_EMAIL: email hiện nút "Gửi Email" dự phòng (để trống = ẩn nút). */
+var FORM_KEY="64119a89-721f-4615-979e-1ddd8063945f";
+var CONTACT_EMAIL="";
+var KHACH_DIR="mapkhach/", KHACH_EXT=".jpg";
+/* ---- LIVE TIKTOK ----
+   LIVE_API = link Web App của script google-apps-script-live.gs (để khách tự đăng live, mọi người cùng thấy). Trống = chỉ hiện danh sách LIVES bên dưới.
+   LIVE_TTL_H = số giờ một live tự ẩn khỏi danh sách nếu người đăng quên bấm «Kết thúc». */
+var LIVE_API="https://script.google.com/macros/s/AKfycbz4GlNZgkpN3Cz847zhx2qtV1kJeK7PV70pANo9PH8pF-E2Uuhpn2wI-Gkmlc1VSab4oQ/exec";
+var LIVE_TTL_H=6;
+/* Live do chính bạn thêm tay (luôn hiện, kể cả khi chưa có LIVE_API). u = username TikTok (không cần @), t = tiêu đề, g = game */
+var LIVES=[
+  /* {u:"user6002956066196",t:"Chơi Red Alert 2 cùng anh em",g:"Red Alert 2"}, */
+];
+/* ---- NĂNG LƯỢNG THEO IP (xem google-apps-script-tai-khoan.gs) ----
+   ACC_API = link Web App của script năng lượng (khác API_URL). Trống = tắt. Không cần đăng nhập. */
+var ACC_API="https://script.google.com/macros/s/AKfycbwX4e3GVFbJYsKWPmo1dSmnASfEMoA4Y4vSy01aUMwz7mJK77YY7SY3p-ZMEgwsQWWhmw/exec";
+/* ---- MAP CỘNG ĐỒNG: khách gửi qua Messenger, bạn kiểm duyệt xong thì thêm 1 dòng vào đây (giống MAPS), by = tên người tạo.
+   Ảnh: bỏ vào thư mục mapkhach/ trên GitHub, tên file = đúng tên map + .jpg */
+var CMAPS=[
+  /* {t:"Tên map",by:"Tên người tạo",p:8,d:"Khó",s:"Vừa",u:"https://link-tai",ts:"2026-11-05"}, */
+];
+CMAPS.forEach(function(m){if(!m.img)m.img=KHACH_DIR+encodeURIComponent(m.t)+KHACH_EXT});
+/* 10 map đề cử bình chọn trong tháng (ghi đúng tên map). Để trống = tự lấy 10 map tải nhiều nhất. */
+var MONTHLY=[];
+/* Tin tức & sự kiện: thêm tin mới lên ĐẦU danh sách */
+var NEWS=[
+  {d:"05/11/2026",t:"Web có mục Cộng đồng mới",b:"Giờ bạn có thể gửi map, góp ý, bình luận và bình chọn Map Tháng ngay trên web."},
+  {d:"05/11/2026",t:"Xem map mới và map hot",b:"Vào Map sinh tồn, chọn «Mới nhất» hoặc «Tải nhiều nhất» ở dòng Sắp xếp."}
+];
+var CFG={
+  name:"Nam Hoàng",
+  bio:"Game thủ chính hiệu. Thích chơi game, nghe nhạc và chia sẻ mod, tips cho anh em.",
+  avatar:"images/avatar.jpg",
+  qrImage:"images/qr.jpg",
+  typing:["Chơi game mỗi ngày","Nghe nhạc cực chill","Chia sẻ mod và tips","Kết nối với tôi ở bên dưới"],
+  /* Dòng chữ chạy ngang giữa mục Thông tin và Kho game: sửa/thêm/bớt câu tùy ý */
+  marquee:["Chào mừng đến góc game của Nam Hoàng","Chia sẻ mod, map và tips mỗi ngày","Nghe nhạc cực chill khi chơi game","Đừng quên ghé ủng hộ cà phê nhé"],
+  socials:[
+    {n:"Facebook",u:"https://www.facebook.com/kun.lee.3348/",i:"fb"},
+    {n:"TikTok",u:"https://tiktok.com/@user6002956066196?lang=vi-VN",i:"tt"},
+    {n:"Zalo",u:"https://zalo.me/g/rullvp413",i:"zl"},
+    {n:"Discord",u:"https://discord.com/users/namhoang3045",i:"dc"}
+  ],
+  music:[
+    /* DANH SÁCH NHẠC GÁN SẴN – khách vào web sẽ tự phát lần lượt từ trên xuống.
+       Thêm bài: copy 1 dòng, id có thể là cả link YouTube hoặc chỉ mã 11 ký tự.
+       Chỉ dùng video thường (KHÔNG dùng livestream, sẽ báo lỗi). Tên bài tự lấy từ YouTube. */
+    {id:"60ItHLz5WEA",t:"Alan Walker - Faded"},
+    {id:"1-xGerv5FOk",t:"Alan Walker - Alone"},
+    {id:"wJnBTPUQS5A",t:"Alan Walker - The Spectre"},
+    {id:"RgKAFK5djSk",t:"See You Again"}
+  ],
+  games:[
+    {
+      name:"Red Alert 2",
+      icon:"🪖",
+      note:"Mod, map, bản Việt hóa",
+      items:[
+        {
+          t:"Tải Game",
+          note:"Bản đầy đủ + Yuri",
+          links:[
+            {name:"Link 1 - MediaFire",url:"https://www.mediafire.com/file/pbq0u4hrjtk2l4f/Ra2+%26+Yuri+Nam+Ho%C3%A0ng+MOD.rar?action=check/mc-1",desc:"Bản Full 100k Gold"},
+            {name:"Link 2 - MediaFire",url:"https://www.mediafire.com/file/szfhang298vko9m/Ra2_Fix_By_Nam_Hoang.rar/file",desc:"Bản gốc 30k Gold đã Fix lỗi"},
+            {name:"Link 3 - MediaFire",url:"https://www.mediafire.com/file/oet0k6r248lkg8x/Ra2_1006_vietnam.rar/file",desc:"Bản Yuri 30k Gold có quân Việt Nam"},
+            {name:"Link 4 - MediaFire",url:"https://www.mediafire.com/file/i4wo9mxfglykkuh/RedAlert2_1006_NamHoang_Fix.rar/file",desc:"Bản gốc 10k Gold đã Fix lỗi"}
+          ]
+        },
+        {
+          t:"Chơi lane với nhau qua Radmin VPN",
+          note:"Tạo mạng LAN ảo để chơi cùng bạn bè ở xa",
+          links:[
+            {name:"Tải Radmin VPN",url:"https://www.radmin-vpn.com/",desc:"Miễn phí, tất cả người chơi đều cần cài"}
+          ],
+          guide:[
+            {h:"Cài Radmin VPN",p:"Mỗi người chơi tải và cài Radmin VPN trên máy của mình. Mở lên và đợi chương trình hiện trạng thái đã kết nối.",url:""},
+            {h:"Tạo mạng (chủ phòng)",p:"Một người làm chủ phòng: bấm «Create network», đặt tên mạng và mật khẩu rồi gửi 2 thông tin này cho bạn bè.",url:""},
+            {h:"Tham gia mạng (người còn lại)",p:"Bấm «Join network», nhập đúng tên mạng và mật khẩu của chủ phòng. Khi tên mọi người hiện lên trong danh sách (chấm xanh) là đã vào cùng một mạng LAN ảo.",url:""},
+            {h:"Cho phép game qua tường lửa",p:"Nếu không thấy phòng, mở Windows Firewall và cho phép Red Alert 2 (gamemd.exe) ở cả mạng Private và Public, hoặc tạm tắt tường lửa khi chơi.",url:""},
+            {h:"Vào game chơi LAN",p:"Mọi người dùng cùng một bản game, chọn Network (LAN) trong game. Chủ phòng tạo phòng, những người khác sẽ thấy phòng và bấm vào để tham gia.",url:""},
+            {h:"Mẹo khi không thấy phòng",p:"Tạm tắt Wi-Fi hoặc card mạng khác, chỉ để Radmin VPN hoạt động, rồi mở lại game. Nếu vẫn không được, thử bấm chuột phải vào tên chủ phòng trong Radmin để ping thử kết nối.",url:""}
+          ]
+        },
+        {
+          t:"Map sinh tồn",
+          note:MAPS.length+" map · có ảnh, thông tin và link tải",
+          links:[],
+          maps:MAPS
+        },
+        {
+          /* Chỉ hiện khi đăng nhập Admin. Ảnh lấy từ thư mục anh-map (tên file = tên map + .jpg) */
+          t:"📮 Đăng map mới (Admin)",
+          note:"Chỉ Admin thấy · ảnh lấy từ thư mục anh-map",
+          links:[],
+          adminOnly:true,
+          adminPost:true
+        },
+        {
+          t:"Map cộng đồng",
+          note:CMAPS.length+" map · do người chơi gửi, ghi rõ tên người tạo",
+          links:[],
+          maps:CMAPS
+        },
+        {
+          t:"Hướng dẫn chỉnh sửa bản đồ, tạo kịch bản riêng",
+          note:"Tạo trigger, quy tắc tự định nghĩa (Red Alert 2…)",
+          /* Có video hoặc bài viết hướng dẫn thì thêm link vào đây: {name:"Video hướng dẫn",url:"https://...",desc:"..."} */
+          links:[],
+          /* Mỗi bước có nút "Xem chi tiết": sửa url:"..." thành link của bạn (để url:"" thì nút tự ẩn) */
+          guide:[
+            {h:"Chuẩn bị công cụ",p:"Cài Red Alert 2 kèm Yuri's Revenge và một trình soạn map như FinalAlert 2. Luôn sao lưu file map gốc trước khi sửa.",url:"https://www.mediafire.com/file/qf5vt6ii2cks8k6/FinalAlert+2+Yuri's+Revenge.rar/file"},
+            {h:"Mở và chỉnh bản đồ",p:"Mở file map, chỉnh địa hình, quặng, công trình. Đặt Waypoint để làm vị trí xuất phát cho từng người chơi.",url:"https://www.youtube.com/watch?v=R0T1O6Y3QBI"},
+            {h:"Tạo Trigger",p:"Mỗi trigger gồm Sự kiện (Event) là điều kiện kích hoạt và Hành động (Action) là việc sẽ xảy ra. Chọn phe sở hữu, đặt chạy một lần hoặc lặp lại. Ví dụ: sau 5 phút thì gọi quân tiếp viện.",url:"https://example.com/ra2-buoc-3"},
+            {h:"Tạo đội quân và kịch bản",p:"Dùng Team Type, Task Force và Script để quy định đội nào xuất hiện, đi đâu, tấn công gì. Trigger sẽ gọi các đội này ra.",url:"https://example.com/ra2-buoc-4"},
+            {h:"Quy tắc tự định nghĩa",p:"Muốn đổi giá, tốc độ hay sát thương, hãy ghi đè thông số bằng các mục INI trong file map hoặc file rules của mod. Chỉ sửa đúng mục cần đổi.",url:"https://example.com/ra2-buoc-5"},
+            {h:"Chạy thử và hoàn thiện",p:"Lưu map, vào chế độ Skirmish thử nhiều lần, sửa lỗi trigger rồi mới chia sẻ cho mọi người.",url:"https://example.com/ra2-buoc-6"}
+          ]
+        }
+      ]
+    },
+    {
+      name:"Minecraft",
+      icon:"⛏️",
+      note:"Mod, texture và map",
+      items:[
+        {
+          t:"Link tải Launcher",
+          note:"Launcher để chơi Minecraft",
+          links:[
+            {name:"Link 1",url:"https://namhoang.forum-viet.com/t472-huong-dan-cai-%C4%91at-minecraft-tlaucher",desc:"Bản mới nhất"},
+            {name:"Link 2",url:"https://example.com/launcher-2",desc:"Dự phòng"}
+          ]
+        },
+        {
+          t:"Gói đồ họa Realistic 4K",
+          note:"Độ phân giải cao",
+          links:[
+            {name:"Link 1",url:"https://example.com/mc-1",desc:"Phiên bản 2.0"},
+            {name:"Link 2",url:"https://example.com/mc-1-2",desc:"Dự phòng"}
+          ]
+        },
+        {
+          t:"Cài Đặt Game - Tự Host local",
+          note:"Hướng dẫn chi tiết mở localhost",
+          links:[
+            {name:"Link 1",url:"https://www.youtube.com/watch?v=lrC8h4YZEz0",desc:"Cho bản 1.20+"},
+            {name:"Link 2",url:"https://www.youtube.com/watch?v=lrC8h4YZEz0",desc:"Dự phòng"}
+          ]
+        },
+        {
+          t:"Minecraft _ Hướng dẫn cài mods Modpack từ CurseForge chi tiết",
+          note:"Hướng dẫn từng bước kèm link",
+          links:[
+            {name:"Link 1",url:"https://www.youtube.com/watch?v=rDfSVbbqacU&t=14s",desc:"Video hướng dẫn"},
+            {name:"Link 2",url:"https://example.com/mc-2-2",desc:"Bài viết chi tiết"}
+          ]
+        },
+        {
+          t:"Map sinh tồn",
+          note:"Bản đồ sinh tồn cực hay",
+          links:[
+            {name:"Link 1",url:"https://example.com/mc-3",desc:"Bản đồ đảo nổi"},
+            {name:"Link 2",url:"https://example.com/mc-3-2",desc:"Bản đồ thành phố"}
+          ]
+        },
+        {
+          t:"Server đang hoạt động",
+          note:"Danh sách server Minecraft đang chạy",
+          links:[],
+          /* THÊM SERVER: copy 1 dòng. name=Tên server, ip=IP server, ver=Phiên bản, mod=Link mod (để "" nếu không có) */
+          servers:[
+            {name:"Survival Việt Nam",ip:"play.example.com",ver:"1.20.4",mod:""},
+            {name:"Modpack Server",ip:"mod.example.com:25565",ver:"1.20.1 Forge",mod:"https://example.com/modpack"}
+          ]
+        }
+      ]
+    },
+    {
+      name:"Diablo II",
+      icon:"😈",
+      note:"Game nhập vai hành động kinh điển",
+      items:[
+        {
+          t:"Link tải game",
+          note:"Bản đầy đủ để cài và chơi,Pass giải nén : namhoangforumviet",
+          links:[
+            {name:"Part 1",url:"https://mega.nz/file/CB4w2B7B#y7xoJzDzkK0EY4O8h8qeldytU02NKAnZZzWWBj4OiB4",desc:"Tải Xuống chung 1 thư mục"},
+            {name:"Part 2",url:"https://mega.nz/file/jR4R3I7R#hepXHgMxLrxMaz5iSrwmZtN_Nx_Knj7vwHVq21Lpb7o",desc:"Tải Xuống chung 1 thư mục"},
+            {name:"Part 3",url:"https://mega.nz/file/EcRUlLxR#7UPGw4cwd9JvU5CpXG8b9oNtCyRAVD5oMbAYt9a_1jY",desc:"Tải Xuống chung 1 thư mục"}
+          ]
+        }
+      ]
+    }
+  ]
+};
+/* ---- Lưu trữ: Google Sheet nếu có API_URL (bình luận, lượt tải, sao, bình chọn), không thì lưu tạm trên máy ---- */
+var ST={dl:{},rt:{},vt:{},cmt:[],champ:"",champN:0};
+function mkey(t){return String(t).replace(/[.#$\/\[\]\s"'<>&%?+\\]+/g,"_").slice(0,80)}
+function lsg(k){try{return JSON.parse(localStorage.getItem(k)||"{}")}catch(e){return{}}}
+function lss(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function build(db){var d={cmt:db.BinhLuan||[],dl:{},rt:{},vt:{}};
+ (db.Dem||[]).forEach(function(e){if(e.loai==="dl")d.dl[e.key]=(d.dl[e.key]||0)+1;else if(e.loai==="rt"){var r=d.rt[e.key]||(d.rt[e.key]={s:0,n:0});r.s+=+e.val;r.n++}else if(e.loai==="vt"){var m=d.vt[e.val]||(d.vt[e.val]={});m[e.key]=(m[e.key]||0)+1}});return d}
+function post_(o){return fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)})}
+var API={on:!!API_URL,
+ load:function(){if(!API.on)return Promise.resolve(build(lsg("g_db")));return fetch(API_URL+"?_="+Date.now()).then(function(r){return r.json()}).then(function(j){return j&&j.cmt?j:build(j||{})}).catch(function(){return{}})},
+ add:function(sh,row){if(!API.on){var db=lsg("g_db");(db[sh]=db[sh]||[]).push(row);lss("g_db",db);return Promise.resolve()}return post_({sh:sh,row:row}).catch(function(){})},
+ dem:function(t,k,v){return API.add("Dem",{ts:Date.now(),loai:t,key:k,val:v})},
+ /* bình chọn theo IP: ip là mã băm, M là tháng "2026-11" (val lưu "m2026-11"). Mỗi IP 1 phiếu/tháng */
+ del:function(id){if(!API.on){var db=lsg("g_db");db.BinhLuan=(db.BinhLuan||[]).filter(function(x){return x.id!==id});lss("g_db",db);return Promise.resolve({ok:1})}return post_({op:"delcmt",id:id,ak:AK}).then(function(r){return r.json()}).catch(function(){return{ok:0,err:"Không gọi được máy chủ bình luận"}})},
+ voted:function(ip,M){if(!API.on)return Promise.resolve(lsg("g_vote")[M]||"");return fetch(API_URL+"?chk="+ip+"&m="+M+"&_="+Date.now()).then(function(r){return r.json()}).then(function(j){return j.v||""}).catch(function(){return null})},
+ vote:function(ip,M,k){if(!API.on){var L=lsg("g_vote");L[M]=k;lss("g_vote",L);API.add("Dem",{ts:Date.now(),loai:"vt",key:k,val:"m"+M});return Promise.resolve({ok:1})}
+  return post_({sh:"Dem",row:{ts:Date.now(),loai:"vt",key:k,val:"m"+M,ip:ip}}).then(function(r){return r.json()}).catch(function(){return{ok:1}})}};
+function rateHtml(k){var r=ST.rt[k]||{},n=r.n||0,a=n?r.s/n:0,my=lsg("g_rated")[k],h='<span class="rate" data-k="'+esc(k)+'" title="'+(my?"Bạn đã chấm "+my+" sao":"Bấm vào sao để đánh giá")+'">';
+ for(var i=1;i<=5;i++)h+='<button type="button" class="st'+(i<=Math.round(a)?" on":"")+'" data-v="'+i+'" aria-label="'+i+' sao">★</button>';
+ return h+"<em>"+(n?a.toFixed(1)+" ("+n+")":"chưa có")+"</em></span>"}
+/* ===================================================================== */
+var $=function(i){return document.getElementById(i)};
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+var RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+document.title=CFG.name+" · Góc game";
+$("myname").textContent=CFG.name;$("mybio").textContent=CFG.bio;$("foot").textContent=CFG.name;$("yr").textContent=new Date().getFullYear();
+var av=$("av");av.src=CFG.avatar;
+av.onerror=function(){av.onerror=null;av.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cff"/><stop offset="1" stop-color="#ff3d81"/></linearGradient></defs><rect width="200" height="200" fill="url(#g)"/><text x="100" y="128" font-size="90" font-weight="800" font-family="sans-serif" text-anchor="middle" fill="#fff">N</text></svg>')};
+// Ảnh QR dự phòng nếu không tìm thấy
+var qrImg=$("qr-img");
+qrImg.onerror=function(){qrImg.onerror=null;qrImg.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cff"/><stop offset="1" stop-color="#ff3d81"/></linearGradient></defs><rect width="300" height="300" fill="url(#g)"/><text x="150" y="140" font-size="60" font-weight="800" font-family="sans-serif" text-anchor="middle" fill="#fff">QR</text><text x="150" y="190" font-size="18" font-family="sans-serif" text-anchor="middle" fill="#fff">Đặt ảnh qr.jpg vào thư mục images</text></svg>')};
+var DAYS=["Chủ nhật","Thứ hai","Thứ ba","Thứ tư","Thứ năm","Thứ sáu","Thứ bảy"];
+function p2(n){return n<10?"0"+n:""+n}
+function tick(){var d=new Date(),h=d.getHours();
+ $("hh").textContent=p2(h);$("mm").textContent=p2(d.getMinutes());$("ss").textContent=p2(d.getSeconds());
+ $("date").textContent=DAYS[d.getDay()]+", ngày "+d.getDate()+" tháng "+(d.getMonth()+1)+" năm "+d.getFullYear();
+ $("hello").textContent=h<5?"Khuya rồi, ngủ sớm nhé":h<11?"Chào buổi sáng":h<14?"Chào buổi trưa":h<18?"Chào buổi chiều":"Chào buổi tối"}
+tick();setInterval(tick,1000);
+(function(){var i=0,j=0,del=false,el=$("type");if(RM){el.textContent=CFG.typing[0]||"";return}
+ (function step(){var w=CFG.typing[i]||"";j+=del?-1:1;el.textContent=w.slice(0,j);var t=del?35:70;
+  if(!del&&j===w.length){del=true;t=1400}else if(del&&j===0){del=false;i=(i+1)%CFG.typing.length;t=300}
+  setTimeout(step,t)})()})();
+function ytId(s){s=String(s).trim();var m=s.match(/(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/);if(m)return m[1];return/^[\w-]{11}$/.test(s)?s:null}
+var PRESET=CFG.music.map(function(m){return{id:ytId(m.id),t:m.t,fixed:1}}).filter(function(m){return m.id});
+var userT=[];try{userT=JSON.parse(localStorage.getItem("g_music_user")||"[]").filter(function(m){return m&&ytId(m.id)})}catch(e){}
+var tracks=PRESET.concat(userT),cur=0,yp=null,fails=0,unlocked=false;
+function save(){try{localStorage.setItem("g_music_user",JSON.stringify(tracks.filter(function(t){return!t.fixed}).map(function(t){return{id:t.id,t:t.t}})))}catch(e){}}
+function say(t,show){if(t)$("cvs").textContent=t;$("cover").classList.toggle("off",!show)}
+function play(i){if(!tracks.length){say("Chưa có bài nào. Hãy dán link YouTube bên dưới.",true);drawList();return}
+ cur=((i%tracks.length)+tracks.length)%tracks.length;say("Đang tải: "+tracks[cur].t,true);
+ if(yp&&yp.loadVideoById)yp.loadVideoById(tracks[cur].id);drawList()}
+function drawList(){$("list").innerHTML=tracks.map(function(t,i){return'<li class="'+(i===cur?"on":"")+(t.bad?" bad":"")+'" data-i="'+i+'" tabindex="0"><img src="https://i.ytimg.com/vi/'+t.id+'/default.jpg" alt=""><span>'+esc(t.t)+'</span>'+(t.fixed?"":'<button type="button" data-d="'+i+'" aria-label="Xóa bài">✕</button>')+'</li>'}).join("")||'<li style="cursor:default">Chưa có bài nào. Hãy dán link YouTube bên dưới.</li>'}
+function fetchTitle(t){fetch("https://www.youtube.com/oembed?format=json&url="+encodeURIComponent("https://www.youtube.com/watch?v="+t.id)).then(function(r){return r.json()}).then(function(j){if(j&&j.title){t.t=j.title;if(!t.fixed)save();drawList()}}).catch(function(){})}
+function unlock(){unlocked=true;$("unm").hidden=true;try{if(yp&&yp.unMute){yp.unMute();yp.setVolume(100)}}catch(e){}}
+["pointerdown","keydown","touchstart"].forEach(function(ev){addEventListener(ev,unlock,{once:true,passive:true})});
+$("unm").onclick=unlock;
+$("cover").onclick=function(){unlock();try{yp&&yp.playVideo()}catch(e){}};
+$("cover").addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();this.click()}});
+$("prv").onclick=function(){play(cur-1)};$("nxt").onclick=function(){play(cur+1)};
+window.onYouTubeIframeAPIReady=function(){
+ var pv={autoplay:1,mute:1,rel:0,modestbranding:1,playsinline:1};if(/^https?:$/.test(location.protocol))pv.origin=location.origin;
+ yp=new YT.Player("yt",{host:"https://www.youtube-nocookie.com",videoId:tracks[cur]?tracks[cur].id:undefined,playerVars:pv,events:{
+  onReady:function(){if(unlocked){unlock()}else{$("unm").hidden=false}
+   if(tracks.length)yp.playVideo();
+   setTimeout(function(){try{if(yp.getPlayerState()!==1&&tracks.length)say("Bấm vào đây để bắt đầu nghe nhạc ▶",true)}catch(e){}},4000)},
+  onStateChange:function(e){if(e.data===1){fails=0;say("",false)}else if(e.data===0){play(cur+1)}},
+  onError:function(){fails++;if(tracks[cur])tracks[cur].bad=1;drawList();
+   if(fails>=tracks.length){say("Chưa phát được bài nào. Hãy thử thêm link YouTube khác bên dưới.",true);return}
+   say("Bài này không phát được, đang chuyển bài…",true);setTimeout(function(){play(cur+1)},1200)}}})};
+(function(){var t=document.createElement("script");t.src="https://www.youtube.com/iframe_api";t.async=true;document.head.appendChild(t);
+ setTimeout(function(){if(!yp)say("Chưa tải được trình phát nhạc. Kiểm tra mạng rồi tải lại trang nhé.",true)},9000)})();
+$("list").addEventListener("click",function(e){var d=e.target.closest("[data-d]");
+ if(d){e.stopPropagation();var k=+d.dataset.d,was=k===cur;tracks.splice(k,1);save();if(k<cur)cur--;if(was)play(cur);else drawList();return}
+ var li=e.target.closest("li[data-i]");if(li)play(+li.dataset.i)});
+$("list").addEventListener("keydown",function(e){var li=e.target.closest("li[data-i]");if(li&&(e.key==="Enter"||e.key===" ")){e.preventDefault();play(+li.dataset.i)}});
+function addTrack(){var id=ytId($("url").value);if(!id){$("url").style.borderColor="var(--p)";$("url").placeholder="Link chưa đúng, thử lại";return}
+ $("url").style.borderColor="";$("url").value="";$("url").placeholder="Dán link YouTube...";
+ var t={id:id,t:"Bài mới ("+id+")"};tracks.push(t);save();fetchTitle(t);play(tracks.length-1)}
+$("addbtn").onclick=addTrack;$("url").addEventListener("keydown",function(e){if(e.key==="Enter")addTrack()});
+PRESET.forEach(fetchTitle);drawList();
+var IC={
+ fb:'<path d="M13.5 22v-8h2.7l.5-3.2h-3.2V8.7c0-.9.4-1.7 1.8-1.7h1.5V4.2S15.5 4 14.3 4C11.8 4 10.2 5.5 10.2 8.2v2.6H7.5V14h2.7v8z"/>',
+ zl:'<path d="M12 3C6.8 3 3 6.6 3 11c0 2.4 1.1 4.5 2.9 6L5 21l3.7-1.9c1 .3 2.2.5 3.3.5 5.2 0 9-3.6 9-8.1S17.2 3 12 3zm-3 5.5h4.4v1L10.5 13H13.5v1.2H8.6v-1l2.9-3.5H9z"/>',
+ tt:'<path d="M16.6 3c.3 2.3 1.6 3.7 3.9 3.9v3c-1.4.1-2.6-.3-3.9-1.1v5.7c0 7.2-7.8 9.4-10.9 4.3-2-3.4-.8-8.8 5.2-9v3.2c-.5.1-.9.2-1.4.4-1.3.5-2 1.5-1.8 3 .4 3 5.9 3.9 5.4-2V3z"/>',
+ dc:'<path d="M19.3 5.3A17 17 0 0 0 15.1 4l-.5 1a15.8 15.8 0 0 0-5.2 0L9 4a17 17 0 0 0-4.3 1.3C2 9.4 1.3 13.4 1.6 17.3a17 17 0 0 0 5.2 2.6l1.1-1.8c-.6-.2-1.2-.5-1.7-.9l.4-.3a12 12 0 0 0 10.8 0l.4.3c-.5.4-1.1.7-1.7.9l1.1 1.8a17 17 0 0 0 5.2-2.6c.4-4.5-.7-8.5-3.1-12zM8.7 14.9c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6.6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/>'};
+$("socials").innerHTML=CFG.socials.map(function(s){return'<a class="soc" href="'+esc(s.u)+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true">'+(IC[s.i]||IC.fb)+'</svg>'+esc(s.n)+'</a>'}).join("");
+var PAL=[["#8b5cff","#29f0ff"],["#ff3d81","#ffb23e"],["#29f0ff","#3ee08a"],["#ff3d81","#8b5cff"]];
+function art(t,i){var c=PAL[i%PAL.length];return"data:image/svg+xml;charset=utf-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200"><defs><linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+c[0]+'"/><stop offset="1" stop-color="'+c[1]+'"/></linearGradient></defs><rect width="320" height="200" fill="url(#a)"/><circle cx="262" cy="44" r="48" fill="#fff" opacity=".16"/><path d="M0 165 L70 105 L130 152 L205 85 L320 172 V200 H0Z" fill="#000" opacity=".25"/><text x="24" y="70" font-family="sans-serif" font-size="46" font-weight="800" fill="#fff">'+esc((t||"?").charAt(0).toUpperCase())+'</text></svg>')}
+$("chipbox").innerHTML=CFG.games.map(function(g,i){return'<button class="chip" type="button" role="listitem" style="--i:'+i+'" data-g="'+i+'" aria-expanded="false"><span class="ci">'+(g.icon||"🎮")+'</span><b>'+esc(g.name)+'</b><small>'+esc(g.note||"")+'</small></button>'}).join("");
+$("open").onclick=function(){var on=!$("chips").classList.contains("on");$("chips").classList.toggle("on",on);this.setAttribute("aria-expanded",on);this.textContent=on?"✕ Đóng danh sách":"🎮 Chọn game";
+ if(!on){$("gp").classList.remove("on");document.querySelectorAll(".chip").forEach(function(c){c.setAttribute("aria-expanded","false")})}};
+var openG=-1, openItem=-1;
+function guideHtml(a){return'<div class="gdl">'+a.map(function(v,n){return'<div class="gd" data-n="'+n+'"><i>'+(n+1)+'</i><div><b>'+esc(v.h)+'</b><p>'+esc(v.p)+'</p>'+(v.url?'<a class="gdb" href="'+esc(v.url)+'" target="_blank" rel="noopener">Xem chi tiết →</a>':'')+'</div></div>'}).join("")+'</div>'}
+function srvHtml(a){return'<div class="srvs">'+a.map(function(v){return'<div class="srv"><div class="srv-h"><span class="live" title="Đang hoạt động"></span><b>'+esc(v.name)+'</b><span class="ver">'+esc(v.ver)+'</span></div><div class="srv-r"><small>IP</small><code>'+esc(v.ip)+'</code><button type="button" class="cpip" data-ip="'+esc(v.ip)+'">Chép IP</button></div><div class="srv-r"><small>Link Mod</small>'+(v.mod?'<a href="'+esc(v.mod)+'" target="_blank" rel="noopener">⬇ Tải mod</a>':'<span class="nomod">Không cần mod</span>')+'</div></div>'}).join("")+'</div>'}
+function renderGame(gIdx){
+  var g=CFG.games[gIdx];
+  var html='<button class="back-btn" id="backGame">← Quay lại danh sách game</button>';
+  html+='<div class="gh">'+esc(g.name)+' <small>· '+esc(g.note||"")+'</small></div>';
+  html+='<div class="item-list">';
+  g.items.forEach(function(item,i){
+    html+='<div'+(item.adminOnly?' class="admonly"'+((window.isLiveAdmin&&window.isLiveAdmin())?'':' hidden'):'')+'><div class="item-btn" data-i="'+i+'"><b>'+esc(item.t)+'</b><span>'+esc(item.note||"")+'</span></div>';
+    html+='<div class="link-list" id="links-'+i+'"><div>';
+    (item.links||[]).forEach(function(lnk,j){
+      html+='<div class="link-item"><a href="'+esc(lnk.url)+'" target="_blank" rel="noopener">🔗 '+esc(lnk.name)+'</a><span class="desc">'+esc(lnk.desc||"")+'</span></div>';
+    });
+    if(item.maps)html+='<div class="mapg"></div>';if(item.adminPost)html+='<div class="admpost"></div>';if(item.servers)html+=srvHtml(item.servers);if(item.guide)html+=guideHtml(item.guide);
+    html+='</div></div></div>';
+  });
+  html+='</div>';
+  $("gcontent").innerHTML=html;
+  $("gp").classList.add("on");
+  setTimeout(function(){$("gp").scrollIntoView({behavior:"smooth",block:"nearest"})},300);
+  // Nút quay lại
+  $("backGame").onclick=function(){$("gp").classList.remove("on");openG=-1;openItem=-1;document.querySelectorAll(".chip").forEach(function(c){c.setAttribute("aria-expanded","false")})};
+  // Mở/đóng danh sách link
+  document.querySelectorAll(".item-btn").forEach(function(btn){
+    btn.onclick=function(){var i=+this.dataset.i;var box=$("links-"+i);var isOn=box.classList.toggle("on");this.style.borderColor=isOn?"var(--c)":"";this.style.background=isOn?"rgba(139,92,255,.15)":"";
+     this.classList.toggle("open",isOn);if(isOn){var it=CFG.games[openG].items[i];if(it.maps)initGallery(box.querySelector(".mapg"),it.maps);if(it.adminPost&&window.initAdminPost)window.initAdminPost(box.querySelector(".admpost"));box.scrollIntoView({behavior:"smooth",block:"nearest"});openItem=i}else{openItem=-1}};
+  });
+}
+$("chipbox").addEventListener("click",function(e){var b=e.target.closest(".chip");if(!b)return;var i=+b.dataset.g;
+ document.querySelectorAll(".chip").forEach(function(c){c.setAttribute("aria-expanded",c===b&&openG!==i)});
+ if(openG===i){$("gp").classList.remove("on");openG=-1;openItem=-1;return}
+ openG=i;renderGame(i);
+});
+$("gcontent").addEventListener("pointermove",function(e){if(RM||e.pointerType!=="mouse")return;var c=e.target.closest(".card");if(!c)return;var r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;c.style.transform="perspective(700px) rotateY("+x*8+"deg) rotateX("+-y*8+"deg) translateY(-4px)"});
+$("gcontent").addEventListener("pointerout",function(e){var c=e.target.closest(".card");if(c)c.style.transform=""});
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.15});
+document.querySelectorAll(".rv").forEach(function(el){io.observe(el)});
+(function(){var cv=$("fx"),x=cv.getContext("2d"),W,H,P=[],gl=$("glow");
+ function size(){W=cv.width=innerWidth;H=cv.height=innerHeight;P=[];var n=Math.min(70,Math.floor(W*H/22000));for(var i=0;i<n;i++)P.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+.6,vx:(Math.random()-.5)*.35,vy:-Math.random()*.5-.1,c:["#8b5cff","#29f0ff","#ff3d81"][i%3]})}
+ size();addEventListener("resize",size);
+ if(!RM)(function loop(){x.clearRect(0,0,W,H);P.forEach(function(p){p.x+=p.vx;p.y+=p.vy;if(p.y<-5){p.y=H+5;p.x=Math.random()*W}if(p.x<-5)p.x=W+5;if(p.x>W+5)p.x=-5;x.globalAlpha=.7;x.fillStyle=p.c;x.beginPath();x.arc(p.x,p.y,p.r,0,6.283);x.fill()});
+  for(var i=0;i<P.length;i++)for(var j=i+1;j<P.length;j++){var dx=P[i].x-P[j].x,dy=P[i].y-P[j].y,d=dx*dx+dy*dy;if(d<9000){x.globalAlpha=(1-d/9000)*.18;x.strokeStyle="#8b5cff";x.beginPath();x.moveTo(P[i].x,P[i].y);x.lineTo(P[j].x,P[j].y);x.stroke()}}
+  requestAnimationFrame(loop)})();
+ addEventListener("pointermove",function(e){gl.style.transform="translate("+e.clientX+"px,"+e.clientY+"px) translate(-50%,-50%)"},{passive:true});
+})();
+/* =====================================================================
+   HIỆU ỨNG KÉO TRANG · CON TRỎ · CHỮ · THƯ VIỆN MAP
+   ===================================================================== */
+(function(){
+var fine=matchMedia("(hover:hover) and (pointer:fine)").matches;
+function mk(t,c,p){var e=document.createElement(t);e.className=c;(p||document.body).appendChild(e);return e}
+/* Chữ tách từng ký tự, bay vào khi kéo tới */
+document.querySelectorAll(".sec h2").forEach(function(h){var t=h.textContent,n=0;h.setAttribute("aria-label",t);h.textContent="";
+ t.split(" ").forEach(function(w){var s=mk("span","w",h);s.setAttribute("aria-hidden","true");
+  Array.from(w).forEach(function(c){var k=mk("span","ch",s);k.textContent=c;k.style.setProperty("--d",(n++*40)+"ms")});
+  h.appendChild(document.createTextNode(" "))})});
+/* Nhãn nhỏ chạy chữ giải mã */
+function scr(el){var t=el.dataset.t||(el.dataset.t=el.textContent),cs="01<>/#$%&*",i=0;clearInterval(el._i);
+ el._i=setInterval(function(){el.textContent=t.split("").map(function(c,j){return j<i||c===" "?c:cs.charAt(Math.random()*cs.length|0)}).join("");if(++i>t.length)clearInterval(el._i)},45)}
+if(!RM){var io3=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.querySelectorAll(".tag").forEach(scr);io3.unobserve(e.target)}})},{threshold:.3});
+ document.querySelectorAll(".rv").forEach(function(el){io3.observe(el)})}
+/* Hiệu ứng kéo trang */
+var prog=$("prog"),tt=$("totop"),hero=document.querySelector(".hero .wrap"),secs=Array.from(document.querySelectorAll(".sec")),decos=[];
+secs.forEach(function(s,k){for(var j=0;j<2;j++){var d=mk("i","deco",s);d.style.cssText="--s:"+(j?56:90)+"px;left:"+(j?8+k*9:72-k*8)+"%;top:"+(j?72:10)+"%";d.dataset.sp=j?-.12:.18;decos.push(d)}});
+var ids=[["top","Trang chủ"],["me","Liên hệ"],["community","Cộng đồng"],["games","Game"],["live","Live"],["donate","Hỗ trợ"]],nav=mk("nav","dots");nav.setAttribute("aria-label","Điều hướng nhanh");
+var dots=ids.map(function(x){var a=mk("a","dt",nav);a.href="#"+x[0];a.setAttribute("aria-label",x[1]);a.dataset.l=x[1];return a});
+var tick=0;
+function upd(){tick=0;var y=scrollY,H=document.documentElement.scrollHeight-innerHeight;
+ prog.style.transform="scaleX("+(H>0?y/H:0)+")";tt.classList.toggle("on",y>500);
+ if(!RM){hero.style.transform="translateY("+y*.3+"px)";hero.style.opacity=Math.max(0,1-y/(innerHeight*.8));
+  decos.forEach(function(d){d.style.setProperty("--dy",(y*d.dataset.sp)+"px")});
+  secs.forEach(function(s){s.style.setProperty("--py",(-s.getBoundingClientRect().top*.15)+"px")})}
+ var cur=0;ids.forEach(function(x,i){var el=document.getElementById(x[0]);if(el&&el.getBoundingClientRect().top<innerHeight*.45)cur=i});
+ dots.forEach(function(d,i){d.classList.toggle("on",i===cur)})}
+addEventListener("scroll",function(){if(!tick){tick=1;requestAnimationFrame(upd)}},{passive:true});upd();
+tt.onclick=function(){scrollTo({top:0,behavior:"smooth"})};
+/* Hiệu ứng con trỏ */
+if(fine&&!RM){document.body.classList.add("hc");
+ var dot=mk("div","cdot"),ring=mk("div","cring"),mx=-100,my=-100,rx=-100,ry=-100,last=0,COL=["#8b5cff","#29f0ff","#ff3d81","#ffb23e"];
+ function spark(x,y,b){var s=mk("i","sp"),a=Math.random()*6.283,d=b?40+Math.random()*50:10+Math.random()*18;
+  s.style.cssText="left:"+x+"px;top:"+y+"px;--dx:"+Math.cos(a)*d+"px;--dy:"+Math.sin(a)*d+"px;background:"+COL[Math.random()*4|0];
+  s.addEventListener("animationend",function(){s.remove()})}
+ addEventListener("pointermove",function(e){mx=e.clientX;my=e.clientY;dot.style.transform="translate("+mx+"px,"+my+"px)";var n=performance.now();if(n-last>45){last=n;spark(mx,my,false)}},{passive:true});
+ (function lp(){rx+=(mx-rx)*.18;ry+=(my-ry)*.18;ring.style.transform="translate("+rx+"px,"+ry+"px)";requestAnimationFrame(lp)})();
+ document.addEventListener("pointerover",function(e){ring.classList.toggle("hv",!!e.target.closest("a,button,.item-btn,.chip,.fc,.mcard,li[data-i],.soc"))});
+ addEventListener("pointerdown",function(e){ring.classList.add("dn");for(var i=0;i<10;i++)spark(e.clientX,e.clientY,true)});
+ addEventListener("pointerup",function(){ring.classList.remove("dn")});
+ document.documentElement.addEventListener("mouseleave",function(){dot.style.opacity=ring.style.opacity=0});
+ document.documentElement.addEventListener("mouseenter",function(){dot.style.opacity=ring.style.opacity=1})}
+/* Thư viện map: ảnh + thông tin + link tải */
+var DFC={"Dễ":"d0","Trung Bình":"d1","Khó":"d2","Cực Khó":"d3","Siêu Cấp":"d4"};
+function bk(p){return p<=3?"2-3":p<=5?"4-5":p==6?"6":"8"}
+function shortU(u){return u.replace(/^https?:\/\/(www\.)?/,"")}
+function chips(k,a){return'<div class="fg" data-k="'+k+'"><button type="button" class="fc on" data-v="all">Tất cả</button>'+a.map(function(v){return'<button type="button" class="fc" data-v="'+v+'">'+v+'</button>'}).join("")+'</div>'}
+window.initGallery=function(box,maps){
+ if(box.dataset.ok)return;box.dataset.ok=1;var st={q:"",pl:"all",df:"all",sz:"all",so:"def"};
+ box.innerHTML='<div class="mapbar"><div class="mtot"><b class="mc">0</b><span>map có ảnh + link tải</span></div><input class="mq" type="search" placeholder="Tìm tên map..." aria-label="Tìm map">'+
+  '<div class="fl"><small>Số người</small>'+chips("pl",["2-3","4-5","6","8"])+'</div>'+
+  '<div class="fl"><small>Độ khó</small>'+chips("df",["Dễ","Trung Bình","Khó","Cực Khó","Siêu Cấp"])+'</div>'+
+  '<div class="fl"><small>Cỡ map</small>'+chips("sz",["Nhỏ","Vừa","Rộng"])+'</div>'+
+  '<div class="fl"><small>Sắp xếp</small><div class="fg" data-k="so"><button type="button" class="fc on" data-v="def">Mặc định</button><button type="button" class="fc" data-v="new">🆕 Mới nhất</button><button type="button" class="fc" data-v="dl">🔥 Tải nhiều nhất</button></div></div></div><div class="mgrid"></div>';
+ var grid=box.querySelector(".mgrid"),cnt=box.querySelector(".mc"),first=true;
+ /* Mới nhất: theo ts:"2026-11-05" nếu có, không thì map nằm CUỐI danh sách MAPS là mới nhất. Tải nhiều nhất: theo số lần bấm Tải map */
+ function ord(){var a=maps.map(function(_,i){return i});
+  if(st.so==="new")a.sort(function(x,y){var tx=maps[x].ts||"",ty=maps[y].ts||"";return tx<ty?1:tx>ty?-1:y-x});
+  else if(st.so==="dl")a.sort(function(x,y){return((maps[y].cid?maps[y].dl:ST.dl[mkey(maps[y].t)])||0)-((maps[x].cid?maps[x].dl:ST.dl[mkey(maps[x].t)])||0)||y-x});
+  return a}
+ function draw(){var h="",n=0;
+  ord().forEach(function(i){var m=maps[i];
+   if(st.q&&m.t.toLowerCase().indexOf(st.q)<0)return;
+   if(st.pl!=="all"&&bk(m.p)!==st.pl)return;if(st.df!=="all"&&m.d!==st.df)return;if(st.sz!=="all"&&m.s!==st.sz)return;
+   var K=m.cid?"c"+m.cid:mkey(m.t),id=((m.u||"").match(/file\/(\w+)/)||[])[1],img=m.img||(MAP_DIR+encodeURIComponent(m.t)+MAP_EXT);
+   h+='<article class="mcard" data-id="'+id+'" data-t="'+esc(m.t)+'" style="animation-delay:'+Math.min(n,24)*40+'ms"><div class="mth"><img src="'+esc(img)+'" alt="Ảnh map '+esc(m.t)+'" loading="lazy" data-i="'+i+'"><span class="pn">👥 '+m.p+'</span><span class="sz">'+esc(m.s)+'</span>'+(ST.champ===K?'<span class="crown">🏆 Map Tháng</span>':'')+'</div><div class="mb"><b>'+esc(m.t)+'</b><div class="mrow"><span class="df '+(DFC[m.d]||"d1")+'">'+esc(m.d)+'</span>'+(!m.cid&&window.mapTag?window.mapTag(m):"")+(m.by?'<span class="by">'+(m.cid?cmBy(m):"👤 "+esc(m.by))+'</span>':'')+'</div><div class="mst"><span class="dlc" data-k="'+esc(K)+'" title="Số lượt tải">⬇ '+(m.cid?(m.dl||0)+" lượt tải":(ST.dl[K]||0))+'</span>'+rateHtml(K)+'</div>'+(m.cid?cmDet(m):"")+'<div class="ma">'+(m.cid?cmAct(m):(window.mapAct?window.mapAct(m,i):'<a class="btn dlb" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a><button type="button" class="cp" data-i="'+i+'">Chép link</button>'))+(window.tipBtn?window.tipBtn(m.t):"")+'</div></div></article>';n++});
+  grid.innerHTML=h||'<div class="mempty">Không có map nào khớp bộ lọc.</div>';
+  if(first&&!RM){first=false;var t0=performance.now();(function c(t){var k=Math.min(1,(t-t0)/900);cnt.textContent=Math.round(n*k);if(k<1)requestAnimationFrame(c)})(t0)}else cnt.textContent=n}
+ box.addEventListener("click",function(e){var c=e.target.closest(".fc");
+  if(c){var g=c.parentNode;g.querySelectorAll(".fc").forEach(function(x){x.classList.toggle("on",x===c)});st[g.dataset.k]=c.dataset.v;draw();return}
+  var p=e.target.closest(".cp[data-i]");if(p){var u=maps[+p.dataset.i].u,ok=function(){p.textContent="Đã chép ✓";setTimeout(function(){p.textContent="Chép link"},1400)},no=function(){window.prompt("Sao chép link:",u)};
+   try{navigator.clipboard.writeText(u).then(ok,no)}catch(x){no()}}});
+ grid.addEventListener("error",function(e){var im=e.target;if(im.tagName!=="IMG"||im.dataset.f)return;var i=+im.dataset.i,mm=maps[i];if(mm.img2&&!mm.t2){mm.t2=1;im.src=mm.img2;return}im.dataset.f=1;im.src=art(mm.t,i)},true);
+ box.querySelector(".mq").addEventListener("input",function(){st.q=this.value.toLowerCase().trim();draw()});
+ box._draw=draw;draw()};
+})();
+</script>
+<script>
+(function(){var nav=$("topnav"),ls=[].slice.call(nav.querySelectorAll("a.nl")),ids=ls.map(function(a){return a.getAttribute("href").slice(1)});
+$("brand").textContent=CFG.name.toUpperCase();
+function on(){nav.classList.toggle("sc",scrollY>20);if(nav.classList.contains("open")){nav.classList.remove("open");$("burger").textContent="☰"}var c=0;ids.forEach(function(id,i){var el=$(id);if(el&&el.getBoundingClientRect().top<innerHeight*.4)c=i});ls.forEach(function(a,i){a.classList.toggle("on",i===c)})}
+addEventListener("scroll",on,{passive:true});on();
+$("burger").onclick=function(){var o=nav.classList.toggle("open");this.setAttribute("aria-expanded",o);this.textContent=o?"✕":"☰"};
+nav.addEventListener("click",function(e){if(e.target.closest("a.nl")){nav.classList.remove("open");$("burger").textContent="☰"}});
+})();
+</script>
+<script>
+(function(){
+var cu=$("curtain"),root=document.documentElement,tb=$("theme"),fine=matchMedia("(hover:hover) and (pointer:fine)").matches;
+$("cln").textContent=CFG.name.toUpperCase();
+/* Sáng / tối */
+function setT(t){root.dataset.theme=t;try{localStorage.setItem("g_theme",t)}catch(e){}document.querySelector('meta[name=theme-color]').content=t==="light"?"#f5f2ff":"#0a0816";tb.setAttribute("aria-pressed",t==="light")}
+setT(root.dataset.theme==="light"?"light":"dark");
+tb.onclick=function(){var t=root.dataset.theme==="light"?"dark":"light";
+ if(RM){setT(t);return}
+ if(document.startViewTransition){document.startViewTransition(function(){setT(t)})}
+ else{root.classList.add("tfade");setT(t);setTimeout(function(){root.classList.remove("tfade")},900)}};
+/* Màn chào */
+function open(){cu.classList.remove("in");setTimeout(function(){cu.classList.remove("boot")},1200)}
+if(RM){open()}else if(document.readyState==="complete"){setTimeout(open,900)}else addEventListener("load",function(){setTimeout(open,900)});
+/* Chuyển trang: màn quét ngang khi bấm menu */
+function wipe(fn){if(RM){fn();return}cu.classList.add("in");setTimeout(function(){fn();setTimeout(function(){cu.classList.remove("in")},140)},650)}
+document.addEventListener("click",function(e){var a=e.target.closest('a[href^="#"]');if(!a)return;var id=a.getAttribute("href").slice(1),el=id==="top"?document.body:$(id);if(!el)return;e.preventDefault();
+ wipe(function(){scrollTo({top:id==="top"?0:el.getBoundingClientRect().top+scrollY-60,behavior:"instant"})})});
+/* Click: sóng lan + gợn nước trên nút */
+document.addEventListener("pointerdown",function(e){var r=document.createElement("i");r.className="shock";r.style.left=e.clientX+"px";r.style.top=e.clientY+"px";document.body.appendChild(r);r.addEventListener("animationend",function(){r.remove()});
+ var b=e.target.closest(".btn,.chip,.soc,.item-btn,.fc,.cp,.nl,.burger,.ctl button,.themebtn");if(b){var q=b.getBoundingClientRect(),z=Math.max(q.width,q.height)*2,p=document.createElement("span");p.className="rip";p.style.cssText="width:"+z+"px;height:"+z+"px;left:"+(e.clientX-q.left-z/2)+"px;top:"+(e.clientY-q.top-z/2)+"px";b.appendChild(p);p.addEventListener("animationend",function(){p.remove()})}});
+/* Cuộn: khối bay vào từ nhiều hướng, nút liên hệ hiện lần lượt */
+var AN=["l","r","z","f"];document.querySelectorAll(".rv").forEach(function(el,i){el.dataset.a=AN[i%4]});
+document.querySelectorAll("#socials .soc").forEach(function(a,i){a.style.setProperty("--n",i)});
+new MutationObserver(function(){document.querySelectorAll("#socials .soc").forEach(function(a,i){a.style.setProperty("--n",i)})}).observe($("socials"),{childList:true});
+/* Nút hút theo con trỏ */
+if(fine&&!RM){var mg=null;document.addEventListener("pointermove",function(e){var m=e.target.closest(".btn,.soc");if(mg&&mg!==m){mg.style.translate="";mg=null}if(!m)return;mg=m;var r=m.getBoundingClientRect();m.style.translate=(e.clientX-r.left-r.width/2)*.16+"px "+(e.clientY-r.top-r.height/2)*.26+"px"},{passive:true})}
+/* Dòng chữ chạy: nhân 4 lần để chạy liền mạch, dịch 25% mỗi vòng */
+(function(){var a=CFG.marquee||[];if(!a.length){$("mqb").style.display="none";return}var one=a.map(function(t){return'<span class="t">'+esc(t)+'</span><span class="msep">✦</span>'}).join("");$("mqt").innerHTML=one+one+one+one;$("mqt").style.animationDuration=Math.max(12,a.join("").length*.25)+"s"})();
+/* Server: chép IP */
+document.addEventListener("click",function(e){var b=e.target.closest(".cpip");if(!b)return;var ip=b.dataset.ip,ok=function(){b.textContent="Đã chép ✓";setTimeout(function(){b.textContent="Chép IP"},1400)},no=function(){window.prompt("Sao chép IP:",ip)};try{navigator.clipboard.writeText(ip).then(ok,no)}catch(x){no()}});
+/* Tiêu đề: mỗi ký tự một màu cầu vồng */
+document.querySelectorAll(".sec h2").forEach(function(h){var c=h.querySelectorAll(".ch");c.forEach(function(x,i){x.style.color="hsl("+(i/Math.max(1,c.length-1)*330)+" 100% var(--rl))"})});
+})();
+</script>
+<script>
+(function(){
+var gs=$("gs"),res=$("sres"),list=[],act=-1;
+function norm(x){return String(x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[đĐ]/g,"d").toLowerCase()}
+function build(){var L=[];
+ CFG.games.forEach(function(g,gi){L.push({k:"Game",t:g.name,s:g.note||"",gi:gi});
+  g.items.forEach(function(it,ii){if(it.adminOnly&&!(window.isLiveAdmin&&window.isLiveAdmin()))return;L.push({k:g.name,t:it.t,s:it.note||"",gi:gi,ii:ii});
+   (it.links||[]).forEach(function(l){L.push({k:"Link",t:l.name,s:it.t+" · "+(l.desc||""),gi:gi,ii:ii})});
+   (it.maps||[]).forEach(function(m){L.push({k:"Map",t:m.t,s:m.d+" · "+m.p+" người · "+m.s,gi:gi,ii:ii,map:m.t})});
+   (it.servers||[]).forEach(function(v){L.push({k:"Server",t:v.name,s:v.ip+" · "+v.ver,gi:gi,ii:ii,sel:".srv"})});
+   (it.guide||[]).forEach(function(v,n){L.push({k:"Hướng dẫn",t:v.h,s:v.p,gi:gi,ii:ii,sel:'.gd[data-n="'+n+'"]'})})})});
+ L.push({k:"Liên hệ",t:CFG.name,s:CFG.bio,sec:"me"});
+ CFG.socials.forEach(function(x){L.push({k:"Liên hệ",t:x.n,s:x.u,sec:"me"})});
+ tracks.forEach(function(t,i){L.push({k:"Nhạc",t:t.t,s:"",tr:i})});
+ L.push({k:"Live",t:"Live TikTok",s:"Xem và chia sẻ live game trên TikTok",sec:"live"});
+ L.push({k:"Hỗ trợ",t:"Ủng hộ cà phê",s:"Quét mã QR để ủng hộ",sec:"donate"});
+ return L}
+function hl(t,q){var n=norm(t);if(n.length!==t.length)return esc(t);var i=n.indexOf(q);return i<0?esc(t):esc(t.slice(0,i))+"<mark>"+esc(t.slice(i,i+q.length))+"</mark>"+esc(t.slice(i+q.length))}
+function cut(x){x=String(x||"");return x.length>80?x.slice(0,78)+"…":x}
+function search(){var q=norm(gs.value).trim();act=-1;if(!q){res.classList.remove("on");res.innerHTML="";list=[];return}
+ var tk=q.split(/\s+/);list=build().map(function(r){var t=norm(r.t),h=t+" "+norm(r.s);if(!tk.every(function(w){return h.indexOf(w)>=0}))return null;r.sc=(t.indexOf(q)===0?0:t.indexOf(q)>0?1:tk.every(function(w){return t.indexOf(w)>=0})?2:3)+(r.k==="Link"?.5:0);return r}).filter(Boolean).sort(function(a,b){return a.sc-b.sc}).slice(0,10);
+ res.innerHTML=list.length?list.map(function(r,i){return'<div class="sr" role="option" data-i="'+i+'"><span class="k">'+esc(r.k)+'</span><span><b>'+hl(r.t,q)+'</b><small>'+esc(cut(r.s))+'</small></span></div>'}).join(""):'<div class="sempty">Không tìm thấy “'+esc(gs.value.trim())+'”</div>';
+ res.classList.add("on")}
+function mark(i){var a=res.querySelectorAll(".sr");a.forEach(function(x,k){x.classList.toggle("act",k===i)});act=i;if(a[i])a[i].scrollIntoView({block:"nearest"})}
+function shine(el){if(!el)return;el.scrollIntoView({behavior:"smooth",block:"center"});el.classList.add("hit");setTimeout(function(){el.classList.remove("hit")},1900)}
+function go(r){res.classList.remove("on");gs.blur();$("topnav").classList.remove("open");$("burger").textContent="☰";
+ if(r.sec){var a=document.querySelector('a.nl[href="#'+r.sec+'"]');if(a)a.click();return}
+ if(r.tr!=null){play(r.tr);var h=document.querySelector('a.nl[href="#top"]');if(h)h.click();return}
+ if(!$("chips").classList.contains("on"))$("open").click();
+ var g=document.querySelector('.chip[data-g="'+r.gi+'"]');if(openG!==r.gi&&g)g.click();
+ if(r.ii==null){setTimeout(function(){shine(g)},500);return}
+ setTimeout(function(){var b=document.querySelector('.item-btn[data-i="'+r.ii+'"]');if(!b)return;if(!b.classList.contains("open"))b.click();
+  setTimeout(function(){
+   if(r.map){var q=document.querySelector(".mq");if(q){q.value=r.map;q.dispatchEvent(new Event("input"))}setTimeout(function(){shine(document.querySelector(".mcard"))},350)}
+   else shine(r.sel?document.querySelector(r.sel):b)},650)},700)}
+gs.addEventListener("input",search);
+gs.addEventListener("focus",function(){if(gs.value.trim())search()});
+gs.addEventListener("keydown",function(e){var n=res.querySelectorAll(".sr").length;
+ if(e.key==="ArrowDown"){e.preventDefault();mark(Math.min(n-1,act+1))}
+ else if(e.key==="ArrowUp"){e.preventDefault();mark(Math.max(0,act-1))}
+ else if(e.key==="Enter"){e.preventDefault();var r=list[act<0?0:act];if(r)go(r)}
+ else if(e.key==="Escape"){res.classList.remove("on");gs.blur()}});
+res.addEventListener("click",function(e){var x=e.target.closest(".sr");if(x)go(list[+x.dataset.i])});
+document.addEventListener("pointerdown",function(e){if(!e.target.closest(".sbox"))res.classList.remove("on")});
+document.addEventListener("keydown",function(e){var t=e.target.tagName;if(((e.key==="/"&&t!=="INPUT"&&t!=="TEXTAREA")||((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"))){e.preventDefault();var tn=$("topnav");if(matchMedia("(max-width:760px)").matches){tn.classList.add("open");$("burger").textContent="✕"}gs.focus()}});
+})();
+</script>
+<script>
+/* ===== CỘNG ĐỒNG: tin tức · góp ý · gửi map · bình luận · bình chọn · người đóng góp ===== */
+(function(){
+var P=$("cp"),cur="news",DIFF=["Dễ","Trung Bình","Khó","Cực Khó","Siêu Cấp"],SZ=["Nhỏ","Vừa","Rộng"],
+ FBP=((CFG.socials.filter(function(s){return s.n==="Facebook"})[0])||{}).u||"https://www.facebook.com/",
+ MSG=(function(){var m=FBP.match(/profile\.php\?id=(\d+)/);if(m)return"https://m.me/"+m[1];return FBP.replace(/^.*facebook\.com\//,"https://m.me/").replace(/[?#].*$/,"").replace(/\/$/,"")})(),
+ ZL=((CFG.socials.filter(function(s){return s.n==="Zalo"})[0])||{}).u||"",
+ URL0=location.href.split("#")[0].split("?")[0];
+$("c-fb").href=FBP;$("c-ms").href=MSG;
+function ym(d){d=d||new Date();return d.getFullYear()+"-"+p2(d.getMonth()+1)}
+function pym(){var d=new Date(),m=d.getMonth();return m?d.getFullYear()+"-"+p2(m):(d.getFullYear()-1)+"-12"}
+function http(u){return/^https?:\/\//i.test(String(u||"").trim())}
+function fd(t){return new Date(+t||0).toLocaleDateString("vi-VN")}
+function sel(a){return a.map(function(x){return"<option>"+esc(x)+"</option>"}).join("")}
+function msg(id,t){var e=$(id);if(e)e.textContent=t}
+function nid(){return"i"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function toast(t){var e=document.createElement("div");e.className="toast";e.textContent=t;document.body.appendChild(e);setTimeout(function(){e.remove()},2600)}
+function cool(k,ms){var L=lsg("g_cool"),n=Date.now();if(L[k]&&n-L[k]<ms)return false;L[k]=n;lss("g_cool",L);return true}
+function shareTo(){var f=function(){window.prompt("Sao chép link:",URL0)};try{navigator.clipboard.writeText(URL0).then(function(){toast("Đã chép link ✓")},f)}catch(x){f()}}
+/* ---- NĂNG LƯỢNG THEO IP · MAP CỘNG ĐỒNG ---- */
+var CM0=CMAPS.slice(),U=null,EN={n:0,resetAt:0,onl:0,post:0},IPV="",CF={cost:4,daily:10,onlMax:5,postRew:5,postRewMax:2},BY="",ERR="",AK="";try{AK=localStorage.getItem("g_ak")||""}catch(x){}try{BY=localStorage.getItem("g_by")||""}catch(x){}
+var CH=document.createElement("button");CH.className="accchip";CH.type="button";document.body.appendChild(CH);
+function myip(){if(IPV)return Promise.resolve(IPV);
+ var src=[["https://api.ipify.org?format=json",function(t){return JSON.parse(t).ip}],["https://api64.ipify.org?format=json",function(t){return JSON.parse(t).ip}],["https://www.cloudflare.com/cdn-cgi/trace",function(t){return t.match(/ip=(\S+)/)[1]}]];
+ return src.reduce(function(p,x){return p.catch(function(){return fetch(x[0]).then(function(r){return r.text()}).then(function(t){var ip=x[1](t);if(!/^[0-9a-fA-F:.]{3,45}$/.test(ip))throw 0;return IPV=ip})})},Promise.reject())}
+function call(op,d){d=d||{};d.op=op;d.ak=AK;if(!ACC_API)return Promise.resolve({ok:false,err:"Chưa điền ACC_API trong index.html"});
+ if(ACC_API===API_URL)return Promise.resolve({ok:false,err:"ACC_API đang trùng API_URL (script cũ). Cần link /exec của script năng lượng mới."});
+ return myip().then(function(ip){d.ip=ip;
+  return fetch(ACC_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)}).then(function(r){return r.text()}).then(function(t){try{return JSON.parse(t)}catch(x){return{ok:false,err:"Máy chủ không trả về JSON: link ACC_API sai, hoặc lúc triển khai chưa chọn «Bất kỳ ai» được truy cập, hoặc chưa cấp quyền cho script."}}},function(){return{ok:false,err:"Không gọi được ACC_API (sai link hoặc mạng/trình chặn quảng cáo chặn script.google.com)."}})},
+  function(){return{ok:false,err:"Không lấy được IP của bạn (ipify/cloudflare bị chặn). Tắt trình chặn quảng cáo/VPN rồi thử lại."}})}
+function chip(){CH.hidden=!ACC_API;var nm=(U&&U.name)||BY||"",nh="";if(nm){try{nh=nmH(nm)}catch(x){nh=esc(nm)}}CH.innerHTML=(nm?'<span class="acn">👤 '+nh+"</span>":"")+"<span>⚡ <b>"+EN.n+"</b></span>";CH.classList.toggle("has",!!nm);$("accnote").textContent=ACC_API?"Bạn có ⚡"+EN.n+" năng lượng (tự nhận diện theo IP, mỗi ngày nhận ⚡"+CF.daily+"). [bản web v5]":""}
+function setE(j){if(j.user){U=j.user;if(U.name&&!BY){BY=U.name;try{localStorage.setItem("g_by",BY)}catch(x){}}}if(j.en)EN=j.en;if(j.cfg)CF=j.cfg;chip();try{document.dispatchEvent(new Event("accchange"))}catch(x){}}
+window.isLiveAdmin=function(){return !!(U&&U.admin)};
+function modal(h){var o=$("amod");if(o)o.remove();o=document.createElement("div");o.id="amod";o.className="amod";o.innerHTML='<div class="abox"><button class="ax" type="button" aria-label="Đóng">✕</button>'+h+'</div>';o.onclick=function(e){if(e.target===o||e.target.classList.contains("ax"))o.remove()};document.body.appendChild(o);return o}
+function left(){var m=Math.max(0,Math.round((EN.resetAt-Date.now())/60000));return Math.floor(m/60)+"g "+m%60+"p"}
+CH.onclick=function(){modal('<h3>⚡ Năng lượng của bạn</h3><p class="big">⚡ <b>'+EN.n+'</b></p>'+nameHtml()+'<p class="mt">Reset về '+CF.daily+' lúc 00:00 (còn '+left()+').</p><p class="mt">• Online: +⚡1 mỗi 10 phút (hôm nay '+EN.onl+'/'+CF.onlMax+')<br>• Đăng map: +⚡'+CF.postRew+' mỗi lần (hôm nay '+EN.post+'/'+CF.postRewMax+' lần)</p><p class="mt"><small>Mã của bạn: '+esc(U?U.id:"chưa kết nối")+'</small> <button class="cp" id="adm" type="button">🛡 '+(U&&U.admin?"Admin":"Đăng nhập")+'</button></p>'+rdHtml()+(U?"":'<p class="mt" style="color:var(--p)">⚠ Chưa kết nối được máy chủ năng lượng: '+esc(ERR||"đang kết nối…")+'<br>Kiểm tra ACC_API đã đúng link /exec và đã «Triển khai phiên bản mới» bằng file .gs mới nhất chưa. Tắt trình chặn quảng cáo nếu có (api.ipify.org bị chặn sẽ không lấy được IP).</p>')+'<button class="btn" id="rtry" type="button">↻ Thử kết nối lại</button>');var ad=$("adm");if(ad)ad.onclick=function(){var k=prompt("Đăng nhập admin: nhập mã admin (để trống = thoát admin):",AK);if(k===null)return;AK=k.trim();try{localStorage.setItem("g_ak",AK)}catch(x){}$("amod").remove();call("me").then(function(j){if(j.ok)setE(j);if(!j.ok)toast("Đăng nhập thất bại");else if(j.user&&j.user.admin)toast("Đăng nhập thành công ✓ Bạn đã là Admin");else if(!AK)toast("Đã thoát admin");else if(j.user&&j.user.admin===undefined)toast("Đăng nhập thất bại");else toast("Đăng nhập thất bại");loadC();var cl0=$("cl");if(cl0&&cur==="cmt")cl0.innerHTML=cList()})};var r=$("rtry");if(r)r.onclick=function(){init2();$("amod").remove()}};
+setInterval(function(){if(!U||document.hidden)return;call("ping").then(function(j){if(j.ok){var o=EN.n;setE(j);if(EN.n>o)toast("⚡ +"+(EN.n-o)+" năng lượng vì bạn online")}})},60000);
+function loadC(){if(!ACC_API)return;call("maps").then(function(j){if(!j.ok)return;CMAPS.length=0;CM0.concat(j.maps.map(function(m){m.cid=m.id;return m})).forEach(function(m){CMAPS.push(m)});
+ CFG.games.forEach(function(g){g.items.forEach(function(it){if(it.maps===CMAPS)it.note=CMAPS.length+" map · do người chơi gửi, ghi rõ tên người tạo"})});actDiff(CMAPS.filter(function(m){return m.cid}));redraw();if(cur==="sub"||cur==="ppl")render()})}
+function init2(){chip();if(!ACC_API)return;call("me").then(function(j){if(j.ok){ERR="";setE(j)}else{ERR=j.err||"lỗi không rõ";toast("Năng lượng: "+ERR)}loadC()})}
+function cmBy(m){return"👤 "+nmH(m.by)}
+function cmDet(m){return'<div class="dlx">Hôm nay <b>+'+(m.dl1||0)+'</b> · 7 ngày <b>+'+(m.dl7||0)+'</b>'+(m.ts?" · đăng "+fd(Date.parse(m.ts)):"")+'</div>'}
+function cmAct(m){return'<button type="button" class="btn cdl" data-id="'+m.cid+'">⬇ Tải map <i>'+(m.got||m.own?"miễn phí":"⚡"+CF.cost)+'</i></button>'+(U&&U.admin?'<button type="button" class="cp cdel" data-id="'+m.cid+'">Xóa</button>':"")}
+window.cmBy=cmBy;window.cmDet=cmDet;window.cmAct=cmAct;
+document.addEventListener("click",function(e){var b=e.target.closest(".cdelc");if(!b)return;var id=b.dataset.id;if(!(U&&U.admin)){toast("Cần đăng nhập Admin để xóa");return}if(!confirm("Xóa bình luận này?"))return;API.del(id).then(function(j){if(j&&j.ok){ST.cmt=ST.cmt.filter(function(x){return x.id!==id});PEND=PEND.filter(function(x){return x.id!==id});var l=$("cl");if(l)l.innerHTML=cList();toast("Đã xóa bình luận ✓")}else toast((j&&j.err)||"Không xóa được bình luận")})});
+document.addEventListener("click",function(e){var b=e.target.closest(".cdl,.cdel");if(!b)return;
+ var id=b.dataset.id,m=CMAPS.filter(function(x){return x.cid===id})[0];if(!m)return;if(!U){toast("Đang kết nối, thử lại sau giây lát");return}
+ if(b.classList.contains("cdel")){if(confirm("Xóa map này?"))call("del",{id:id}).then(function(j){toast(j.ok?"Đã xóa":j.err);loadC()});return}
+ if(!m.got&&!m.own){if(EN.n<CF.cost){toast("Không đủ năng lượng (cần ⚡"+CF.cost+", còn ⚡"+EN.n+"). Online thêm hoặc đăng map để nhận thêm.");return}
+  if(!confirm("Tải map này tốn ⚡"+CF.cost+" (bạn còn ⚡"+EN.n+"). Tiếp tục?"))return}
+ var w=window.open("","_blank");call("dl",{id:id}).then(function(j){if(!j.ok){if(w)w.close();toast(j.err);return}setE(j);
+  if(w&&!w.closed)w.location=j.u;else modal('<h3>Link tải map</h3><a class="btn" href="'+esc(j.u)+'" target="_blank" rel="noopener">⬇ Mở link tải</a>');loadC()})});
+/* ---- đếm lượt tải · đánh giá sao ---- */
+function refresh(k){document.querySelectorAll(".dlc,.rate").forEach(function(el){if(el.dataset.k!==k)return;if(el.classList.contains("dlc"))el.textContent="⬇ "+(ST.dl[k]||0);else el.outerHTML=rateHtml(k)})}
+function countDl(t){var k=mkey(t);if(!cool("dl_"+k,30000))return;ST.dl[k]=(ST.dl[k]||0)+1;API.dem("dl",k,1);refresh(k)}
+function rate(b){var k=b.parentNode.dataset.k,v=+b.dataset.v,R=lsg("g_rated");if(R[k]){toast("Bạn đã đánh giá map này rồi");return}
+ R[k]=v;lss("g_rated",R);var r=ST.rt[k]||(ST.rt[k]={s:0,n:0});r.s+=v;r.n++;API.dem("rt",k,v);refresh(k);toast("Cảm ơn bạn đã đánh giá "+v+" ★")}
+document.addEventListener("click",function(e){var t=e.target,b;
+ if(b=t.closest(".dlb")){var c=b.closest(".mcard");countDl(b.dataset.t||(c&&c.dataset.t));return}
+ if(b=t.closest(".cb[data-s]")){shareTo();return}
+ if(b=t.closest(".rate .st"))rate(b)});
+/* ---- dữ liệu ---- */
+function allMaps(){return MAPS.concat(CMAPS)}
+function redraw(){document.querySelectorAll(".mapg").forEach(function(b){b._draw&&b._draw()})}
+function champT(){var m=allMaps().filter(function(x){return mkey(x.t)===ST.champ})[0];return m?m.t:ST.champ}
+function topMaps(n){return allMaps().map(function(m,i){return{t:m.t,d:ST.dl[mkey(m.t)]||0,i:i}}).sort(function(x,y){return y.d-x.d||y.i-x.i}).slice(0,n).map(function(x){return x.t})}
+function setData(d){ST.dl=d.dl||{};ST.rt=d.rt||{};ST.vt=d.vt||{};ST.cmt=d.cmt||[];
+ var v=ST.vt["m"+pym()]||{},best=0;ST.champ="";ST.champN=0;Object.keys(v).forEach(function(k){if(+v[k]>best){best=+v[k];ST.champ=k;ST.champN=best}})}
+function load(){return API.load().then(function(d){setData(d||{});redraw();render()})}
+/* ---- các tab ---- */
+function pNews(){P.innerHTML=NEWS.length?NEWS.map(function(n){return'<div class="nw"><small>📢 '+esc(n.d)+'</small><p><b>'+esc(n.t)+'</b></p><p>'+esc(n.b)+'</p></div>'}).join(""):'<p class="mt">Chưa có tin mới.</p>'}
+function copyTxt(t){try{if(navigator.clipboard&&navigator.clipboard.writeText)return navigator.clipboard.writeText(t).then(function(){return true},function(){return false})}catch(x){}return Promise.resolve(false)}
+function toMsgr(text,id){
+ var box=$(id);
+ var show=function(failed){
+  var b=function(h,l,c){return'<a class="cb'+(c?" ct":"")+'" href="'+esc(h)+'" target="_blank" rel="noopener">'+l+'</a>'};
+  var em=(typeof CONTACT_EMAIL==="string"&&CONTACT_EMAIL)?b("mailto:"+CONTACT_EMAIL+"?subject="+encodeURIComponent("Góp ý từ web Góc game")+"&body="+encodeURIComponent(text),"📧 Gửi Email"):"";
+  box.innerHTML='<div class="nw champ"><b>'+(failed?"⚠ Chưa gửi tự động được.":"✅ Nội dung đã được chép sẵn.")+'</b> Chọn 1 cách để gửi cho Nam Hoàng (dán nội dung rồi bấm Gửi):'
+   +'<div class="sendrow">'+b(MSG,"✉ Mở Messenger",1)+(ZL?b(ZL,"💬 Zalo"):"")+b(FBP,"📘 Facebook")+em+'<button class="cb cpy" type="button">📋 Chép lại</button></div>'
+   +'<small>Messenger cứ quay vòng, không chat được? Do trình duyệt chưa đăng nhập Messenger: hãy mở bằng app Messenger/Facebook trên điện thoại, hoặc dùng Zalo / Email.</small>'
+   +'<div class="cf" style="margin:8px 0 0"><textarea readonly rows="6" onclick="this.select()">'+esc(text)+'</textarea></div></div>';
+  var c=box.querySelector(".cpy");if(c)c.onclick=function(){copyTxt(text).then(function(ok){toast(ok?"Đã chép nội dung ✓":"Hãy chạm vào khung và chép tay")})}};
+ if(typeof FORM_KEY==="string"&&FORM_KEY){
+  box.innerHTML='<div class="nw">⏳ Đang gửi...</div>';
+  fetch("https://api.web3forms.com/submit",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({access_key:FORM_KEY,subject:text.split("\n")[0],from_name:"Web Góc game",message:text})})
+   .then(function(r){return r.json()})
+   .then(function(j){if(j&&j.success)box.innerHTML='<div class="nw champ"><b>✅ Đã gửi!</b> Cảm ơn bạn, Nam Hoàng đã nhận được nội dung.</div>';else throw 0})
+   .catch(function(){copyTxt(text);show(true)});
+  return}
+ copyTxt(text);show(false)}
+function pReq(){P.innerHTML='<div class="cf"><p class="mt">Điền xong bấm gửi: nội dung sẽ được chép sẵn và Messenger của Nam Hoàng sẽ mở ra, bạn chỉ cần dán rồi bấm Gửi.</p><div class="r2"><label>Tên của bạn<input id="rn" maxlength="40" placeholder="Có thể bỏ trống"></label><label>Loại<select id="rk">'+sel(["Yêu cầu map","Yêu cầu mod","Góp ý","Báo lỗi link"])+'</select></label></div><label>Nội dung<textarea id="rc" rows="4" maxlength="600" placeholder="Ghi tên map/mod và link tham khảo nếu có..."></textarea></label><div class="cr"><button class="btn" id="rs" type="button">💡 Gửi góp ý</button></div><p class="mt" id="rm"></p><div id="rx"></div></div>';
+ $("rs").onclick=function(){var c=$("rc").value.trim();if(c.length<5){msg("rm","Hãy nhập nội dung (ít nhất 5 ký tự).");return}
+  msg("rm","");toMsgr("💡 GÓP Ý TỪ WEB\nLoại: "+$("rk").value+"\nTên: "+($("rn").value.trim()||"Ẩn danh")+"\nNội dung: "+c.slice(0,600),"rx");$("rc").value=""}}
+function cmThumb(m){var im=String(m.img||"").trim();if(!im)return"";return'<a class="cmth" href="'+esc(im)+'" target="_blank" rel="noopener" title="Bấm để xem ảnh lớn"><img src="'+esc(im)+'" alt="Ảnh map '+esc(m.t)+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.className=\'cmth no\';this.parentNode.textContent=\'🖼 Không tải được ảnh\'"></a>'}
+function initPrev(){var ip=$("si"),pv=$("sip"),tm=0;if(!ip||!pv)return;
+ function run(){var v=ip.value.trim();if(!v){pv.style.display="none";pv.innerHTML="";return}pv.style.display="flex";
+  if(!http(v)){pv.innerHTML="<span>⚠ Link ảnh phải bắt đầu bằng http:// hoặc https://</span>";return}
+  pv.innerHTML="<span>⏳ Đang tải ảnh…</span>";var im=new Image();im.referrerPolicy="no-referrer";
+  im.onload=function(){if(ip.value.trim()!==v)return;pv.innerHTML="";pv.appendChild(im);pv.insertAdjacentHTML("beforeend","<span>✓ Ảnh hợp lệ ("+im.naturalWidth+"×"+im.naturalHeight+"). Ảnh sẽ hiện bên phải dòng map sau khi đăng.</span>")};
+  im.onerror=function(){if(ip.value.trim()!==v)return;pv.innerHTML="<span>⚠ Không tải được ảnh. Hãy dùng link ảnh trực tiếp (đuôi .jpg, .png, .webp…).</span>"};im.src=v}
+ ip.addEventListener("input",function(){clearTimeout(tm);tm=setTimeout(run,350)});run()}
+function pSub(){
+ var f=ACC_API?'<div class="cf"><p class="mt">Map hiện ngay ở mục «Map cộng đồng» kèm tên bạn nhập. Đăng thành công +⚡'+CF.postRew+' (tối đa '+CF.postRewMax+' lần/ngày, đăng tối đa 5 map/ngày). Map sai link hoặc vi phạm sẽ bị gỡ.</p><div class="r2"><label>Tên người đóng góp<input id="sb" maxlength="40"></label><label>Tên map<input id="sn" maxlength="80"></label></div><div class="r2"><label>Số người<select id="sp">'+sel([2,3,4,5,6,7,8])+'</select></label><label>Độ khó<select id="sd">'+sel(DIFF)+'</select></label><label>Cỡ map<select id="szm">'+sel(SZ)+'</select></label></div><label>Link tải (MediaFire, Drive, Mega…)<input id="su" type="url" placeholder="https://"></label><label>Link ảnh map (nên có, dán link ảnh trực tiếp)<input id="si" type="url" placeholder="https://"></label><div class="imgtool"><a class="cb" href="https://postimages.org/" target="_blank" rel="noopener">🗜 Nén &amp; tải ảnh lên Postimages</a><small>Hướng dẫn: ① Bấm nút, chọn ảnh, ở mục <b>Resize image</b> chọn kích thước nhỏ (vd 800x600) để nén ảnh → ② bấm <b>Upload</b> → ③ ở trang kết quả, copy ô <b>Liên kết trực tiếp</b> (Direct link, dạng https://i.postimg.cc/…jpg) → ④ dán vào ô «Link ảnh map» ở trên.</small></div><div class="imgprev" id="sip"></div><div class="cr"><button class="btn" id="sg" type="button">⭐ Đăng map</button></div><p class="mt" id="sm"></p></div>':'<p class="mt">Tính năng chưa được bật (chưa điền ACC_API).</p>';
+ var L=CMAPS.map(function(m){return'<div class="nw"><div class="cmrow"><div class="cmi"><b>'+esc(m.t)+'</b> <span class="by">'+(m.cid?cmBy(m):"👤 "+esc(m.by))+" · "+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+'</span>'+(m.cid?'<div class="dlx">⬇ <b>'+(m.dl||0)+'</b> lượt tải · hôm nay <b>+'+(m.dl1||0)+'</b> · 7 ngày <b>+'+(m.dl7||0)+'</b></div>'+cmAct(m)+tipBtn(m.t):'<br><a class="cb dlb" data-t="'+esc(m.t)+'" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a>')+'</div>'+cmThumb(m)+'</div></div>'}).join("");
+ P.innerHTML=f+'<h3 class="sh">🌟 Map cộng đồng đã đăng ('+CMAPS.length+')</h3>'+(L||'<p class="mt">Chưa có map nào. Hãy là người đầu tiên!</p>');
+ if(!ACC_API)return;$("sb").value=BY;initPrev();$("sg").onclick=function(){var by=$("sb").value.trim(),t=$("sn").value.trim(),u=$("su").value.trim(),im=$("si").value.trim();
+  if(by.length<2||t.length<2){msg("sm","Nhập tên người đóng góp và tên map.");return}if(!http(u)){msg("sm","Link tải phải bắt đầu bằng http:// hoặc https://");return}if(im&&!http(im)){msg("sm","Link ảnh chưa đúng.");return}
+  BY=by;try{localStorage.setItem("g_by",by)}catch(x){}
+  msg("sm","Đang đăng…");call("submit",{by:by,t:t,p:$("sp").value,d:$("sd").value,s:$("szm").value,u:u,img:im}).then(function(j){if(!j.ok){msg("sm",j.err||"Không đăng được");return}setE(j);toast("Đã đăng map ✓"+(j.reward?" +⚡"+j.reward:""));loadC()})}}
+function cList(){var a=ST.cmt.filter(function(x){var q=String(x.noidung||"");return q.indexOf("[MEO]")!==0&&q.indexOf("[LIKE]")!==0}).sort(function(x,y){return y.ts-x.ts}).slice(0,100);
+ return a.length?a.map(function(x){return'<div class="nw"><small><b>'+nmH(x.ten||"Ẩn danh")+"</b> · "+esc(x.map||"Chung")+" · "+ft(x.ts)+"</small><p>"+esc(x.noidung)+"</p>"+(U&&U.admin&&x.id?'<button type="button" class="cp cdelc" data-id="'+esc(x.id)+'">🗑 Xóa</button>':"")+"</div>"}).join(""):'<p class="mt">Chưa có bình luận nào. Hãy là người đầu tiên!</p>'}
+function ft(t){var d=new Date(+t||0);return d.toLocaleDateString("vi-VN")+" "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
+var PEND=[];
+function pCmt(){
+ P.innerHTML='<div class="cf"><div class="r2"><label>Tên bạn<input id="cn" maxlength="30"></label><label>Bạn đã chơi map nào?<select id="cm">'+sel(["Chung (cả web)"].concat(allMaps().map(function(m){return m.t})))+'</select></label></div><label>Cảm nhận<textarea id="cc" rows="3" maxlength="400" placeholder="Chơi map này thấy thế nào?"></textarea></label><div><button class="btn" id="cs" type="button">💬 Gửi bình luận</button></div><p class="mt" id="cx"></p></div><div class="clist" id="cl">'+cList()+'</div>';
+ try{var sn=localStorage.getItem("g_cname");if(sn)$("cn").value=sn}catch(x){}
+ $("cs").onclick=function(){var c=$("cc").value.trim();if(c.length<3){msg("cx","Hãy viết vài chữ cảm nhận của bạn.");return}if(!cool("cmt",20000)){msg("cx","Bạn gửi hơi nhanh, đợi chút nhé.");return}
+  var nm=$("cn").value.trim().slice(0,30);try{localStorage.setItem("g_cname",nm)}catch(x){}
+  var r={id:nid(),ts:Date.now(),ten:nm,map:$("cm").value,noidung:c.slice(0,400)};ST.cmt.push(r);PEND.push(r);API.add("BinhLuan",r);render()}}
+/* tự cập nhật bình luận của mọi người mỗi 12 giây khi đang xem tab Bình luận */
+setInterval(function(){if(!API.on||document.hidden||cur!=="cmt")return;
+ API.load().then(function(d){if(!d||!d.cmt)return;setData(d);
+  PEND=PEND.filter(function(x){return Date.now()-x.ts<90000});
+  PEND.forEach(function(x){if(!ST.cmt.some(function(y){return y.id===x.id}))ST.cmt.push(x)});
+  var l=$("cl");if(l&&cur==="cmt")l.innerHTML=cList()})},12000);
+var VS={m:"",v:undefined,ip:""};
+function hash(s){return crypto.subtle.digest("SHA-256",new TextEncoder().encode(s+"|nhgame")).then(function(b){return"h"+Array.prototype.map.call(new Uint8Array(b).slice(0,12),function(x){return("0"+x.toString(16)).slice(-2)}).join("")})}
+function myIp(){return fetch("https://api.ipify.org?format=json").then(function(r){return r.json()}).then(function(j){return hash(j.ip)})}
+function chk(M){VS={m:M,v:undefined,ip:""};if(!API.on){VS.v=lsg("g_vote")[M]||"";return}
+ myIp().then(function(ip){VS.ip=ip;return API.voted(ip,M)}).then(function(v){VS.v=v;if(cur==="vote"&&VS.m===M)pVote()}).catch(function(){VS.v=null;if(cur==="vote")pVote()})}
+function pVote(){var M=ym();if(VS.m!==M)chk(M);var st=VS.v,v=ST.vt["m"+M]||{},names=MONTHLY.length?MONTHLY.slice(0,10):topMaps(10),
+ rows=names.map(function(t){var k=mkey(t);return{t:t,k:k,n:+v[k]||0}}).sort(function(a,b){return b.n-a.n}),tot=rows.reduce(function(s,x){return s+x.n},0)||1,
+ note=st===undefined?"⏳ Đang kiểm tra IP của bạn…":st===null?"⚠ Không kiểm tra được IP lúc này, hãy tải lại trang và thử lại.":st?"✓ IP của bạn đã bình chọn tháng này rồi. Sang tháng sau bạn được bình chọn lại.":"Mỗi IP chỉ được bình chọn 1 lần mỗi tháng, bảng xếp hạng tự đặt lại vào đầu tháng sau.";
+ P.innerHTML='<p class="mt">Mỗi tháng có 10 map đề cử. Tháng sau công bố kết quả và trao huy hiệu 🏆 Map Tháng.</p><p class="mt"><b>'+note+'</b></p>'+
+ (ST.champ?'<div class="nw champ">🏆 Map Tháng '+pym()+": <b>"+esc(champT())+"</b> · "+ST.champN+" phiếu</div>":"")+
+ '<h3 class="sh">Bảng xếp hạng tháng '+M+"</h3>"+rows.map(function(x,i){return'<div class="rk"><span class="no">'+(i+1)+'</span><div class="rkm"><b>'+esc(x.t)+'</b><i style="width:'+Math.round(x.n/tot*100)+'%"></i></div><span class="vn">'+x.n+'</span><button class="cb'+(st===x.k?" on":"")+'" type="button" data-v="'+esc(x.k)+'"'+(st!==""?" disabled":"")+">"+(st===x.k?"✓ Đã chọn":"Bình chọn")+"</button></div>"}).join("")+
+ '<h3 class="sh">💡 Đề xuất map</h3><div class="cf"><label>Map bạn thích (ghi tên, có thể kèm link)<input id="ug" maxlength="120"></label><div><button class="btn" id="ub" type="button">Gửi đề xuất</button></div><p class="mt" id="um"></p><div id="ux"></div></div>';
+ $("ub").onclick=function(){var t=$("ug").value.trim();if(t.length<2){msg("um","Nhập tên map bạn muốn đề xuất.");return}msg("um","");toMsgr("🗳 ĐỀ XUẤT MAP TỪ WEB\nMap: "+t,"ux");$("ug").value=""}}
+var PS="dl",PSL={dl:"lượt tải",mp:"map đã đăng",d7:"lượt tải 7 ngày",d1:"lượt tải hôm nay"};
+function ppLv(n){return n>=10?"👑 Huyền thoại":n>=5?"💎 Cao thủ":n>=3?"🔥 Tích cực":"🌱 Tân binh"}
+function ppVal(o,k){return k==="mp"?o.maps.length:o[k]}
+function ppData(){var g=Object.create(null);
+ CMAPS.forEach(function(m){var nm=String(m.by||"").trim();if(!nm)return;var key=nm.toLowerCase(),o=g[key]||(g[key]={n:nm,maps:[],dl:0,d1:0,d7:0,last:0}),ts=Date.parse(m.ts)||0;
+  o.maps.push(m);o.dl+=+m.dl||0;o.d1+=+m.dl1||0;o.d7+=+m.dl7||0;if(ts>o.last)o.last=ts});
+ return Object.keys(g).map(function(k){var o=g[k];o.maps.sort(function(x,y){return(+y.dl||0)-(+x.dl||0)});return o})}
+function pPpl(){var L=ppData(),k=PS;
+ if(!L.length){P.innerHTML='<p class="mt">Chưa có ai đóng góp. Hãy gửi map đầu tiên ở tab «Gửi map của bạn»!</p>';return}
+ L.sort(function(x,y){return ppVal(y,k)-ppVal(x,k)||y.dl-x.dl||y.maps.length-x.maps.length||x.n.localeCompare(y.n)});
+ var tm=0,td=0,t1=0;L.forEach(function(o){tm+=o.maps.length;td+=o.dl;t1+=o.d1});
+ var mx=Math.max(1,ppVal(L[0],k)),me=String(BY||"").trim().toLowerCase(),medal=["🥇","🥈","🥉"];
+ var h='<p class="mt">Bảng xếp hạng những người gửi map cho cộng đồng. Lượt tải do máy chủ đếm, mỗi người chỉ tính cho map do chính họ đăng.</p>'
+  +'<div class="pst"><div><b>'+L.length+'</b>người đóng góp</div><div><b>'+tm+'</b>map đã đăng</div><div><b>'+td+'</b>tổng lượt tải</div><div><b>+'+t1+'</b>lượt tải hôm nay</div></div>'
+  +'<div class="psb"><span>Xếp theo:</span>'+[["dl","⬇ Tổng lượt tải"],["mp","🗺 Số map"],["d7","📈 7 ngày"],["d1","🔥 Hôm nay"]].map(function(x){return'<button type="button" class="cb psort'+(k===x[0]?" on":"")+'" data-k="'+x[0]+'">'+x[1]+'</button>'}).join("")+'</div>';
+ var top=L.slice(0,3);
+ h+='<div class="pod" style="grid-template-columns:repeat('+top.length+',1fr)">'+top.map(function(o,i){return'<div class="pc p'+(i+1)+'"><div class="md">'+medal[i]+'</div><b title="'+esc(o.n)+'">'+nmH(o.n)+'</b><div class="pv">'+ppVal(o,k)+'</div><small>'+PSL[k]+'</small><small>'+o.maps.length+' map</small></div>'}).join("")+'</div>';
+ h+='<h3 class="sh">Bảng xếp hạng chi tiết ('+L.length+' người)</h3>';
+ h+=L.map(function(o,i){var mine=o.n.toLowerCase()===me,v=ppVal(o,k),best=o.maps[0];
+  return'<details class="pr'+(mine?" me":"")+'"><summary><span class="no">'+(i<3?medal[i]:i+1)+'</span><span class="pa">'+esc(o.n.charAt(0).toUpperCase())+'</span>'
+   +'<div class="pi"><b><em>'+nmH(o.n)+'</em><span class="lv">'+ppLv(o.maps.length)+'</span>'+(mine?'<span class="lv me">Bạn</span>':'')+'</b>'
+   +'<span class="pbar"><i style="width:'+Math.round(v/mx*100)+'%"></i></span>'
+   +'<div class="ps"><span>🗺 <b>'+o.maps.length+'</b> map</span><span>⬇ <b>'+o.dl+'</b> lượt tải</span><span>Hôm nay <b>+'+o.d1+'</b></span><span>7 ngày <b>+'+o.d7+'</b></span>'+(o.last?'<span>Đăng gần nhất '+fd(o.last)+'</span>':'')+'</div></div>'
+   +'<span class="pv2">'+v+'<small>'+PSL[k]+'</small></span></summary>'
+   +'<div class="pm">'+(best&&(+best.dl||0)>0?'<div><span>⭐ Map nổi bật nhất</span><span>'+esc(best.t)+' · ⬇ '+best.dl+'</span></div>':'')
+   +o.maps.map(function(m){return'<div><span>'+esc(m.t)+'</span><span>'+esc(m.d||"")+(m.s?" · "+esc(m.s):"")+' · '+(m.p||"?")+' người · ⬇ '+(+m.dl||0)+'</span></div>'}).join("")+'</div></details>'}).join("");
+ P.innerHTML=h}
+P.addEventListener("click",function(e){var b=e.target.closest(".psort");if(b){PS=b.dataset.k;pPpl()}});
+function render(t){cur=t||cur;document.querySelectorAll(".ctab").forEach(function(b){b.classList.toggle("on",b.dataset.t===cur)});({news:pNews,req:pReq,sub:pSub,cmt:pCmt,vote:pVote,ppl:pPpl,box:pBox,shop:pShop})[cur]()}
+$("ctabs").addEventListener("click",function(e){var b=e.target.closest(".ctab");if(b)render(b.dataset.t)});
+P.addEventListener("click",function(e){var b=e.target.closest(".cb[data-v]");if(!b||b.disabled||VS.v!=="")return;
+ var M=ym(),k=b.dataset.v,v=ST.vt["m"+M]||(ST.vt["m"+M]={});VS.v=k;v[k]=(v[k]||0)+1;pVote();
+ API.vote(VS.ip,M,k).then(function(j){if(j&&j.dup){v[k]--;VS.v=j.v||k;toast("IP của bạn đã bình chọn tháng này rồi")}else toast("Đã ghi nhận phiếu bầu ✓");if(cur==="vote")pVote()})});
+/* ---- TÊN CỦA BẠN (gắn với IP, đổi được bất cứ lúc nào) ---- */
+function nameHtml(){var n=(U&&U.name)||BY||"";return'<div class="nmf"><p class="mt"><b>👤 Tên của bạn</b>'+(n?": "+nmH(n):"")+'</p><div class="nmr"><input id="mynm" maxlength="40" value="'+esc(n)+'" placeholder="Nhập tên của bạn" autocomplete="off"><button type="button" class="btn" id="mynb">Lưu</button></div><p class="mt" id="mynm_m"><small>Tên gắn với IP của bạn và đổi được bất cứ lúc nào. Dùng làm tên đóng góp, bình luận trên web.</small></p></div>'}
+document.addEventListener("click",function(e){var b=e.target.closest("#mynb");if(!b)return;var i=$("mynm"),m=$("mynm_m"),n=(i.value||"").trim();
+ if(n.length<2){m.textContent="Tên quá ngắn (ít nhất 2 ký tự).";return}
+ if(!ACC_API||!U){m.textContent="Đang kết nối máy chủ năng lượng, thử lại sau giây lát.";return}
+ var old=U.name;b.disabled=true;m.textContent="Đang lưu…";
+ call("setname",{name:n}).then(function(j){b.disabled=false;if(!j||!j.ok){m.textContent=spErr(j);return}
+  setE(j);if(!BY||BY===old||BY===n)setBy(n);m.textContent="Đã lưu tên ✓";toast("Đã lưu tên: "+n)})});
+/* ---- NHẬP MÃ QUÀ TẶNG ⚡ (mã ghi trong sheet «Codes» của Google Sheet) ---- */
+function rdHtml(){return'<div class="rdf"><p class="mt"><b>🎟 Nhập mã quà tặng</b> <small>(⚡ từ mã được giữ lại, không bị reset 00:00)</small></p><div class="rdr"><input class="rdc" maxlength="40" placeholder="Nhập mã…" autocomplete="off" spellcheck="false"><button type="button" class="btn rdb">Nhận ⚡</button></div><p class="mt rdm"></p></div>'}
+document.addEventListener("click",function(e){var b=e.target.closest(".rdb");if(!b)return;var f=b.closest(".rdf"),i=f.querySelector(".rdc"),m=f.querySelector(".rdm"),c=i.value.trim();
+ if(c.length<2){m.textContent="Nhập mã quà tặng.";return}
+ if(!ACC_API||!U){m.textContent="Đang kết nối máy chủ năng lượng, thử lại sau giây lát.";return}
+ b.disabled=true;m.textContent="Đang kiểm tra…";
+ call("redeem",{code:c}).then(function(j){b.disabled=false;if(!j||!j.ok){m.textContent=spErr(j);return}
+  setE(j);i.value="";m.textContent="🎉 Nhận thành công +⚡"+j.gain+"! Bạn đang có ⚡"+EN.n;toast("+⚡"+j.gain+" từ mã quà tặng");
+  var bg=document.querySelector("#amod .big b");if(bg)bg.textContent=EN.n;var sv=document.querySelector(".shp small b");if(sv)sv.textContent=EN.n})});
+/* ---- TÊN ĐẸP · CỬA HÀNG ⚡ · MAP BÍ ẨN · MẸO PHÁ ĐẢO ---- */
+function jl(k,d){try{var v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(x){return d}}
+function js_(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(x){}}
+function setBy(n){BY=n;try{localStorage.setItem("g_by",n)}catch(x){}chip()}
+function spErr(j){var m=(j&&j.err)||"Không rõ lỗi";return/\bop\b|unknown|không hỗ trợ|chưa hỗ trợ|Thao tác không hợp lệ/i.test(m)?"Máy chủ năng lượng chưa được cập nhật cho tính năng này ("+m+")":m}
+var SHOP={fr:{t:"🖼 Khung tên",it:[["fr1","Viền neon xanh",6],["fr2","Viền hồng rực",6],["fr3","Viền vàng kim",12],["fr4","Viền cầu vồng",20]]},
+ co:{t:"🎨 Màu tên",it:[["co1","Xanh ngọc",4],["co2","Hồng đào",4],["co3","Vàng cam",8],["co4","Gradient tím hồng",15]]},
+ ic:{t:"✨ Biểu tượng cạnh tên",it:[["ic1","Ngọn lửa",3],["ic2","Kiếm sĩ",5],["ic3","Rồng",8],["ic4","Kim cương",10],["ic5","Vương miện",15]]}};
+var IC={ic1:"🔥",ic2:"⚔️",ic3:"🐉",ic4:"💎",ic5:"👑"},PRICE={};
+Object.keys(SHOP).forEach(function(g){SHOP[g].it.forEach(function(x){PRICE[x[0]]=x[2]})});
+var OWN=jl("g_own",{}),EQ=jl("g_eq",{fr:"",co:"",ic:""}),COS=Object.create(null);
+function okId(x,p){return typeof x==="string"&&x.indexOf(p)===0&&PRICE[x]!==undefined}
+function cosHtml(name,e){var n=esc(name);if(!e||typeof e!=="object")return n;
+ var fr=okId(e.fr,"fr")?e.fr:"",co=okId(e.co,"co")?e.co:"",ic=okId(e.ic,"ic")?IC[e.ic]:"";if(!fr&&!co&&!ic)return n;
+ return'<span class="nm'+(fr?" "+fr:"")+'">'+(ic?ic+" ":"")+'<span class="nmt'+(co?" "+co:"")+'">'+n+"</span></span>"}
+function nmH(name){name=String(name||"Ẩn danh");var l=name.trim().toLowerCase(),me=String(BY||"").trim().toLowerCase();return cosHtml(name,me&&l===me?EQ:COS[l])}
+function pubEq(){if(BY&&ACC_API)call("equip",{by:BY,eq:EQ}).then(function(j){if(j&&!j.ok&&j.err)toast(j.err)})}
+function loadCos(){if(!ACC_API)return;call("cos").then(function(j){if(!j||!j.ok||!j.cos)return;admApply(j);var o=Object.create(null);Object.keys(j.cos).forEach(function(k){o[k.toLowerCase()]=j.cos[k]});COS=o;
+ if(j.box&&j.box.forEach){MBX=j.box.slice();if(cur==="box")pBox()}
+ if(j.own&&j.own.forEach){var ow={};j.own.forEach(function(id){if(PRICE[id]!==undefined)ow[id]=1});OWN=ow;js_("g_own",OWN);["fr","co","ic"].forEach(function(g){if(EQ[g]&&!OWN[EQ[g]])EQ[g]=""});js_("g_eq",EQ)}
+ if(cur==="ppl")render();else if(cur==="cmt"){var l=$("cl");if(l)l.innerHTML=cList()}}).catch(function(){})}
+function shopCard(g,it){var id=it[0],own=OWN[id],on=EQ[g]===id,e={fr:"",co:"",ic:""};e[g]=id;
+ return'<div class="shc'+(on?" on":"")+'"><div class="shpv">'+cosHtml("Tên bạn",e)+"</div><small>"+esc(it[1])+'</small><button type="button" class="cb shb2" data-a="'+(own?(on?"off":"use"):"buy")+'" data-g="'+g+'" data-id="'+id+'" data-n="'+esc(it[1])+'">'+(own?(on?"✓ Đang dùng · Bỏ":"Dùng"):"⚡ "+it[2])+"</button></div>"}
+function pShop(){
+ var h='<p class="mt">Dùng ⚡ để đổi khung tên, màu tên và biểu tượng. Chúng hiện cạnh tên bạn ở BXH, bình luận, dòng hoạt động và map bạn đăng. Mua một lần, dùng mãi, chỉ hiện khi tên bạn nhập khớp với ô bên dưới.</p>'
+  +rdHtml()+'<div class="cf"><div class="r2"><label>Tên hiển thị của bạn<input id="shn" maxlength="40" value="'+esc(BY)+'" placeholder="Tên đóng góp / bình luận của bạn"></label><div class="shp">Xem trước<div id="shv">'+nmH(BY||"Tên bạn")+'</div><small>⚡ của bạn: <b>'+EN.n+"</b></small></div></div></div>";
+ Object.keys(SHOP).forEach(function(g){h+='<h3 class="sh">'+SHOP[g].t+'</h3><div class="shg">'+SHOP[g].it.map(function(it){return shopCard(g,it)}).join("")+"</div>"});
+ P.innerHTML=h}
+P.addEventListener("input",function(e){if(e.target.id!=="shn")return;setBy(e.target.value.trim());var v=$("shv");if(v)v.innerHTML=nmH(BY||"Tên bạn")});
+P.addEventListener("click",function(e){var b=e.target.closest(".shb2");if(!b)return;var g=b.dataset.g,id=b.dataset.id,a=b.dataset.a;
+ if(a==="use"||a==="off"){EQ[g]=a==="use"?id:"";js_("g_eq",EQ);pubEq();pShop();return}
+ var n=($("shn")?$("shn").value:BY).trim();if(n.length<2){toast("Nhập tên hiển thị của bạn trước (ít nhất 2 ký tự)");return}setBy(n);
+ if(!ACC_API||!U){toast("Đang kết nối máy chủ năng lượng, thử lại sau giây lát");return}
+ var pr=PRICE[id];if(EN.n<pr){toast("Không đủ năng lượng (cần ⚡"+pr+", còn ⚡"+EN.n+")");return}
+ if(!confirm("Mua «"+b.dataset.n+"» với ⚡"+pr+"? (bạn còn ⚡"+EN.n+")"))return;b.disabled=true;
+ call("spend",{kind:"shop",item:id,cost:pr,by:BY}).then(function(j){if(!j||!j.ok){b.disabled=false;toast(spErr(j));return}
+  setE(j);OWN[id]=1;js_("g_own",OWN);EQ[g]=id;js_("g_eq",EQ);pubEq();toast("Đã mua ✓ và đang dùng");pShop()})});
+/* ---- map bí ẩn (lấy từ kho map sinh tồn) ---- */
+var MYST=2;
+var MBX=[];
+function mOpened(){var a=jl("g_myst",[]);if(!Array.isArray(a))a=[];var r=MBX.slice();a.forEach(function(t){if(r.indexOf(t)<0)r.push(t)});return r}
+function mapRow(m){var im=m.img||(MAP_DIR+encodeURIComponent(m.t)+MAP_EXT);
+ return'<div class="nw"><div class="cmrow"><div class="cmi"><b>'+esc(m.t)+'</b> <span class="by">👥 '+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+'</span><br><button type="button" class="cb dlb mget" data-t="'+esc(m.t)+'">⬇ Tải map</button> '+tipBtn(m.t)+"</div>"+cmThumb({t:m.t,img:im})+"</div></div>"}
+function pBox(rev){var op=mOpened(),pool=MAPS.filter(function(m){return op.indexOf(m.t)<0&&!mpaid(m)});
+ P.innerHTML='<div class="mbx"><div class="mbi" id="mbi">🎁</div><h3 class="sh" style="margin:6px 0">Hộp quà map bí ẩn</h3><p class="mt">Mở hộp để nhận ngẫu nhiên <b>1 map trong kho map sinh tồn</b>. Tên và ảnh được giấu cho tới khi bạn mở. Chỉ tốn <b>⚡'+MYST+"</b>, rẻ hơn tải map cộng đồng (⚡"+CF.cost+"). Mỗi hộp luôn ra map bạn chưa từng mở.</p>"
+  +'<p class="mt">Còn <b>'+pool.length+"</b>/"+MAPS.length+" map chưa mở · ⚡ của bạn: <b>"+EN.n+'</b></p><button class="btn" id="mbo" type="button"'+(pool.length?"":" disabled")+">"+(pool.length?"🎁 Mở hộp (⚡"+MYST+")":"Bạn đã mở hết kho map")+'</button><div id="mbr">'
+  +(rev?'<div class="mrev nw champ"><b>🎉 Bạn nhận được:</b>'+mapRow(rev)+"</div>":"")+"</div></div>"
+  +'<h3 class="sh">Hộp bạn đã mở ('+op.length+")</h3>"+(op.length?op.slice().reverse().map(function(t){var m=MAPS.filter(function(x){return x.t===t})[0];return m?mapRow(m):""}).join(""):'<p class="mt">Chưa mở hộp nào.</p>');
+ var bo=$("mbo");if(!pool.length)return;
+ bo.onclick=function(){if(!ACC_API||!U){toast("Đang kết nối máy chủ năng lượng, thử lại sau giây lát");return}
+  if(EN.n<MYST){toast("Không đủ năng lượng (cần ⚡"+MYST+", còn ⚡"+EN.n+")");return}
+  if(!confirm("Mở hộp bí ẩn tốn ⚡"+MYST+" (bạn còn ⚡"+EN.n+"). Tiếp tục?"))return;
+  var op1=mOpened(),pl0=MAPS.filter(function(m){return op1.indexOf(m.t)<0&&!mpaid(m)}),pick=pl0[Math.floor(Math.random()*pl0.length)];if(!pick){toast("Bạn đã mở hết kho map");return}
+  bo.disabled=true;var bx=$("mbi");bx.classList.add("shk");
+  call("spend",{kind:"mystery",cost:MYST,map:pick.t}).then(function(j){bx.classList.remove("shk");if(!j||!j.ok){bo.disabled=false;if(/đã mở map này/.test((j&&j.err)||""))loadCos();toast(spErr(j));return}
+   setE(j);var o2=jl("g_myst",[]);if(!Array.isArray(o2))o2=[];if(o2.indexOf(pick.t)<0)o2.push(pick.t);js_("g_myst",o2);if(MBX.indexOf(pick.t)<0)MBX.push(pick.t);pBox(pick)})}}
+/* ---- mẹo phá đảo: lưu chung trong bảng bình luận (tiền tố [MEO]/[LIKE]) nên không cần sửa máy chủ ---- */
+var TP="[MEO]",TL="[LIKE]",TIPT="";
+function myCid(){var c=jl("g_cid","");if(!c){c="u"+Math.random().toString(36).slice(2,10);js_("g_cid",c)}return c}
+function tipCount(t){var n=0;ST.cmt.forEach(function(x){if(x.map===t&&String(x.noidung||"").indexOf(TP)===0&&x.id)n++});return n}
+function tipsOf(t){var lk=Object.create(null);
+ ST.cmt.forEach(function(x){var q=String(x.noidung||"");if(q.indexOf(TL)===0){var id=q.slice(TL.length);(lk[id]=lk[id]||Object.create(null))[x.ten]=1}});
+ return ST.cmt.filter(function(x){return x.map===t&&String(x.noidung||"").indexOf(TP)===0&&x.id}).map(function(x){return{id:x.id,ten:x.ten,ts:x.ts,tx:String(x.noidung).slice(TP.length),lk:Object.keys(lk[x.id]||{}).length}}).sort(function(a,b){return b.lk-a.lk||b.ts-a.ts})}
+function tipBtn(t){var n=tipCount(t);return'<button type="button" class="mtip" data-t="'+esc(t)+'" title="Xem và chia sẻ mẹo phá đảo">💡 Mẹo<i>'+(n?" "+n:"")+"</i></button>"}
+window.tipBtn=tipBtn;
+function autoLink(t){return esc(t).replace(/https?:\/\/[^\s<]+/g,function(u){return'<a href="'+u+'" target="_blank" rel="noopener noreferrer">'+u+"</a>"})}
+function tipList(t){var L=tipsOf(t),mine=jl("g_tl",{}),adm=U&&U.admin;
+ return L.length?L.map(function(x,i){var pin=i===0&&x.lk>0;return'<div class="tp'+(pin?" pin":"")+'">'+(pin?'<span class="tpb">📌 Mẹo hay nhất</span>':"")+"<p>"+autoLink(x.tx)+'</p><div class="tpf"><small>'+nmH(x.ten||"Ẩn danh")+" · "+agoT(x.ts)+'</small><span><button type="button" class="cp tpl'+(mine[x.id]?" on":"")+'" data-id="'+esc(x.id)+'"'+(mine[x.id]?" disabled":"")+'>👍 Hữu ích <b>'+x.lk+"</b></button>"+(adm?' <button type="button" class="cp tpd" data-id="'+esc(x.id)+'">🗑</button>':"")+"</span></div></div>"}).join(""):'<p class="mt">Chưa có mẹo nào cho map này. Hãy là người đầu tiên chia sẻ!</p>'}
+function tipRefresh(){var l=$("tplist");if(l&&TIPT)l.innerHTML=tipList(TIPT);document.querySelectorAll(".mtip").forEach(function(b){var i=b.querySelector("i");if(i){var n=tipCount(b.dataset.t);i.textContent=n?" "+n:""}})}
+function tipSync(){if(!API.on)return;API.load().then(function(d){if(!d||!d.cmt)return;setData(d);PEND=PEND.filter(function(x){return Date.now()-x.ts<90000});PEND.forEach(function(x){if(!ST.cmt.some(function(y){return y.id===x.id}))ST.cmt.push(x)});tipRefresh()})}
+function openTips(t){TIPT=t;
+ modal('<h3>💡 Mẹo phá đảo</h3><p class="mt"><b>'+esc(t)+'</b></p><div id="tplist">'+tipList(t)+'</div><div class="cf"><label>Tên bạn<input id="tpn" maxlength="30" value="'+esc(BY)+'" placeholder="Có thể bỏ trống"></label><label>Mẹo của bạn (1-2 câu hoặc dán link video)<textarea id="tpt" rows="3" maxlength="300" placeholder="Ví dụ: Xây lính phòng thủ ở cửa hang trước phút thứ 5..."></textarea></label><div><button class="btn" id="tps" type="button">💡 Gửi mẹo</button></div><p class="mt" id="tpm"></p></div>');
+ var bx=$("amod");if(bx&&bx.firstChild)bx.firstChild.classList.add("wide");tipSync()}
+document.addEventListener("click",function(e){var b;
+ if(b=e.target.closest(".mtip")){openTips(b.dataset.t);return}
+ if(b=e.target.closest("#tps")){var tx=($("tpt").value||"").trim(),n=($("tpn").value||"").trim().slice(0,30);
+  if(tx.length<5){msg("tpm","Hãy viết ít nhất 5 ký tự.");return}if(!cool("tip",30000)){msg("tpm","Bạn gửi hơi nhanh, đợi chút nhé.");return}
+  if(n&&!BY)setBy(n);var r={id:nid(),ts:Date.now(),ten:n,map:TIPT,noidung:TP+tx.slice(0,300)};ST.cmt.push(r);PEND.push(r);API.add("BinhLuan",r);
+  $("tpt").value="";msg("tpm","Đã gửi mẹo ✓ Cảm ơn bạn!");tipRefresh();return}
+ if(b=e.target.closest(".tpl")){var id=b.dataset.id,mine=jl("g_tl",{});if(mine[id]||b.disabled)return;mine[id]=1;js_("g_tl",mine);
+  var r2={id:nid(),ts:Date.now(),ten:"ID:"+myCid(),map:TIPT,noidung:TL+id};ST.cmt.push(r2);PEND.push(r2);API.add("BinhLuan",r2);tipRefresh();return}
+ if(b=e.target.closest(".tpd")){if(!(U&&U.admin)){toast("Cần đăng nhập Admin để xóa");return}if(!confirm("Xóa mẹo này?"))return;var d=b.dataset.id;
+  API.del(d).then(function(j){if(j&&j.ok){ST.cmt=ST.cmt.filter(function(x){return x.id!==d});PEND=PEND.filter(function(x){return x.id!==d});tipRefresh();toast("Đã xóa mẹo ✓")}else toast((j&&j.err)||"Không xóa được mẹo")})}});
+/* ---- GIÁ MAP SINH TỒN ⚡ · ĐĂNG MAP MỚI (CHỈ ADMIN) ----
+   Giá mở khóa mặc định theo độ khó: Dễ 2 · Trung Bình 4 · Khó 6 · Cực Khó 8 · Siêu Cấp 10. Admin sửa theo độ khó hoặc riêng từng map.
+   Máy chủ (google-apps-script-tai-khoan.gs) lưu bảng giá + map Admin đăng, tự kiểm tra giá khi trừ ⚡ và chỉ nhận lệnh đăng/sửa/xóa khi đúng mã Admin. */
+var TIER0={"Dễ":2,"Trung Bình":4,"Khó":6,"Cực Khó":8,"Siêu Cấp":10},
+ MAPS0=MAPS.slice(),PCFG={tier:Object.create(null),map:Object.create(null)},MBK=Object.create(null),ASIG="",MOWN=jl("g_mown",{}),LADM=false,APT=0;
+if(!MOWN||typeof MOWN!=="object"||Array.isArray(MOWN))MOWN={};
+function isAdm(){return !!(U&&U.admin)}
+function mfind(t){return MAPS.filter(function(m){return m.t===t})[0]}
+function pnum(v,d){v=Math.round(+v);return isNaN(v)?d:Math.max(0,Math.min(99,v))}
+function mprice(m){var v=PCFG.map[mkey(m.t)];if(v==null)v=PCFG.tier[m.d];if(v==null)v=TIER0[m.d];return pnum(v,2)}
+function mpaid(m){var k=mkey(m.t);return !!(MOWN[k]||MBK[k])}
+function mowned(m){return isAdm()||mpaid(m)||mOpened().indexOf(m.t)>=0}
+window.mapTag=function(m){var o=!isAdm()&&mowned(m);return'<span class="mpr'+(o?" own":"")+'" title="'+(isAdm()?"Admin tải miễn phí":"Giá mở khóa map")+'">'+(o?"✓ Đã mở":"⚡"+mprice(m))+"</span>"};
+window.mapAct=function(m,i){var h;
+ if(mowned(m))h='<button type="button" class="btn dlb mget" data-t="'+esc(m.t)+'">⬇ Tải map</button><button type="button" class="cp mcl" data-t="'+esc(m.t)+'">Chép link</button>';
+ else h='<button type="button" class="btn mbuy" data-t="'+esc(m.t)+'">🔒 Mở khóa<i>⚡'+mprice(m)+"</i></button>";
+ if(isAdm())h+='<button type="button" class="mad mpe" data-t="'+esc(m.t)+'" title="Sửa giá ⚡ của map này">✎ Giá</button>'+(m.rid?'<button type="button" class="mad mpx" data-t="'+esc(m.t)+'" title="Xóa map này">🗑</button>':"");
+ return h};
+/* nhận bảng giá + map Admin đăng + map đã mua từ máy chủ (gọi trong loadCos) */
+function admApply(j){var tr=(j.mp&&j.mp.tier)||{},mp=(j.mp&&j.mp.map)||{},list=[],seen=Object.create(null);
+ MAPS0.forEach(function(m){seen[m.t.toLowerCase()]=1});
+ (j.ms||[]).forEach(function(o){if(!o||typeof o.t!=="string"||DIFF.indexOf(o.d)<0||SZ.indexOf(o.s)<0)return;var k=o.t.toLowerCase();if(seen[k])return;seen[k]=1;
+  list.push({t:o.t,p:+o.p,d:o.d,s:o.s,u:String(o.u||"").trim(),ts:o.ts||"",rid:o.id})});
+ MBK=Object.create(null);(j.mb||[]).forEach(function(k){MBK[k]=1});
+ var sig=JSON.stringify([tr,mp,list.map(function(m){return m.rid}),Object.keys(MBK).length]);if(sig===ASIG)return;ASIG=sig;
+ PCFG={tier:Object.create(null),map:Object.create(null)};
+ DIFF.forEach(function(d){if(tr[d]!=null&&!isNaN(+tr[d]))PCFG.tier[d]=pnum(tr[d],TIER0[d])});
+ Object.keys(mp).forEach(function(k){if(mp[k]!=null&&!isNaN(+mp[k]))PCFG.map[k]=pnum(mp[k],0)});
+ MAPS.length=0;MAPS0.concat(list).forEach(function(m){MAPS.push(m)});
+ CFG.games.forEach(function(g){g.items.forEach(function(it){if(it.maps===MAPS)it.note=MAPS.length+" map · có ảnh, thông tin và link tải"})});
+ redraw();admPanel()}
+/* mua map bằng ⚡ (máy chủ tự tính lại giá và trừ năng lượng) */
+function buyMap(m,b){var pr=mprice(m);
+ if(!ACC_API||!U){toast("Đang kết nối máy chủ năng lượng, thử lại sau giây lát");return}
+ if(EN.n<pr){toast("Không đủ năng lượng (cần ⚡"+pr+", còn ⚡"+EN.n+"). Online thêm hoặc nhập mã quà tặng.");return}
+ if(!confirm("Mở khóa «"+m.t+"» với ⚡"+pr+"? (bạn còn ⚡"+EN.n+")"))return;
+ b.disabled=true;
+ call("spend",{kind:"mapbuy",map:m.t,d:m.d,price:pr}).then(function(j){
+  if(!j||!j.ok){b.disabled=false;toast(spErr(j));if(j&&/vừa đổi|đã mở/.test(j.err||""))loadCos();return}
+  setE(j);MOWN[mkey(m.t)]=1;js_("g_mown",MOWN);toast("Đã mở khóa «"+m.t+"» ✓");redraw()})}
+/* lấy link tải từ máy chủ (chỉ trả về khi đã mở khóa hoặc là Admin) */
+var LK=Object.create(null);
+function getLink(m){if(LK[m.t])return Promise.resolve(LK[m.t]);
+ return call("mdl",{map:m.t}).then(function(j){if(!j||!j.ok||!j.u){toast(spErr(j));return""}LK[m.t]=j.u;return j.u})}
+/* admin: lưu bảng giá lên máy chủ */
+function savePrice(okMsg){return call("mset",{tier:PCFG.tier,map:PCFG.map}).then(function(j){
+ if(!j||!j.ok){toast(spErr(j));loadCos();return}setE(j);toast(okMsg||"Đã lưu giá ✓");loadCos()})}
+function postMap(){var t=($("apn").value||"").trim(),u=($("apu").value||"").trim();
+ if(t.length<2){msg("apm","Nhập tên map (ít nhất 2 ký tự).");return}
+ if(!http(u)){msg("apm","Link tải phải bắt đầu bằng http:// hoặc https://");return}
+ if(MAPS.some(function(m){return m.t.toLowerCase()===t.toLowerCase()})){msg("apm","Đã có map trùng tên «"+t+"». Hãy đặt tên khác.");return}
+ msg("apm","Đang đăng…");
+ call("madd",{t:t,p:+$("app").value,d:$("apd").value,s:$("apsz").value,u:u}).then(function(j){
+  if(!j||!j.ok){msg("apm",spErr(j));return}setE(j);toast("Đã đăng map «"+t+"» ✓");loadCos()})}
+function delMap(m){if(!m||!m.rid||!confirm("Xóa map «"+m.t+"» khỏi Map sinh tồn?"))return;
+ call("mdel",{id:m.rid}).then(function(j){if(!j||!j.ok){toast(spErr(j));return}setE(j);toast("Đã xóa map ✓");loadCos()})}
+function editPrice(m){var k=mkey(m.t),has=PCFG.map[k]!=null,dv=PCFG.tier[m.d]!=null?PCFG.tier[m.d]:TIER0[m.d],
+ v=prompt("Giá ⚡ của map «"+m.t+"» (số nguyên 0-99).\nĐể trống = dùng giá theo độ khó «"+m.d+"» (⚡"+dv+").",has?mprice(m):"");
+ if(v===null)return;v=v.trim();
+ if(v===""){delete PCFG.map[k]}else{if(isNaN(+v)||+v<0||+v>99){toast("Giá phải là số nguyên từ 0 đến 99");return}PCFG.map[k]=Math.round(+v)}
+ savePrice("Đã cập nhật giá ✓")}
+/* giao diện mục «Đăng map mới (Admin)» */
+function admRender(b){var done=MAPS.filter(function(m){return m.rid});
+ b.innerHTML='<div class="cf admf"><p class="mt">Đăng map vào mục «Map sinh tồn». <b>Ảnh:</b> bỏ file vào thư mục <b>anh-map</b>, tên file = đúng tên map + <b>.jpg</b> (ví dụ map «Route 99» → <b>anh-map/Route 99.jpg</b>). Giá mở khóa tự tính theo độ khó, sửa ở bên dưới.</p>'
+  +'<div class="r2"><label>Tên map<input id="apn" maxlength="80" autocomplete="off"></label><label>Link tải (MediaFire, Drive, Mega…)<input id="apu" type="url" placeholder="https://"></label></div>'
+  +'<div class="r2"><label>Số người<select id="app">'+sel([2,3,4,5,6,7,8])+'</select></label><label>Độ khó<select id="apd">'+sel(DIFF)+'</select></label><label>Cỡ map<select id="apsz">'+sel(SZ)+'</select></label></div>'
+  +'<div class="imgprev" id="api"></div><div class="cr"><button class="btn" id="apg" type="button">📮 Đăng map</button></div><p class="mt" id="apm"></p>'
+  +'<h3 class="sh">⚙ Giá ⚡ theo độ khó</h3><div class="tpr">'+DIFF.map(function(d){return'<label>'+esc(d)+'<input class="tpi" data-d="'+esc(d)+'" type="number" min="0" max="99" step="1" value="'+pnum(PCFG.tier[d]!=null?PCFG.tier[d]:TIER0[d],2)+'"></label>'}).join("")+"</div>"
+  +'<div class="adr"><button class="btn" id="apsv" type="button">💾 Lưu giá</button><button class="cp" id="apr" type="button">↺ Về mặc định 2·4·6·8·10</button><button class="cp" id="apc" type="button">Xóa giá riêng từng map ('+Object.keys(PCFG.map).length+")</button></div><p class=\"mt\" id=\"apq\">Muốn đổi giá riêng một map: bấm nút «✎ Giá» trên thẻ map (chỉ Admin thấy).</p>"
+  +'<h3 class="sh">📮 Map đã đăng ('+done.length+")</h3>"
+  +(done.length?done.slice().reverse().map(function(m){return'<div class="nw"><b>'+esc(m.t)+'</b> <span class="by">👥 '+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+" · ⚡"+mprice(m)+'</span><div class="adr" style="margin-top:6px"><button type="button" class="mad mpx" data-t="'+esc(m.t)+'">🗑 Xóa</button></div></div>'}).join(""):'<p class="mt">Chưa đăng map nào.</p>')+"</div>";
+ $("app").value="8"}
+function admPanel(){var b=document.querySelector(".admpost");if(b&&b.dataset.ok&&isAdm())admRender(b)}
+window.initAdminPost=function(b){if(!b)return;b.dataset.ok=1;if(isAdm())admRender(b);else b.innerHTML='<p class="mt">Cần đăng nhập Admin để đăng map.</p>'};
+function apPrev(){var i=$("apn"),pv=$("api");if(!i||!pv)return;var v=i.value.trim();
+ if(!v){pv.style.display="none";pv.innerHTML="";return}
+ pv.style.display="flex";pv.innerHTML="<span>⏳ Đang tìm ảnh…</span>";var im=new Image(),pa=MAP_DIR+v+MAP_EXT;
+ im.onload=function(){if(i.value.trim()!==v)return;pv.innerHTML="";pv.appendChild(im);pv.insertAdjacentHTML("beforeend","<span>✓ Thấy ảnh <b>"+esc(pa)+"</b></span>")};
+ im.onerror=function(){if(i.value.trim()!==v)return;pv.innerHTML="<span>⚠ Chưa thấy ảnh <b>"+esc(pa)+"</b>. Hãy bỏ ảnh vào thư mục anh-map (đúng tên, đúng chữ hoa/thường). Vẫn đăng được, web sẽ hiện ảnh màu thay thế.</span>"};
+ im.src=MAP_DIR+encodeURIComponent(v)+MAP_EXT}
+document.addEventListener("input",function(e){if(e.target.id!=="apn")return;clearTimeout(APT);APT=setTimeout(apPrev,300)});
+document.addEventListener("click",function(e){var b=e.target.closest("#apg,#apsv,#apr,#apc,.mpe,.mpx,.mbuy,.mget,.mcl");if(!b)return;
+ var m=b.dataset.t?mfind(b.dataset.t):null;
+ if(b.classList.contains("mbuy")){if(m)buyMap(m,b);return}
+ if(b.classList.contains("mget")){if(!m)return;if(!ACC_API||!U){toast("Đang kết nối máy chủ năng lượng, thử lại sau giây lát");return}
+  var w=window.open("","_blank");getLink(m).then(function(u){if(!u){if(w)w.close();return}
+   if(w&&!w.closed)w.location=u;else modal('<h3>Link tải map</h3><a class="btn" href="'+esc(u)+'" target="_blank" rel="noopener">⬇ Mở link tải</a>')});return}
+ if(b.classList.contains("mcl")){if(!m)return;getLink(m).then(function(u){if(!u)return;copyTxt(u).then(function(ok){if(ok)toast("Đã chép link ✓");else window.prompt("Sao chép link:",u)})});return}
+ if(!isAdm()){toast("Cần đăng nhập Admin");return}
+ if(b.id==="apg"){postMap();return}
+ if(b.id==="apsv"){var nt=Object.create(null),bad=false;
+  document.querySelectorAll(".tpi").forEach(function(i){var v=i.value.trim();if(v===""||isNaN(+v)||+v<0||+v>99){bad=true;return}nt[i.dataset.d]=Math.round(+v)});
+  if(bad){msg("apq","Giá phải là số nguyên từ 0 đến 99.");return}
+  PCFG.tier=nt;savePrice("Đã lưu giá ✓ Mọi người chơi sẽ thấy giá mới");return}
+ if(b.id==="apr"){PCFG.tier=Object.create(null);savePrice("Đã về giá mặc định 2·4·6·8·10 ✓");return}
+ if(b.id==="apc"){PCFG.map=Object.create(null);savePrice("Đã xóa giá riêng, mọi map dùng giá theo độ khó ✓");return}
+ if(!m)return;
+ if(b.classList.contains("mpe")){editPrice(m);return}
+ if(b.classList.contains("mpx")){delMap(m);return}
+});
+/* đăng nhập / thoát Admin: hiện-ẩn mục Admin và vẽ lại nút trên thẻ map */
+document.addEventListener("accchange",function(){var a=isAdm();if(a===LADM)return;LADM=a;
+ document.querySelectorAll(".admonly").forEach(function(el){el.hidden=!a});
+ redraw();var ap=document.querySelector(".admpost");if(ap&&ap.dataset.ok){if(a)admRender(ap);else ap.innerHTML='<p class="mt">Cần đăng nhập Admin để đăng map.</p>'}});
+setTimeout(loadCos,1500);setInterval(function(){if(!document.hidden)loadCos()},180000);
+/* ---- DÒNG HOẠT ĐỘNG TRỰC TIẾP: chỉ dùng dữ liệu thật từ máy chủ (đăng map mới, lượt tải tăng) ---- */
+var ACT=[],SNAP=null,TKV=$("tkv");
+function agoT(t){var m=Math.floor((Date.now()-t)/60000);return m<1?"vừa xong":m<60?m+" phút trước":m<1440?Math.floor(m/60)+" giờ trước":Math.floor(m/1440)+" ngày trước"}
+function actPush(k,tx,ts){ACT.unshift({k:k,tx:tx,ts:ts||Date.now()});if(ACT.length>20)ACT.length=20}
+function actDraw(flash){if(!TKV)return;
+ var it=ACT.map(function(a){return'<span class="tki" data-k="'+a.k+'">'+a.tx+(a.ts?"<small>"+agoT(a.ts)+"</small>":"")+"</span>"});
+ var L=ppData();if(L.length){L.sort(function(x,y){return y.dl-x.dl||y.maps.length-x.maps.length});it.push('<span class="tki" data-k="top">👑 '+nmH(L[0].n)+" đang dẫn đầu BXH người đóng góp ("+L[0].maps.length+" map)</span>")}
+ if(!it.length)it.push('<span class="tki" data-k="sub">🎮 Chưa có hoạt động nào, hãy là người đầu tiên đăng map!</span>');
+ var sp='<span class="tks">✦</span>',h=it.join(sp)+sp;
+ TKV.innerHTML='<div class="tkt" style="animation-duration:'+Math.max(18,Math.round(h.replace(/<[^>]*>/g,"").length*.22))+'s">'+h+h+"</div>";
+ if(flash){var b=$("tkbar");b.classList.remove("fl");void b.offsetWidth;b.classList.add("fl")}}
+function actDiff(list){var now=Date.now(),fresh=false;
+ if(!SNAP){SNAP={};var wk=now-7*864e5;
+  var posts=list.filter(function(m){return(Date.parse(m.ts)||0)>wk}).sort(function(x,y){return Date.parse(y.ts)-Date.parse(x.ts)}).slice(0,5).map(function(m){return{k:"post",tx:"🌟 "+nmH(m.by)+" vừa đăng map «"+esc(m.t)+"»",ts:Date.parse(m.ts)}});
+  var st=list.filter(function(m){return+m.dl1>0}).sort(function(x,y){return y.dl1-x.dl1}).slice(0,3).map(function(m){return{k:"dl",tx:"📈 «"+esc(m.t)+"» có +"+(+m.dl1)+" lượt tải hôm nay",ts:0}});
+  ACT=posts.concat(st);list.forEach(function(m){SNAP[m.id||m.cid]={dl:+m.dl||0}});actDraw(false);return}
+ list.forEach(function(m){var id=m.id||m.cid,o=SNAP[id],d=+m.dl||0;
+  if(!o){SNAP[id]={dl:d};actPush("post","🌟 "+nmH(m.by)+" vừa đăng map «"+esc(m.t)+"»",now);fresh=true}
+  else if(d>o.dl){var n=d-o.dl;o.dl=d;actPush("dl","⬇ "+(n>1?n+" người chơi":"Một người chơi")+" vừa tải «"+esc(m.t)+"»",now);fresh=true}
+  else if(d<o.dl)o.dl=d});
+ if(fresh)actDraw(true)}
+if($("tkbar"))$("tkbar").addEventListener("click",function(e){var b=e.target.closest(".tki");if(!b)return;render(b.dataset.k==="top"?"ppl":"sub");var t=$("ctabs");if(t)t.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"})});
+setInterval(function(){if(!ACC_API||document.hidden)return;call("maps").then(function(j){if(!j||!j.ok)return;actDiff(j.maps);if(cur==="ppl")loadC()}).catch(function(){})},45000);
+setInterval(function(){if(!document.hidden)actDraw(false)},300000);
+actDraw(false);
+render("news");load();init2();
+/* ---- mở thẳng map từ link chia sẻ (?map=Tên map) ---- */
+var qm=new URLSearchParams(location.search).get("map");
+if(qm)setTimeout(function(){var g=$("gs");g.value=qm;g.dispatchEvent(new Event("input"));var r=document.querySelector(".sr");if(r)r.click()},3200);
+})();
+</script>
+<script>
+/* ===== LIVE TIKTOK: chia sẻ và xem live cùng nhau ===== */
+(function(){
+var G=$("lvgrid"),CNT=$("lvcount"),FORM=$("lvform"),TOG=$("lvtog"),MSG=$("lvmsg"),
+    TTL=(typeof LIVE_TTL_H==="number"&&LIVE_TTL_H>0)?LIVE_TTL_H:6,ON=!!(typeof LIVE_API==="string"&&LIVE_API),
+    NEW=[],cache=[],last=0,busy=false;
+$("lvttl").textContent=TTL;
+function toast2(t){var e=document.createElement("div");e.className="toast";e.textContent=t;document.body.appendChild(e);setTimeout(function(){e.remove()},2600)}
+function say(t){MSG.textContent=t||""}
+function me(){try{var t=localStorage.getItem("g_lvtok");if(!t){t="t"+Date.now().toString(36)+Math.random().toString(36).slice(2,10);localStorage.setItem("g_lvtok",t)}return t}catch(e){return"anon"}}
+function admKey(){try{return localStorage.getItem("g_ak")||""}catch(e){return""}}
+function parseUser(s){s=String(s||"").trim();var m=s.match(/tiktok\.com\/@([A-Za-z0-9._]{2,24})/i);if(m)s=m[1];else s=s.replace(/^@/,"");
+  return/^[A-Za-z0-9._]{2,24}$/.test(s)?s:""}
+function liveUrl(u){return"https://www.tiktok.com/@"+encodeURIComponent(u)+"/live"}
+function ago(ts){var m=Math.max(0,Math.round((Date.now()-ts)/60000));return m<1?"vừa xong":m<60?m+" phút trước":Math.floor(m/60)+" giờ "+(m%60)+" phút trước"}
+function fixed(){return LIVES.map(function(x,i){return{id:"fx"+i,u:parseUser(x.u),t:x.t||"",g:x.g||"",ts:0,fixed:1}}).filter(function(x){return x.u})}
+function fresh(a){var lim=Date.now()-TTL*3600000;return a.filter(function(x){return x.fixed||(x.ts>lim&&!x.end)})}
+function all(){var seen=Object.create(null),out=[];
+  fixed().concat(fresh(cache),fresh(NEW)).forEach(function(x){var k=x.u.toLowerCase();if(seen[k]){if(!x.fixed&&seen[k].fixed)return;if(x.ts<=seen[k].ts)return}seen[k]=x});
+  Object.keys(seen).forEach(function(k){out.push(seen[k])});
+  return out.sort(function(a,b){return (b.ts||9e15)-(a.ts||9e15)})}
+function draw(){var a=all(),adm=!!(window.isLiveAdmin&&window.isLiveAdmin());
+  CNT.innerHTML=a.length?'<b>🔴 '+a.length+'</b> live đang được chia sẻ':'Chưa có live nào';
+  G.innerHTML=a.length?a.map(function(x){
+    return'<article class="lvcard"><span class="lvon">LIVE</span><h3>'+esc(x.t||"Đang live trên TikTok")+'</h3><div><span class="lvu">@'+esc(x.u)+'</span></div>'
+    +'<div class="lvmeta">'+(x.g?"🎮 "+esc(x.g)+" · ":"")+(x.fixed?"Do Nam Hoàng chia sẻ":(x.by?"Đăng bởi "+esc(x.by)+" · ":"")+ago(x.ts))+'</div>'
+    +'<div class="lvact"><a class="btn" href="'+esc(liveUrl(x.u))+'" target="_blank" rel="noopener noreferrer">▶ Xem live</a><button class="cp" type="button" data-a="cp" data-u="'+esc(x.u)+'">🔗 Chép link</button>'
+    +(adm&&!x.fixed&&ON?'<button class="cp end" type="button" data-a="end" data-id="'+esc(x.id)+'">⏹ Kết thúc live (Admin)</button>':"")+'</div></article>'}).join("")
+   :'<div class="lvempty">Chưa có ai đang live. Bật live trên TikTok rồi bấm «Chia sẻ live của tôi» để là người đầu tiên!</div>'}
+function post(o){o.tok=me();return fetch(LIVE_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(o)}).then(function(r){return r.json()})}
+function load(force){if(!ON){draw();return Promise.resolve()}
+  if(busy||(!force&&Date.now()-last<8000))return Promise.resolve();busy=true;
+  return fetch(LIVE_API+"?live=1&tok="+encodeURIComponent(me())+"&_="+Date.now()).then(function(r){return r.json()}).then(function(j){
+    if(j&&j.lives){cache=j.lives.map(function(x){x.u=parseUser(x.u);x.ts=+x.ts||0;return x}).filter(function(x){return x.u});
+      NEW=NEW.filter(function(n){return !cache.some(function(c){return c.id===n.id})&&Date.now()-n.ts<90000})}
+  }).catch(function(){}).then(function(){busy=false;last=Date.now();draw()})}
+TOG.onclick=function(){var o=FORM.hidden;FORM.hidden=!o;TOG.setAttribute("aria-expanded",o);TOG.textContent=o?"✕ Đóng":"📡 Chia sẻ live của tôi";if(o)$("lvu").focus()};
+$("lvrf").onclick=function(){load(true);toast2("Đã làm mới danh sách")};
+$("lvg").innerHTML=CFG.games.map(function(g){return"<option>"+esc(g.name)+"</option>"}).join("")+"<option>Game khác</option>";
+try{var sv=localStorage.getItem("g_lvu");if(sv)$("lvu").value=sv}catch(e){}
+$("lvsend").onclick=function(){var u=parseUser($("lvu").value),t=$("lvt").value.trim().slice(0,60),g=$("lvg").value;
+  if(!u){say("Chưa đúng. Nhập @username TikTok hoặc dán link dạng tiktok.com/@tenban (link rút gọn vm.tiktok.com thì hãy nhập username).");return}
+  if(t.length<3){say("Hãy nhập tiêu đề live (ít nhất 3 ký tự).");return}
+  try{var L=+localStorage.getItem("g_lvcool")||0;if(Date.now()-L<30000){say("Bạn đăng hơi nhanh, đợi chút nhé.");return}localStorage.setItem("g_lvcool",Date.now());localStorage.setItem("g_lvu",u)}catch(e){}
+  var row={id:"l"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),u:u,t:t,g:g,by:u,ts:Date.now(),tok:me()};
+  if(!ON){say("");toast2("Chưa bật LIVE_API nên live chỉ hiện trên máy bạn.");NEW.push(row);draw();return}
+  say("Đang đăng…");post({op:"add",row:row}).then(function(j){
+    if(!j||!j.ok){say((j&&j.err)||"Không đăng được, thử lại sau.");return}
+    say("");row.id=j.id||row.id;NEW.push(row);$("lvt").value="";FORM.hidden=true;TOG.setAttribute("aria-expanded","false");TOG.textContent="📡 Chia sẻ live của tôi";
+    toast2("Đã đăng live ✓");draw();load(true)}).catch(function(){say("Không kết nối được máy chủ LIVE_API.")})};
+G.addEventListener("click",function(e){var b=e.target.closest("button[data-a]");if(!b)return;var a=b.dataset.a;
+  if(a==="cp"){var url=liveUrl(b.dataset.u);try{navigator.clipboard.writeText(url).then(function(){toast2("Đã chép link live ✓")},function(){window.prompt("Sao chép link:",url)})}catch(x){window.prompt("Sao chép link:",url)}return}
+  var id=b.dataset.id;
+  if(a==="end"){if(!(window.isLiveAdmin&&window.isLiveAdmin())){toast2("Chỉ Admin mới được kết thúc live");return}
+    if(!confirm("Kết thúc và gỡ live này khỏi danh sách?"))return;
+    post({op:"end",id:id,ak:admKey()}).then(function(j){toast2(j&&j.ok?"Đã kết thúc live ✓":((j&&j.err)||"Không kết thúc được"));load(true)}).catch(function(){toast2("Không kết nối được máy chủ")})}});
+document.addEventListener("accchange",draw);
+var sec=$("live"),vis=false;
+if("IntersectionObserver" in window){new IntersectionObserver(function(es){vis=es[0].isIntersecting;if(vis)load(false)},{threshold:.05}).observe(sec)}else vis=true;
+setInterval(function(){if(vis&&!document.hidden)load(true);else draw()},30000);
+draw();load(true);
+})();
+</script>
+</body>
+</html>
