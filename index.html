@@ -642,6 +642,48 @@ body.gmscr .bxh{display:flex}
 @media(max-width:560px){.tdg{grid-template-columns:1fr}.tdc.ci,.tdc.wide{grid-column:auto}.cd i{display:none}}
 @media(max-width:760px){.bxh{right:14px}.player.mini{width:168px;height:calc(168px * 9 / 16 + 30px)}.player.mini iframe{height:calc(100% - 30px)}.player.mini .mbar{height:30px}}
 </style>
+<style>
+/* ===== XEM VIDEO CHƠI ===== */
+.vbtn{margin-left:auto;font:700 .85rem var(--body);padding:.34rem .95rem;border-radius:99px;border:1px solid var(--c);background:linear-gradient(135deg,rgba(41,240,255,.12),rgba(139,92,255,.22));color:var(--c);cursor:pointer;white-space:nowrap;transition:box-shadow .25s,transform .2s}
+.vbtn:hover{box-shadow:0 6px 18px -8px var(--c);transform:translateY(-1px)}
+.mapg.vmode>.mapbar,.mapg.vmode>.mgrid{display:none}
+.vpanel{padding:14px;margin:6px 0 14px;border:1px solid var(--line);border-radius:14px;background:rgba(139,92,255,.07)}
+.vhead{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin-bottom:12px}
+.vhead .mtot{margin-right:auto}
+.vadd{display:grid;grid-template-columns:1fr 170px auto;gap:8px;margin-bottom:6px}
+.vadd input,.vq{min-width:0}
+.vmsg{min-height:1.3em;margin:2px 0 10px;font-size:.84rem;color:var(--mute)}.vmsg.er{color:#ff5b6e}.vmsg.ok{color:var(--c)}
+.vwarn{margin:0 0 10px;padding:6px 10px;border:1px dashed #ffb23e;border-radius:10px;font-size:.82rem;color:#ffb23e}
+.vtool{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:12px}
+.vtool .vq{flex:1 1 180px}
+.vf{font:700 .85rem var(--body);padding:.28rem .75rem;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;transition:all .2s}.vf:hover{border-color:var(--c)}
+.vf.on{background:linear-gradient(135deg,var(--v),var(--p));border-color:transparent;color:#fff}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:14px}
+.vcard{border:1px solid var(--line);border-radius:14px;background:var(--panel);overflow:hidden;display:flex;flex-direction:column;animation:cin .5s cubic-bezier(.2,.7,.2,1) backwards;transition:transform .3s,border-color .3s,box-shadow .3s}
+.vcard:hover{transform:translateY(-4px);border-color:var(--c);box-shadow:0 14px 30px -16px var(--c)}
+.vth{position:relative;display:block;width:100%;aspect-ratio:16/9;padding:0;border:0;cursor:pointer;background:linear-gradient(135deg,#241a52,#4a1a52);overflow:hidden}
+.vth img{width:100%;height:100%;object-fit:cover;display:block}
+.vth.noimg img{display:none}.vth.noimg::before{content:"🎬";position:absolute;inset:0;display:grid;place-items:center;font-size:2.4rem;opacity:.6}
+.vplay{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;display:grid;place-items:center;background:rgba(10,8,22,.72);color:#fff;font-size:1.1rem;padding-left:3px;border:1px solid rgba(255,255,255,.5);transition:transform .25s,background .25s}
+.vth:hover .vplay{transform:scale(1.12);background:var(--p)}
+.vsrc{position:absolute;left:8px;top:8px;font:800 .68rem var(--head);letter-spacing:.06em;padding:.12rem .5rem;border-radius:99px;color:#fff;background:#e62117}
+.vsrc.tt{background:#111;border:1px solid #29f0ff}
+.vb{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;flex:1}
+.vb b{font:700 .95rem/1.3 var(--body);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.vb small{color:var(--mute);font-size:.78rem}
+.va{display:flex;gap:6px;margin-top:auto;padding-top:8px;flex-wrap:wrap}
+.va .btn{flex:1;justify-content:center;font-size:.85rem;padding:.4rem .6rem}
+.va .cp{text-decoration:none;display:inline-flex;align-items:center}
+.va .vdel:hover{border-color:#ff5b6e;color:#ff5b6e}
+.vempty{grid-column:1/-1;text-align:center;color:var(--mute);padding:26px 8px}
+.vmod{position:fixed;inset:0;z-index:9996;background:rgba(5,3,14,.82);display:grid;place-items:center;padding:16px;animation:sin .2s ease-out}
+.vbox{position:relative;width:min(900px,100%);aspect-ratio:16/9;background:#000;border-radius:14px;box-shadow:0 20px 60px -10px #000}
+.vbox.tt{width:min(360px,100%);aspect-ratio:9/16;max-height:88vh}
+.vbox iframe{width:100%;height:100%;border:0;border-radius:14px}
+.vx{position:absolute;right:-6px;top:-38px;border:0;background:rgba(255,255,255,.14);color:#fff;font-size:1.4rem;line-height:1;width:34px;height:34px;border-radius:50%;cursor:pointer}.vx:hover{background:var(--p)}
+@media(max-width:640px){.vadd{grid-template-columns:1fr}.vx{right:0;top:-42px}}
+:root[data-theme=light] .vadd .btn{color:#fff}
+</style>
 </head>
 <body>
 <div class="curtain in boot" id="curtain" aria-hidden="true"><i style="--k:0"></i><i style="--k:1"></i><i style="--k:2"></i><i style="--k:3"></i><i style="--k:4"></i><div class="cl"><b id="cln">NAM HOÀNG</b><span class="bar"><em></em></span></div></div>
@@ -860,7 +902,7 @@ var LIVES=[
 ];
 /* ---- NĂNG LƯỢNG THEO IP (xem google-apps-script-tai-khoan.gs) ----
    ACC_API = link Web App của script năng lượng (khác API_URL). Trống = tắt. Không cần đăng nhập. */
-var ACC_API="https://script.google.com/macros/s/AKfycbwwHnJsYWDe_zQQSwebooJHSgY5wPezPCNthTE9oSft-v5yLd5pQTjbK8nvh2DGKFx7ow/exec";
+var ACC_API="https://script.google.com/macros/s/AKfycbwVATC4OjhK5badLERDjfCaY5Lw6kLT6sqyK-nc9b1HzkVSix92ONg1W7C0TJ1la5CduA/exec";
 /* ---- MAP CỘNG ĐỒNG: khách gửi qua Messenger, bạn kiểm duyệt xong thì thêm 1 dòng vào đây (giống MAPS), by = tên người tạo.
    Ảnh: bỏ vào thư mục mapkhach/ trên GitHub, tên file = đúng tên map + .jpg */
 var CMAPS=[
@@ -1249,7 +1291,7 @@ window.initGallery=function(box,maps){
   '<div class="fl"><small>Số người</small>'+chips("pl",["2-3","4-5","6","8"])+'</div>'+
   '<div class="fl"><small>Độ khó</small>'+chips("df",["Dễ","Trung Bình","Khó","Cực Khó","Siêu Cấp"])+'</div>'+
   '<div class="fl"><small>Cỡ map</small>'+chips("sz",["Nhỏ","Vừa","Rộng"])+'</div>'+
-  '<div class="fl"><small>Sắp xếp</small><div class="fg" data-k="so"><button type="button" class="fc on" data-v="def">Mặc định</button><button type="button" class="fc" data-v="new">🆕 Mới nhất</button><button type="button" class="fc" data-v="dl">🔥 Tải nhiều nhất</button></div></div></div><div class="mgrid"></div>';
+  '<div class="fl"><small>Sắp xếp</small><div class="fg" data-k="so"><button type="button" class="fc on" data-v="def">Mặc định</button><button type="button" class="fc" data-v="new">🆕 Mới nhất</button><button type="button" class="fc" data-v="dl">🔥 Tải nhiều nhất</button></div><button type="button" class="vbtn" data-vopen>🎬 Xem video chơi</button></div></div><div class="mgrid"></div>';
  var grid=box.querySelector(".mgrid"),cnt=box.querySelector(".mc"),first=true;
  /* Mới nhất: theo ts:"2026-11-05" nếu có, không thì map nằm CUỐI danh sách MAPS là mới nhất. Tải nhiều nhất: theo số lần bấm Tải map */
  function ord(){var a=maps.map(function(_,i){return i});
@@ -1907,6 +1949,98 @@ var sec=$("live"),vis=false;
 if("IntersectionObserver" in window){new IntersectionObserver(function(es){vis=es[0].isIntersecting;if(vis)load(false)},{threshold:.05}).observe(sec)}else vis=true;
 setInterval(function(){if(vis&&!document.hidden)load(true);else draw()},30000);
 draw();load(true);
+})();
+</script>
+<script>
+/* ===== XEM VIDEO CHƠI: người chơi dán link YouTube/TikTok, tự hiện ảnh thu nhỏ, chỉ Admin xóa =====
+   Lưu chung cho mọi người qua ACC_API (op: vlist · vadd · vdel, xem file google-apps-script-video.gs).
+   Máy chủ chưa hỗ trợ thì tạm lưu trên máy này và có dòng cảnh báo. */
+(function(){
+var G=function(){return window.__gm||{}},LK="g_vids_local",V=[],mode="srv",known=null,mineT=0,box=null,P=null,st={q:"",src:"all"};
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function isAdm(){return !!(window.isLiveAdmin&&window.isLiveAdmin())}
+function nm(n){try{var g=G();return g.nmH?g.nmH(n||"Ẩn danh"):esc(n||"Ẩn danh")}catch(e){return esc(n||"Ẩn danh")}}
+function ago(t){if(!t)return"";var m=Math.floor((Date.now()-t)/60000);return m<1?"vừa xong":m<60?m+" phút trước":m<1440?Math.floor(m/60)+" giờ trước":Math.floor(m/1440)+" ngày trước"}
+function parse(u){u=String(u||"").trim();if(!u||u.length>300)return null;
+ if(!/^https?:\/\//i.test(u))u="https://"+u;var a;try{a=new URL(u)}catch(e){return null}
+ if(a.protocol!=="https:"&&a.protocol!=="http:")return null;
+ var h=a.hostname.toLowerCase().replace(/^(www|m)\./,""),id="",m;
+ if(h==="youtu.be")id=a.pathname.slice(1).split("/")[0];
+ else if(h==="youtube.com"||h==="music.youtube.com"){if(a.pathname==="/watch")id=a.searchParams.get("v")||"";else if(m=a.pathname.match(/^\/(shorts|embed|live|v)\/([\w-]{11})/))id=m[2]}
+ if(id&&/^[\w-]{11}$/.test(id))return{src:"yt",vid:id,url:"https://www.youtube.com/watch?v="+id};
+ if(h==="tiktok.com"||/\.tiktok\.com$/.test(h)){
+  if(m=a.pathname.match(/\/video\/(\d{8,25})/))return{src:"tt",vid:m[1],url:"https://www.tiktok.com"+a.pathname.replace(/\/+$/,"")};
+  if(/^(vm|vt)\./.test(h)||/^\/t\/[\w-]+/.test(a.pathname))return{src:"tt",vid:"",url:"https://"+h+a.pathname.replace(/\/+$/,"")}}
+ return null}
+function clean(arr){var o=[];(arr||[]).forEach(function(x){if(!x||typeof x!=="object")return;var p=parse(x.url);if(!p)return;
+ o.push({id:String(x.id||p.url),src:p.src,vid:p.vid,url:p.url,t:String(x.t||"").slice(0,140),th:/^https:\/\//.test(x.th||"")?String(x.th).slice(0,600):"",by:String(x.by||"Ẩn danh").slice(0,30),ts:+x.ts||Date.parse(x.ts)||0})});
+ o.sort(function(a,b){return b.ts-a.ts});return o}
+function thumb(v){return v.src==="yt"?"https://i.ytimg.com/vi/"+v.vid+"/mqdefault.jpg":v.th}
+function locGet(){try{return clean(JSON.parse(localStorage.getItem(LK)||"[]"))}catch(e){return[]}}
+function locSet(){try{localStorage.setItem(LK,JSON.stringify(V.slice(0,200)))}catch(e){}}
+function meta(p){var u=p.src==="yt"?"https://www.youtube.com/oembed?format=json&url="+encodeURIComponent(p.url):"https://www.tiktok.com/oembed?url="+encodeURIComponent(p.url);
+ return Promise.race([fetch(u).then(function(r){return r.json()}),new Promise(function(_,rj){setTimeout(rj,4500)})]).then(function(j){return{t:(j&&j.title)||"",th:p.src==="tt"?((j&&j.thumbnail_url)||""):""}}).catch(function(){return{t:"",th:""}})}
+function say(t,c){var e=P&&P.querySelector(".vmsg");if(e){e.textContent=t||"";e.className="vmsg"+(c?" "+c:"")}}
+function load(){var g=G();if(!g.call){mode="loc";V=locGet();return Promise.resolve()}
+ return g.call("vlist").then(function(j){if(j&&j.ok&&Array.isArray(j.vids)){mode="srv";V=clean(j.vids);if(known===null){known={};V.forEach(function(x){known[x.id]=1})}}else{mode="loc";V=locGet()}}).catch(function(){mode="loc";V=locGet()})}
+function draw(){if(!P)return;var adm=isAdm(),q=st.q.toLowerCase(),n=0,h="";
+ V.forEach(function(v,i){if(st.src!=="all"&&v.src!==st.src)return;if(q&&(v.t+" "+v.by).toLowerCase().indexOf(q)<0)return;n++;
+  var th=thumb(v),lbl=v.src==="yt"?"YouTube":"TikTok",ti=v.t||("Video "+lbl);
+  h+='<article class="vcard" style="animation-delay:'+Math.min(n,18)*40+'ms"><button type="button" class="vth'+(th?"":" noimg")+'" data-vplay="'+i+'" aria-label="Xem '+esc(ti)+'">'+(th?'<img src="'+esc(th)+'" alt="" loading="lazy" referrerpolicy="no-referrer">':"")+'<span class="vplay">▶</span><span class="vsrc '+v.src+'">'+lbl+'</span></button>'
+   +'<div class="vb"><b>'+esc(ti)+'</b><small>👤 '+nm(v.by)+(v.ts?" · "+ago(v.ts):"")+'</small><div class="va"><button type="button" class="btn" data-vplay="'+i+'">▶ Xem</button><a class="cp" href="'+esc(v.url)+'" target="_blank" rel="noopener noreferrer">Mở link</a>'+(adm?'<button type="button" class="cp vdel" data-vdel="'+i+'">🗑 Xóa</button>':"")+'</div></div></article>'});
+ P.querySelector(".vgrid").innerHTML=h||'<div class="vempty">'+(V.length?"Không có video nào khớp bộ lọc.":"Chưa có video nào. Hãy là người đầu tiên chia sẻ nhé!")+'</div>';
+ P.querySelector(".vc").textContent=V.length;
+ P.querySelector(".vwarn").hidden=mode==="srv"}
+function build(){P=document.createElement("div");P.className="vpanel";
+ P.innerHTML='<div class="vhead"><button type="button" class="cp" data-vback>← Danh sách map</button><div class="mtot"><b class="vc">0</b><span>video chơi do người chơi chia sẻ</span></div></div>'
+ +'<p class="vwarn" hidden>⚠ Máy chủ chưa hỗ trợ video (cần thêm google-apps-script-video.gs vào script ACC_API). Tạm thời video chỉ lưu trên máy này.</p>'
+ +'<div class="vadd"><input class="vu" type="text" inputmode="url" maxlength="300" placeholder="Dán link YouTube hoặc TikTok…" aria-label="Link video"><input class="vn" type="text" maxlength="30" placeholder="Tên của bạn" aria-label="Tên của bạn"><button type="button" class="btn" data-vadd>➕ Thêm video</button></div>'
+ +'<div class="vmsg" role="status"></div>'
+ +'<div class="vtool"><input class="vq" type="search" placeholder="Tìm video hoặc người chia sẻ…" aria-label="Tìm video"><div class="fg" data-vsrc><button type="button" class="vf on" data-v="all">Tất cả</button><button type="button" class="vf" data-v="yt">YouTube</button><button type="button" class="vf" data-v="tt">TikTok</button></div></div>'
+ +'<div class="vgrid"></div>';
+ box.appendChild(P);
+ try{P.querySelector(".vn").value=localStorage.getItem("g_by")||localStorage.getItem("g_cname")||""}catch(e){}
+ P.querySelector(".vq").addEventListener("input",function(){st.q=this.value.trim();draw()});
+ P.addEventListener("error",function(e){var im=e.target;if(im.tagName==="IMG"&&im.parentNode){im.parentNode.classList.add("noimg")}},true)}
+function open(b){box=b.closest(".mapg");if(!box)return;if(!P||P.parentNode!==box){P=null;build()}
+ box.classList.add("vmode");draw();say("Đang tải danh sách…");load().then(function(){draw();say("")});
+ var t=box.getBoundingClientRect().top;if(t<0||t>innerHeight*.6)box.scrollIntoView({behavior:matchMedia("(prefers-reduced-motion:reduce)").matches?"auto":"smooth",block:"start"})}
+function add(){var g=G(),u=P.querySelector(".vu").value,p=parse(u),by=P.querySelector(".vn").value.trim().slice(0,30);
+ if(!p){say("Link không hợp lệ. Chỉ nhận link YouTube (watch, shorts, youtu.be) hoặc TikTok.","er");return}
+ if(!by){say("Nhập tên của bạn để mọi người biết ai chia sẻ.","er");P.querySelector(".vn").focus();return}
+ if(V.some(function(x){return x.url===p.url})){say("Video này đã có trong danh sách rồi.","er");return}
+ if(Date.now()-mineT<20000){say("Bạn thêm hơi nhanh, đợi vài giây nhé.","er");return}
+ var btn=P.querySelector("[data-vadd]");btn.disabled=true;say("Đang lấy ảnh thu nhỏ…");
+ try{localStorage.setItem("g_by",by)}catch(e){}
+ meta(p).then(function(m){var rec={id:"l"+Date.now().toString(36),src:p.src,vid:p.vid,url:p.url,t:(m.t||"").trim().slice(0,140),th:m.th,by:by,ts:Date.now()};
+  function done(){mineT=Date.now();P.querySelector(".vu").value="";say("Đã thêm video ✓","ok");btn.disabled=false;draw();
+}
+  if(mode==="srv"&&g.call){g.call("vadd",{v:{src:rec.src,vid:rec.vid,url:rec.url,t:rec.t,th:rec.th,by:rec.by}}).then(function(j){
+    if(j&&j.ok){if(Array.isArray(j.vids))V=clean(j.vids);else V=clean([j.v||rec].concat(V));if(known!==null)V.forEach(function(x){known[x.id]=1});done()}
+    else{say((j&&j.err)||"Không thêm được video","er");btn.disabled=false}})}
+  else{V=clean([rec].concat(V));locSet();done()}})}
+function del(i){var v=V[i];if(!v)return;if(!isAdm()){say("Chỉ Admin mới được xóa video","er");return}
+ if(!confirm("Xóa video này khỏi danh sách?"))return;var g=G();
+ if(mode==="srv"&&g.call){g.call("vdel",{id:v.id}).then(function(j){if(j&&j.ok){V.splice(i,1);draw();say("Đã xóa video ✓","ok")}else say((j&&j.err)||"Không xóa được video","er")})}
+ else{V.splice(i,1);locSet();draw();say("Đã xóa video ✓","ok")}}
+function play(i){var v=V[i];if(!v)return;
+ var src=v.src==="yt"?"https://www.youtube-nocookie.com/embed/"+v.vid+"?autoplay=1&rel=0":(v.vid?"https://www.tiktok.com/embed/v2/"+v.vid:"");
+ if(!src){window.open(v.url,"_blank","noopener");return}
+ var m=document.createElement("div");m.className="vmod";m.setAttribute("role","dialog");m.setAttribute("aria-modal","true");
+ m.innerHTML='<div class="vbox'+(v.src==="tt"?" tt":"")+'"><button type="button" class="vx" aria-label="Đóng">×</button><iframe src="'+src+'" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="'+esc(v.t||"Video")+'"></iframe></div>';
+ function close(){document.removeEventListener("keydown",key);m.remove()}
+ function key(e){if(e.key==="Escape")close()}
+ m.addEventListener("click",function(e){if(e.target===m||e.target.closest(".vx"))close()});document.addEventListener("keydown",key);document.body.appendChild(m)}
+document.addEventListener("click",function(e){var t=e.target;if(!t.closest)return;var b;
+ if(b=t.closest("[data-vopen]")){open(b);return}
+ if(!P||!P.contains(t))return;
+ if(t.closest("[data-vback]")){box.classList.remove("vmode");return}
+ if(t.closest("[data-vadd]")){add();return}
+ if(b=t.closest("[data-vplay]")){play(+b.dataset.vplay);return}
+ if(b=t.closest("[data-vdel]")){del(+b.dataset.vdel);return}
+ if(b=t.closest(".vf")){P.querySelectorAll(".vf").forEach(function(x){x.classList.toggle("on",x===b)});st.src=b.dataset.v;draw()}});
+document.addEventListener("keydown",function(e){if(e.key==="Enter"&&P&&e.target&&e.target.closest&&e.target.closest(".vadd")&&e.target.tagName==="INPUT"){e.preventDefault();add()}});
+document.addEventListener("accchange",function(){if(P&&P.isConnected)draw()});
 })();
 </script>
 </body>
