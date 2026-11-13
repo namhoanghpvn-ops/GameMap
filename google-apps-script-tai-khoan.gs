@@ -22,7 +22,7 @@ var H={Users:["id","prov","name","av","day","n","onlSec","onlG","posts","postRew
  Sessions:["h","uid","exp"],Maps:["id","ts","uid","by","av","t","p","d","s","u","img","st"],Downloads:["ts","uid","mid"],
  Shop:["ts","uid","item","price"],Equip:["uid","by","fr","co","ic","ts"],Boxes:["ts","uid","map"],
  Codes:["code","energy","max","exp","note"],Redeems:["ts","uid","code"],
- SLinks:["key","t","u"],Config:["k","v"],SMaps:["id","ts","t","p","d","s","u","st"],MapBuys:["ts","uid","key","title","price"]};
+ SLinks:["key","t","u"],Videos:["id","ts","src","url","t","th","by","uid"],Config:["k","v"],SMaps:["id","ts","t","p","d","s","u","st"],MapBuys:["ts","uid","key","title","price"]};
 var DF=["Dễ","Trung Bình","Khó","Cực Khó","Siêu Cấp"],SZ=["Nhỏ","Vừa","Rộng"];
 function sh(n){var ss=SpreadsheetApp.getActive(),s=ss.getSheetByName(n);if(!s){s=ss.insertSheet(n);s.appendRow(H[n])}else if(s.getLastColumn()<H[n].length)s.getRange(1,1,1,H[n].length).setValues([H[n]]);return s}
 function all(n){var v=sh(n).getDataRange().getValues(),h=v.shift();return v.map(function(r,i){var o={_r:i+2};h.forEach(function(k,j){o[k]=r[j]});return o})}
@@ -41,7 +41,7 @@ function en(u){var t=new Date(today().slice(1,5)+"-"+today().slice(5,7)+"-"+toda
 function roll(u){if(u.day!==today()){var cr=Math.min(+u.bonus||0,+u.n||0);u.day=today();u.n=C.DAILY+cr;u.bonus=cr;u.onlSec=0;u.onlG=0;u.posts=0;u.postRew=0;u.codeBad=0}} // cr = ⚡ từ mã quà tặng chưa dùng hết, được giữ sang ngày mới
 function nrm(s){return String(s||"").replace(/\s+/g,"").toUpperCase()}
 function expired(x){if(x===""||x==null)return false;var t=x instanceof Date?x.getTime():Date.parse(String(x));return!isNaN(t)&&Date.now()>t+864e5}
-function khoiTao(){["Shop","Equip","Boxes","Codes","Redeems","Config","SMaps","MapBuys","SLinks"].forEach(sh);Logger.log("Đã tạo xong các sheet")} // chạy 1 lần trong trình soạn thảo để tạo sẵn sheet Codes
+function khoiTao(){["Shop","Equip","Boxes","Codes","Redeems","Config","SMaps","MapBuys","SLinks","Videos"].forEach(sh);Logger.log("Đã tạo xong các sheet")} // chạy 1 lần trong trình soạn thảo để tạo sẵn sheet Codes
 function isAd(d){return!!C.ADMIN_KEY&&d.ak===C.ADMIN_KEY}
 function uv(u,d){return{id:u.id,admin:isAd(d),name:String(u.name||"")}}
 function who(ip,mk){if(!/^[0-9a-fA-F:.]{3,45}$/.test(String(ip||"")))throw new Error("Không xác định được IP");
@@ -64,7 +64,7 @@ function pub(u){var dl={},t0=new Date(en({n:0}).resetAt-864e5).getTime(),now=Dat
  all("Downloads").forEach(function(r){var o=dl[r.mid]||(dl[r.mid]={a:0,b:0,c:0});o.a++;if(+r.ts>=t0)o.b++;if(+r.ts>=now-6048e5)o.c++;if(u&&r.uid===u.id)got[r.mid]=1});
  return{ok:true,maps:all("Maps").filter(function(m){return m.st==="on"}).reverse().slice(0,500).map(function(m){var o=dl[m.id]||{a:0,b:0,c:0};
   return{id:m.id,ts:new Date(+m.ts).toISOString(),by:m.by,av:m.av,t:m.t,p:+m.p,d:m.d,s:m.s,img:m.img,dl:o.a,dl1:o.b,dl7:o.c,got:!!got[m.id],own:!!u&&m.uid===u.id}})}}
-function run(d){var op=d.op,u=who(d.ip,op!=="maps");if(op==="maps")return pub(u);
+function run(d){var op=d.op;if(op==="vlist"||op==="vadd"||op==="vdel")return vidRun(d);var u=who(d.ip,op!=="maps");if(op==="maps")return pub(u);
  if(op==="cos"){var cs={};all("Equip").forEach(function(r){if(r.fr||r.co||r.ic)cs[String(r.by).toLowerCase()]={fr:String(r.fr||""),co:String(r.co||""),ic:String(r.ic||"")}});return{ok:true,cos:cs,own:owned(u.id),box:all("Boxes").filter(function(r){return r.uid===u.id&&r.map}).map(function(r){return String(r.map)}),mp:mcfg(),ms:smaps(isAd(d)),mb:mbOwned(u.id)}}
  roll(u);var res={ok:true},now=Date.now();
  if(op==="ping"){var dt=Math.min(90,Math.max(0,(now-(+u.lastPing||now))/1000));u.lastPing=now;u.onlSec=+u.onlSec+dt;
@@ -221,3 +221,29 @@ function nhapLinkMap(keep){var L=[
  L.forEach(function(x){var k=mk(x[0]);if(m[k]){if(keep)return}else{ord.push(k);add++}m[k]=[k,x[0],x[1]]});
  var rows=ord.map(function(k){return m[k]});if(rows.length)s.getRange(2,1,rows.length,3).setValues(rows);
  Logger.log("Đã nạp "+L.length+" link vào sheet SLinks (thêm mới "+add+")");return L.length}
+
+/* ===== VIDEO CHƠI (YouTube / TikTok do người chơi chia sẻ) · lưu ở sheet "Videos" =====
+   Lệnh web gọi: vlist (xem, ai cũng được) · vadd (thêm) · vdel (xóa, CHỈ Admin: isAd(d) kiểm tra ADMIN_KEY).
+   Mỗi IP: cách nhau 20 giây, tối đa 10 video/ngày. Tối đa VID_MAX video trong danh sách. */
+var VID_MAX=300,VID_GAP=20000,VID_DAY=10;
+function vidParse(u){u=String(u||"").trim();if(!u||u.length>300)return null;var m;
+ if((m=u.match(/^https:\/\/(?:www\.|m\.|music\.)?youtube\.com\/watch\?(?:[^#]*&)?v=([\w-]{11})/i))||(m=u.match(/^https:\/\/youtu\.be\/([\w-]{11})/i))||(m=u.match(/^https:\/\/(?:www\.|m\.)?youtube\.com\/(?:shorts|embed|live|v)\/([\w-]{11})/i)))return{src:"yt",vid:m[1],url:"https://www.youtube.com/watch?v="+m[1]};
+ if(m=u.match(/^(https:\/\/(?:[\w-]+\.)?tiktok\.com\/[^?#\s]*\/video\/(\d{8,25}))/i))return{src:"tt",vid:m[2],url:m[1].replace(/\/+$/,"")};
+ if((m=u.match(/^(https:\/\/(?:vm|vt)\.tiktok\.com\/[\w-]+)/i))||(m=u.match(/^(https:\/\/(?:www\.)?tiktok\.com\/t\/[\w-]+)/i)))return{src:"tt",vid:"",url:m[1]};
+ return null}
+function vidTxt(s,n){s=cl(s,n);return/^[=+\-@]/.test(s)?" "+s:s} // chặn công thức Google Sheet
+function vidList(){return all("Videos").map(function(r){var p=vidParse(r.url);return p?{id:String(r.id),ts:+r.ts||0,src:p.src,vid:p.vid,url:p.url,t:String(r.t||""),th:String(r.th||""),by:String(r.by||"Ẩn danh")}:null}).filter(Boolean).sort(function(a,b){return b.ts-a.ts}).slice(0,VID_MAX)}
+function vidRun(d){var op=d.op;
+ if(op==="vlist")return{ok:true,vids:vidList()};
+ if(op==="vadd"){var v=d.v||{},p=vidParse(v.url);if(!p)return err("Link không hợp lệ (chỉ nhận YouTube hoặc TikTok)");
+  var rows=all("Videos"),now=Date.now(),uid=/^[0-9a-fA-F:.]{3,45}$/.test(String(d.ip||""))?"u"+sha(d.ip+"|"+C.SALT).slice(0,12):"";
+  if(rows.some(function(r){return String(r.url).toLowerCase()===p.url.toLowerCase()}))return err("Video này đã có trong danh sách rồi");
+  if(rows.length>=VID_MAX)return err("Danh sách video đã đầy, nhờ Admin dọn bớt");
+  if(uid){var mine=rows.filter(function(r){return r.uid===uid}),t0=now-864e5;
+   if(mine.some(function(r){return now-(+r.ts||0)<VID_GAP}))return err("Bạn thêm hơi nhanh, đợi vài giây nhé");
+   if(mine.filter(function(r){return(+r.ts||0)>t0}).length>=VID_DAY)return err("Hôm nay bạn đã thêm đủ "+VID_DAY+" video")}
+  var th=String(v.th||""),rec={id:"v"+now.toString(36)+Math.floor(Math.random()*46656).toString(36),ts:now,src:p.src,url:p.url,t:vidTxt(v.t,140),th:/^https:\/\/[^\s"'<>]{4,580}$/.test(th)?th:"",by:vidTxt(v.by||"Ẩn danh",30)||"Ẩn danh",uid:uid};
+  put("Videos",rec);return{ok:true,v:{id:rec.id,ts:rec.ts,src:p.src,vid:p.vid,url:p.url,t:rec.t,th:rec.th,by:rec.by},vids:vidList()}}
+ if(op==="vdel"){if(!isAd(d))return err("Chỉ Admin mới được xóa video");var id=String(d.id||""),r=all("Videos").filter(function(x){return String(x.id)===id})[0];
+  if(!r)return err("Không tìm thấy video");sh("Videos").deleteRow(r._r);return{ok:true}}
+ return err("Lệnh không hỗ trợ")}

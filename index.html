@@ -1956,7 +1956,7 @@ draw();load(true);
    Lưu chung cho mọi người qua ACC_API (op: vlist · vadd · vdel, xem file google-apps-script-video.gs).
    Máy chủ chưa hỗ trợ thì tạm lưu trên máy này và có dòng cảnh báo. */
 (function(){
-var G=function(){return window.__gm||{}},LK="g_vids_local",V=[],mode="srv",known=null,mineT=0,box=null,P=null,st={q:"",src:"all"};
+var G=function(){return window.__gm||{}},LK="g_vids_local",V=[],mode="srv",known=null,why="",mineT=0,box=null,P=null,st={q:"",src:"all"};
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function isAdm(){return !!(window.isLiveAdmin&&window.isLiveAdmin())}
 function nm(n){try{var g=G();return g.nmH?g.nmH(n||"Ẩn danh"):esc(n||"Ẩn danh")}catch(e){return esc(n||"Ẩn danh")}}
@@ -1982,7 +1982,7 @@ function meta(p){var u=p.src==="yt"?"https://www.youtube.com/oembed?format=json&
  return Promise.race([fetch(u).then(function(r){return r.json()}),new Promise(function(_,rj){setTimeout(rj,4500)})]).then(function(j){return{t:(j&&j.title)||"",th:p.src==="tt"?((j&&j.thumbnail_url)||""):""}}).catch(function(){return{t:"",th:""}})}
 function say(t,c){var e=P&&P.querySelector(".vmsg");if(e){e.textContent=t||"";e.className="vmsg"+(c?" "+c:"")}}
 function load(){var g=G();if(!g.call){mode="loc";V=locGet();return Promise.resolve()}
- return g.call("vlist").then(function(j){if(j&&j.ok&&Array.isArray(j.vids)){mode="srv";V=clean(j.vids);if(known===null){known={};V.forEach(function(x){known[x.id]=1})}}else{mode="loc";V=locGet()}}).catch(function(){mode="loc";V=locGet()})}
+ return g.call("vlist").then(function(j){if(j&&j.ok&&Array.isArray(j.vids)){mode="srv";V=clean(j.vids);if(known===null){known={};V.forEach(function(x){known[x.id]=1})}}else{mode="loc";why=(j&&j.err)||"không có phản hồi hợp lệ";V=locGet()}}).catch(function(){mode="loc";why="không gọi được máy chủ";V=locGet()})}
 function draw(){if(!P)return;var adm=isAdm(),q=st.q.toLowerCase(),n=0,h="";
  V.forEach(function(v,i){if(st.src!=="all"&&v.src!==st.src)return;if(q&&(v.t+" "+v.by).toLowerCase().indexOf(q)<0)return;n++;
   var th=thumb(v),lbl=v.src==="yt"?"YouTube":"TikTok",ti=v.t||("Video "+lbl);
@@ -1990,10 +1990,10 @@ function draw(){if(!P)return;var adm=isAdm(),q=st.q.toLowerCase(),n=0,h="";
    +'<div class="vb"><b>'+esc(ti)+'</b><small>👤 '+nm(v.by)+(v.ts?" · "+ago(v.ts):"")+'</small><div class="va"><button type="button" class="btn" data-vplay="'+i+'">▶ Xem</button><a class="cp" href="'+esc(v.url)+'" target="_blank" rel="noopener noreferrer">Mở link</a>'+(adm?'<button type="button" class="cp vdel" data-vdel="'+i+'">🗑 Xóa</button>':"")+'</div></div></article>'});
  P.querySelector(".vgrid").innerHTML=h||'<div class="vempty">'+(V.length?"Không có video nào khớp bộ lọc.":"Chưa có video nào. Hãy là người đầu tiên chia sẻ nhé!")+'</div>';
  P.querySelector(".vc").textContent=V.length;
- P.querySelector(".vwarn").hidden=mode==="srv"}
+ P.querySelector(".vwarn").hidden=mode==="srv";var w=P.querySelector(".vwhy");if(w)w.textContent=why?"("+why+") ":""}
 function build(){P=document.createElement("div");P.className="vpanel";
  P.innerHTML='<div class="vhead"><button type="button" class="cp" data-vback>← Danh sách map</button><div class="mtot"><b class="vc">0</b><span>video chơi do người chơi chia sẻ</span></div></div>'
- +'<p class="vwarn" hidden>⚠ Máy chủ chưa hỗ trợ video (cần thêm google-apps-script-video.gs vào script ACC_API). Tạm thời video chỉ lưu trên máy này.</p>'
+ +'<p class="vwarn" hidden>⚠ Chưa kết nối được máy chủ video: <span class="vwhy"></span>Hãy dán file google-apps-script-tai-khoan.gs bản mới nhất rồi «Triển khai phiên bản mới». Tạm thời video chỉ lưu trên máy này.</p>'
  +'<div class="vadd"><input class="vu" type="text" inputmode="url" maxlength="300" placeholder="Dán link YouTube hoặc TikTok…" aria-label="Link video"><input class="vn" type="text" maxlength="30" placeholder="Tên của bạn" aria-label="Tên của bạn"><button type="button" class="btn" data-vadd>➕ Thêm video</button></div>'
  +'<div class="vmsg" role="status"></div>'
  +'<div class="vtool"><input class="vq" type="search" placeholder="Tìm video hoặc người chia sẻ…" aria-label="Tìm video"><div class="fg" data-vsrc><button type="button" class="vf on" data-v="all">Tất cả</button><button type="button" class="vf" data-v="yt">YouTube</button><button type="button" class="vf" data-v="tt">TikTok</button></div></div>'
