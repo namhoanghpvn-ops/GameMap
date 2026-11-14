@@ -903,7 +903,7 @@ var LIVES=[
 ];
 /* ---- NĂNG LƯỢNG THEO IP (xem google-apps-script-tai-khoan.gs) ----
    ACC_API = link Web App của script năng lượng (khác API_URL). Trống = tắt. Không cần đăng nhập. */
-var ACC_API="https://script.google.com/macros/s/AKfycbw1B2ptNT3xHweaJKjQiCYBSCcngJFa9lPmQsPniW_Qp3v0edKUnfL2tPB7TvGPzTBPcw/exec";
+var ACC_API="https://script.google.com/macros/s/AKfycbz2l2D3rfXj5hSltbvNV_oXIE_PRN4RMpHmXaoVAHnNubErJkOT7syOeKOzBgdPQDLSSg/exec";
 /* ---- ĐĂNG NHẬP: điền ID từng nền tảng (để trống = ẩn nút). Địa chỉ quay về phải khai báo ở Google/Zalo/TikTok:
    chính là địa chỉ trang web của bạn, ví dụ https://tenban.github.io/tenrepo/ (kết thúc bằng dấu /) ---- */
 var AUTH={google:"",zalo:"",tiktok:""}; // google = Client ID · zalo = App ID · tiktok = Client Key
@@ -1446,7 +1446,7 @@ function call0(op,d){d=d||{};d.op=op;d.ak=AK;if(!ACC_API)return Promise.resolve(
 var TOK="";try{TOK=localStorage.getItem("g_tok")||""}catch(x){}
 function setTok(v){TOK=v||"";try{if(TOK)localStorage.setItem("g_tok",TOK);else localStorage.removeItem("g_tok")}catch(x){}}
 function call(op,d){return call0(op,d).then(function(j){if(j&&j.auth&&TOK){setTok("");U=null;chip();toast("Phiên đăng nhập đã hết hạn, hãy đăng nhập lại");return call0(op,d)}return j})}
-function authOn(){return !!(ACC_API&&(AUTH.google||AUTH.zalo||AUTH.tiktok))}
+function authOn(){return !!(ACC_API&&(564900221591-sjt501p4ns0f8cfcf49qqok8ko3sqonn.apps.googleusercontent.com||AUTH.zalo||AUTH.tiktok))}
 function rnd(n){var a=new Uint8Array(n);crypto.getRandomValues(a);return Array.prototype.map.call(a,function(b){return("0"+b.toString(16)).slice(-2)}).join("")}
 function b64u(buf){return btoa(String.fromCharCode.apply(null,new Uint8Array(buf))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
 function RU(){return location.origin+location.pathname.replace(/index\.html$/,"")}
@@ -1470,9 +1470,9 @@ function loginHtml(){if(!authOn())return"";var lk=(TOK&&U&&U.links)||[],h='<div 
  else h+='<p class="mt"><b>🔑 Đăng nhập</b></p><p class="mt"><small>Giữ ⚡ năng lượng, đồ cửa hàng và map đã mở trên mọi thiết bị. Chưa đăng nhập thì tính theo IP.</small></p>';
  h+='<div class="lgrow">'+rest.map(function(p){return p==="google"?'<div id="gbtn"></div>':'<button type="button" class="lgb lg-'+p+'" data-p="'+p+'">'+PN[p]+'</button>'}).join("")+'</div>';
  if(TOK&&U)h+='<button class="cp" id="lgout" type="button">Đăng xuất</button>';return h+"</div>"}
-function loginMount(){if(!authOn()||!AUTH.google||((TOK&&U&&U.links)||[]).indexOf("google")>=0)return;
+function loginMount(){if(!authOn()||!564900221591-sjt501p4ns0f8cfcf49qqok8ko3sqonn.apps.googleusercontent.com||((TOK&&U&&U.links)||[]).indexOf("google")>=0)return;
  gsi(function(){var e=$("gbtn");if(!e||!(window.google&&google.accounts))return;
-  google.accounts.id.initialize({client_id:AUTH.google,callback:function(r){var m=$("amod");if(m)m.remove();doLogin({prov:"google",cred:r.credential,link:TOK?1:0})}});
+  google.accounts.id.initialize({client_id:564900221591-sjt501p4ns0f8cfcf49qqok8ko3sqonn.apps.googleusercontent.com,callback:function(r){var m=$("amod");if(m)m.remove();doLogin({prov:"google",cred:r.credential,link:TOK?1:0})}});
   google.accounts.id.renderButton(e,{theme:"filled_black",size:"large",shape:"pill",locale:"vi",width:260})})}
 document.addEventListener("click",function(e){var b=e.target.closest(".lgb");if(b){oauthGo(b.dataset.p,!!TOK);return}
  if(e.target.closest("#lgout")){var m=$("amod");if(m)m.remove();call("logout").then(function(){setTok("");U=null;EN={n:0,resetAt:0,onl:0,post:0};chip();init2();toast("Đã đăng xuất")})}});
