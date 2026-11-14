@@ -17,9 +17,14 @@ var C={SALT:"doi-chuoi-bi-mat-nay",ADMIN_KEY:"250319", // ĐẶT 1 MẬT KHẨU 
  CHECKIN_KEEP:true, // true = ⚡ điểm danh được giữ sang ngày sau (như mã quà tặng); false = reset 00:00 như ⚡ thường
  MYST:2,       // hộp map bí ẩn tốn
  SHOP:{fr1:6,fr2:6,fr3:12,fr4:20,co1:4,co2:4,co3:8,co4:15,ic1:3,ic2:5,ic3:8,ic4:10,ic5:15}, // GIÁ CỬA HÀNG ⚡ (máy chủ tự kiểm tra giá, không tin số web gửi lên)
- TZ:"Asia/Ho_Chi_Minh"};
+ TZ:"Asia/Ho_Chi_Minh",
+ /* ===== ĐĂNG NHẬP (điền ID/khóa lấy từ trang nhà phát triển của từng nền tảng; để trống = tắt nền tảng đó) ===== */
+ GOOGLE_ID:"",            // Google Client ID (dạng xxxx.apps.googleusercontent.com)
+ ZALO_ID:"",ZALO_SECRET:"", // Zalo App ID + Secret Key
+ TT_KEY:"",TT_SECRET:"",    // TikTok Client Key + Client Secret
+ SESSION_DAYS:30};          // đăng nhập giữ bao nhiêu ngày
 var H={Users:["id","prov","name","av","day","n","onlSec","onlG","posts","postRew","lastPing","bonus","codeBad","ciLast","ciStreak"],
- Sessions:["h","uid","exp"],Maps:["id","ts","uid","by","av","t","p","d","s","u","img","st"],Downloads:["ts","uid","mid"],
+ Sessions:["h","uid","exp"],Identities:["key","uid","prov","ts"],Maps:["id","ts","uid","by","av","t","p","d","s","u","img","st"],Downloads:["ts","uid","mid"],
  Shop:["ts","uid","item","price"],Equip:["uid","by","fr","co","ic","ts"],Boxes:["ts","uid","map"],
  Codes:["code","energy","max","exp","note"],Redeems:["ts","uid","code"],
  SLinks:["key","t","u"],Videos:["id","ts","src","url","t","th","by","uid"],Config:["k","v"],SMaps:["id","ts","t","p","d","s","u","st"],MapBuys:["ts","uid","key","title","price"]};
@@ -43,8 +48,8 @@ function nrm(s){return String(s||"").replace(/\s+/g,"").toUpperCase()}
 function expired(x){if(x===""||x==null)return false;var t=x instanceof Date?x.getTime():Date.parse(String(x));return!isNaN(t)&&Date.now()>t+864e5}
 function khoiTao(){["Shop","Equip","Boxes","Codes","Redeems","Config","SMaps","MapBuys","SLinks","Videos"].forEach(sh);Logger.log("Đã tạo xong các sheet")} // chạy 1 lần trong trình soạn thảo để tạo sẵn sheet Codes
 function isAd(d){return!!C.ADMIN_KEY&&d.ak===C.ADMIN_KEY}
-function uv(u,d){return{id:u.id,admin:isAd(d),name:String(u.name||"")}}
-function who(ip,mk){if(!/^[0-9a-fA-F:.]{3,45}$/.test(String(ip||"")))throw new Error("Không xác định được IP");
+function uv(u,d){var lg=/^a/.test(String(u.id));return{id:u.id,admin:isAd(d),name:String(u.name||""),av:String(u.av||""),login:lg,links:lg?all("Identities").filter(function(r){return r.uid===u.id}).map(function(r){return String(r.prov)}):[]}}
+function who(d,mk){var su=sess(d);if(su)return su;var ip=d.ip;if(!/^[0-9a-fA-F:.]{3,45}$/.test(String(ip||"")))throw new Error("Không xác định được IP");
  var id="u"+sha(ip+"|"+C.SALT).slice(0,12),u=all("Users").filter(function(r){return r.id===id})[0];
  if(!u&&mk){u={id:id,prov:"ip",name:"",av:"",day:"",n:0,onlSec:0,onlG:0,posts:0,postRew:0,lastPing:Date.now(),bonus:0,codeBad:0};roll(u);put("Users",u);u=all("Users").filter(function(r){return r.id===id})[0]}
  return u||null}
@@ -59,12 +64,12 @@ function mprice(t,dd){var c=mcfg(),k=mk(t),v=has(c.map,k)?c.map[k]:has(c.tier,dd
 function smaps(adm){return all("SMaps").filter(function(m){return m.st==="on"}).map(function(m){return{id:m.id,ts:new Date(+m.ts).toISOString(),t:m.t,p:+m.p,d:m.d,s:m.s,u:adm?m.u:""}})} // link chỉ trả cho Admin; người chơi lấy qua op "mdl" sau khi mở khóa
 function mbOwned(uid){var a=all("MapBuys").filter(function(r){return r.uid===uid}).map(function(r){return String(r.key)});all("Boxes").forEach(function(r){if(r.uid===uid&&r.map)a.push(mk(r.map))});return a}
 function doGet(){return J(pub(null))}
-function doPost(e){var l=LockService.getScriptLock();l.waitLock(25000);try{return J(run(JSON.parse(e.postData.contents)))}catch(x){return J(err(String(x.message||x)))}finally{l.releaseLock()}}
+function doPost(e){var l=LockService.getScriptLock();l.waitLock(25000);try{return J(run(JSON.parse(e.postData.contents)))}catch(x){var em=String(x.message||x);return J(em==="AUTH"?{ok:false,auth:true,err:"Phiên đăng nhập đã hết hạn, hãy đăng nhập lại"}:err(em))}finally{l.releaseLock()}}
 function pub(u){var dl={},t0=new Date(en({n:0}).resetAt-864e5).getTime(),now=Date.now(),got={};
  all("Downloads").forEach(function(r){var o=dl[r.mid]||(dl[r.mid]={a:0,b:0,c:0});o.a++;if(+r.ts>=t0)o.b++;if(+r.ts>=now-6048e5)o.c++;if(u&&r.uid===u.id)got[r.mid]=1});
  return{ok:true,maps:all("Maps").filter(function(m){return m.st==="on"}).reverse().slice(0,500).map(function(m){var o=dl[m.id]||{a:0,b:0,c:0};
   return{id:m.id,ts:new Date(+m.ts).toISOString(),by:m.by,av:m.av,t:m.t,p:+m.p,d:m.d,s:m.s,img:m.img,dl:o.a,dl1:o.b,dl7:o.c,got:!!got[m.id],own:!!u&&m.uid===u.id}})}}
-function run(d){var op=d.op;if(op==="vlist"||op==="vadd"||op==="vdel")return vidRun(d);var u=who(d.ip,op!=="maps");if(op==="maps")return pub(u);
+function run(d){var op=d.op;if(op==="vlist"||op==="vadd"||op==="vdel")return vidRun(d);if(op==="login")return loginOp(d);if(op==="logout")return logoutOp(d);var u=who(d,op!=="maps");if(op==="maps")return pub(u);
  if(op==="cos"){var cs={};all("Equip").forEach(function(r){if(r.fr||r.co||r.ic)cs[String(r.by).toLowerCase()]={fr:String(r.fr||""),co:String(r.co||""),ic:String(r.ic||"")}});return{ok:true,cos:cs,own:owned(u.id),box:all("Boxes").filter(function(r){return r.uid===u.id&&r.map}).map(function(r){return String(r.map)}),mp:mcfg(),ms:smaps(isAd(d)),mb:mbOwned(u.id)}}
  roll(u);var res={ok:true},now=Date.now();
  if(op==="ping"){var dt=Math.min(90,Math.max(0,(now-(+u.lastPing||now))/1000));u.lastPing=now;u.onlSec=+u.onlSec+dt;
@@ -236,7 +241,7 @@ function vidList(){return all("Videos").map(function(r){var p=vidParse(r.url);re
 function vidRun(d){var op=d.op;
  if(op==="vlist")return{ok:true,vids:vidList()};
  if(op==="vadd"){var v=d.v||{},p=vidParse(v.url);if(!p)return err("Link không hợp lệ (chỉ nhận YouTube hoặc TikTok)");
-  var rows=all("Videos"),now=Date.now(),uid=/^[0-9a-fA-F:.]{3,45}$/.test(String(d.ip||""))?"u"+sha(d.ip+"|"+C.SALT).slice(0,12):"";
+  var rows=all("Videos"),now=Date.now(),uid=uidOf(d);
   if(rows.some(function(r){return String(r.url).toLowerCase()===p.url.toLowerCase()}))return err("Video này đã có trong danh sách rồi");
   if(rows.length>=VID_MAX)return err("Danh sách video đã đầy, nhờ Admin dọn bớt");
   if(uid){var mine=rows.filter(function(r){return r.uid===uid}),t0=now-864e5;
@@ -247,3 +252,50 @@ function vidRun(d){var op=d.op;
  if(op==="vdel"){if(!isAd(d))return err("Chỉ Admin mới được xóa video");var id=String(d.id||""),r=all("Videos").filter(function(x){return String(x.id)===id})[0];
   if(!r)return err("Không tìm thấy video");sh("Videos").deleteRow(r._r);return{ok:true}}
  return err("Lệnh không hỗ trợ")}
+
+
+/* ===================== ĐĂNG NHẬP GOOGLE · ZALO · TIKTOK =====================
+   Luồng: web lấy mã đăng nhập từ nền tảng → gửi op "login" → máy chủ tự xác minh với nền tảng
+   → trả về token phiên (lưu ở sheet Sessions, hết hạn sau SESSION_DAYS ngày). Chưa đăng nhập vẫn dùng theo IP như cũ.
+   Người mới đăng nhập lần đầu sẽ được chuyển năng lượng/đồ/map đang có theo IP sang tài khoản. */
+function sv(u){u=String(u||"");return/^https:\/\/[^\s"'<>]{4,500}$/.test(u)?u:""}
+function sessH(t){return"h"+sha(t+"|"+C.SALT).slice(0,40)}
+function sess(d){var t=String(d.tok||"");if(!t)return null;if(!/^[0-9a-f]{64}$/.test(t))throw new Error("AUTH");
+ var h=sessH(t),s=all("Sessions").filter(function(r){return r.h===h})[0],u=s&&+s.exp>Date.now()?all("Users").filter(function(r){return r.id===s.uid})[0]:null;
+ if(!u)throw new Error("AUTH");return u}
+function uidOf(d){if(String(d.tok||""))return sess(d).id;return/^[0-9a-fA-F:.]{3,45}$/.test(String(d.ip||""))?"u"+sha(d.ip+"|"+C.SALT).slice(0,12):""}
+function prof(p,d){var j,t,m,us;
+ if(p==="google"){if(!C.GOOGLE_ID)throw new Error("Chưa bật đăng nhập Google");
+  j=fj("https://oauth2.googleapis.com/tokeninfo?id_token="+encodeURIComponent(String(d.cred||"")));
+  if(!j||!j.sub||j.aud!==C.GOOGLE_ID||!/accounts\.google\.com$/.test(String(j.iss)))throw new Error("Google từ chối đăng nhập");
+  return{id:String(j.sub),name:j.name||String(j.email||"").split("@")[0],av:j.picture}}
+ if(p==="zalo"){if(!C.ZALO_ID)throw new Error("Chưa bật đăng nhập Zalo");
+  t=fj("https://oauth.zaloapp.com/v4/access_token",{method:"post",headers:{secret_key:C.ZALO_SECRET},payload:{code:String(d.code||""),app_id:C.ZALO_ID,grant_type:"authorization_code",code_verifier:String(d.ver||"")}});
+  if(!t||!t.access_token)throw new Error("Zalo từ chối đăng nhập: "+cl(t&&(t.error_description||t.error_name||t.message),80));
+  m=fj("https://graph.zalo.me/v2.0/me?fields=id,name,picture",{headers:{access_token:t.access_token}});
+  if(!m||!m.id)throw new Error("Không lấy được thông tin Zalo");
+  return{id:String(m.id),name:m.name,av:m.picture&&m.picture.data&&m.picture.data.url}}
+ if(p==="tiktok"){if(!C.TT_KEY)throw new Error("Chưa bật đăng nhập TikTok");
+  t=fj("https://open.tiktokapis.com/v2/oauth/token/",{method:"post",payload:{client_key:C.TT_KEY,client_secret:C.TT_SECRET,code:String(d.code||""),grant_type:"authorization_code",redirect_uri:String(d.ru||"")}});
+  if(!t||!t.access_token)throw new Error("TikTok từ chối đăng nhập: "+cl(t&&(t.error_description||t.error),80));
+  m=fj("https://open.tiktokapis.com/v2/user/info/?fields=open_id,avatar_url,display_name",{headers:{Authorization:"Bearer "+t.access_token}});
+  us=m&&m.data&&m.data.user;if(!us||!us.open_id)throw new Error("Không lấy được thông tin TikTok");
+  return{id:String(us.open_id),name:us.display_name,av:us.avatar_url}}
+ throw new Error("Nền tảng đăng nhập không hỗ trợ")}
+function moveUid(n,from,to){var s=sh(n),c=H[n].indexOf("uid")+1,L=s.getLastRow();if(!c||L<2)return;var r=s.getRange(2,c,L-1,1),v=r.getValues(),ch=0;v.forEach(function(x){if(x[0]===from){x[0]=to;ch=1}});if(ch)r.setValues(v)}
+function purge(){var s=sh("Sessions"),L=s.getLastRow();if(L<2)return;var v=s.getRange(2,3,L-1,1).getValues(),now=Date.now();for(var i=v.length-1;i>=0;i--)if(+v[i][0]<now)s.deleteRow(i+2)}
+function loginOp(d){var p=String(d.prov||""),f=prof(p,d),now=Date.now(),key=p+":"+f.id,idn=all("Identities").filter(function(r){return r.key===key})[0],u;
+ if(d.link){var cur=sess(d);if(!cur)throw new Error("AUTH");if(idn&&idn.uid!==cur.id)return err("Tài khoản "+p+" này đã gắn với người dùng khác");
+  if(!idn)put("Identities",{key:key,uid:cur.id,prov:p,ts:now});return{ok:true,linked:1,user:uv(cur,d),en:en(cur),cfg:cfg()}}
+ if(idn)u=all("Users").filter(function(r){return r.id===idn.uid})[0];
+ if(u){roll(u);var av=sv(f.av);if(av)u.av=av;upd("Users",u)}
+ else{var id="a"+sha(key+"|"+C.SALT).slice(0,12),ipid=/^[0-9a-fA-F:.]{3,45}$/.test(String(d.ip||""))?"u"+sha(d.ip+"|"+C.SALT).slice(0,12):"",
+   gs=ipid?all("Users").filter(function(r){return r.id===ipid})[0]:null,nm=cl(f.name,40);
+  u={id:id,prov:p,name:nm.length>=2?nm:"Người chơi "+id.slice(1,5),av:sv(f.av),day:"",n:0,onlSec:0,onlG:0,posts:0,postRew:0,lastPing:now,bonus:0,codeBad:0,ciLast:"",ciStreak:0};
+  if(gs){["day","n","onlSec","onlG","posts","postRew","bonus","codeBad","ciLast","ciStreak"].forEach(function(k){u[k]=gs[k]});if(String(gs.name||"").length>=2)u.name=gs.name; // chuyển dữ liệu IP cũ sang tài khoản
+   ["Shop","Equip","Boxes","MapBuys","Downloads","Redeems","Maps","Videos"].forEach(function(n){moveUid(n,ipid,id)});
+   gs.n=0;gs.bonus=0;gs.prov="ip>"+id;upd("Users",gs)}
+  roll(u);put("Users",u);put("Identities",{key:key,uid:id,prov:p,ts:now})}
+ var tok=(Utilities.getUuid()+Utilities.getUuid()).replace(/-/g,"");purge();put("Sessions",{h:sessH(tok),uid:u.id,exp:now+C.SESSION_DAYS*864e5});
+ return{ok:true,tok:tok,user:uv(u,d),en:en(u),cfg:cfg()}}
+function logoutOp(d){var t=String(d.tok||"");if(/^[0-9a-f]{64}$/.test(t)){var h=sessH(t),s=all("Sessions").filter(function(r){return r.h===h})[0];if(s)sh("Sessions").deleteRow(s._r)}return{ok:true}}
