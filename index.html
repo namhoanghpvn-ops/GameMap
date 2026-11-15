@@ -468,6 +468,7 @@ body.hc select{cursor:pointer!important}
 .cdl i{font-style:normal;font-size:.78rem;opacity:.9;background:rgba(0,0,0,.28);padding:0 .45rem;border-radius:99px}
 .dlx{font-size:.82rem;color:var(--mute);margin:2px 0 6px}.dlx b{color:var(--c)}
 .nw .cdl{padding:.3rem .8rem;font-size:.85rem}
+.cpp{font-weight:900;font-size:1rem;line-height:1;padding:.36rem .72rem;border:1px dashed var(--c);color:var(--c)}.cpp:hover{background:rgba(0,229,255,.12)}.cpp:disabled{opacity:.55;cursor:default;border-style:solid}
 .cpr{margin-top:8px;width:100%}.cpr .cprom{width:100%;justify-content:center;white-space:normal;text-align:center;padding:.5rem .7rem;border:1px dashed var(--c);color:var(--c);font-weight:800}
 .cpr .cprom:hover{background:rgba(0,229,255,.1)}.cpr .cprom:disabled{opacity:.5;cursor:wait}
 .nw .cdelc{margin-top:6px;padding:.2rem .7rem;font-size:.8rem}.nw .cdelc:hover{border-color:#ff5b6e;color:#ff5b6e}
@@ -1454,15 +1455,16 @@ function init2(){chip();if(!ACC_API)return;call("me").then(function(j){if(j.ok){
 function cmBy(m){return"👤 "+nmH(m.by)}
 function cmDet(m){return'<div class="dlx">Hôm nay <b>+'+(m.dl1||0)+'</b> · 7 ngày <b>+'+(m.dl7||0)+'</b>'+(m.ts?" · đăng "+fd(Date.parse(m.ts)):"")+'</div>'}
 function cmAct(m){return'<button type="button" class="btn cdl" data-id="'+m.cid+'">⬇ Tải map <i>'+(m.got||m.own?"miễn phí":"⚡"+CF.cost)+'</i></button>'+(U&&U.admin?'<button type="button" class="cp cdel" data-id="'+m.cid+'">Xóa</button>':"")}
-function cmProm(m){return U&&U.admin&&m.cid?'<div class="cpr"><button type="button" class="cp cprom" data-id="'+m.cid+'" title="Thêm map này vào mục Map sinh tồn (chỉ Admin thấy)">➕ Thêm vào Map sinh tồn</button></div>':""}
+function cmHas(t){return MAPS.some(function(x){return String(x.t).toLowerCase()===String(t).toLowerCase()})}
+function cmProm(m){if(!(U&&U.admin&&m.cid))return"";var has=cmHas(m.t);return'<button type="button" class="cp cprom cpp" data-id="'+m.cid+'"'+(has?' disabled':'')+' title="'+(has?"Map này đã có trong Map sinh tồn":"Tự động thêm map này (kèm ảnh và link) vào Map sinh tồn · chỉ Admin thấy")+'">'+(has?"✓":"＋")+'</button>'}
 window.cmProm=cmProm;
 window.cmBy=cmBy;window.cmDet=cmDet;window.cmAct=cmAct;
 document.addEventListener("click",function(e){var b=e.target.closest(".cprom");if(!b||b.disabled)return;
  if(!(U&&U.admin)){toast("Cần đăng nhập Admin");return}
  var id=b.dataset.id,m=CMAPS.filter(function(x){return String(x.cid)===String(id)})[0];if(!m)return;
  if(MAPS.some(function(x){return x.t.toLowerCase()===String(m.t).toLowerCase()})){toast("Map sinh tồn đã có map trùng tên «"+m.t+"»");return}
- if(!confirm("Thêm «"+m.t+"» ("+m.p+" người · "+m.d+" · "+m.s+") vào mục Map sinh tồn?\nMap vẫn giữ nguyên ở mục Map cộng đồng."))return;
- b.disabled=true;call("mpromote",{id:id}).then(function(j){b.disabled=false;if(!j||!j.ok){toast(spErr(j));return}setE(j);toast("Đã thêm «"+m.t+"» vào Map sinh tồn ✓");loadCos()})});
+ b.disabled=true;b.textContent="…";
+ call("mpromote",{id:id,img:String(m.img||"").trim()}).then(function(j){if(!j||!j.ok){b.disabled=false;b.textContent="＋";toast(spErr(j));return}setE(j);b.textContent="✓";b.title="Map này đã có trong Map sinh tồn";toast("Đã thêm «"+m.t+"» vào Map sinh tồn ✓");loadCos()})});
 document.addEventListener("click",function(e){var b=e.target.closest(".cdelc");if(!b)return;var id=b.dataset.id;if(!(U&&U.admin)){toast("Cần đăng nhập Admin để xóa");return}if(!confirm("Xóa bình luận này?"))return;API.del(id).then(function(j){if(j&&j.ok){ST.cmt=ST.cmt.filter(function(x){return x.id!==id});PEND=PEND.filter(function(x){return x.id!==id});var l=$("cl");if(l)l.innerHTML=cList();toast("Đã xóa bình luận ✓")}else toast((j&&j.err)||"Không xóa được bình luận")})});
 document.addEventListener("click",function(e){var b=e.target.closest(".cdl,.cdel");if(!b)return;
  var id=b.dataset.id,m=CMAPS.filter(function(x){return x.cid===id})[0];if(!m)return;if(!U){toast("Đang kết nối, thử lại sau giây lát");return}
