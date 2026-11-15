@@ -924,7 +924,7 @@ var MAPS=[
    Góp ý và gửi map của khách được chuyển thẳng vào Messenger của bạn (không lưu trên web).
    API_URL = link Google Apps Script (xem file google-apps-script.gs), dùng để lưu bình luận, lượt tải, sao và bình chọn theo IP.
    Để trống = chế độ thử (chỉ lưu trên máy từng người). */
-var API_URL="https://script.google.com/macros/s/AKfycbyJsmgMSIlLinS16Yhjqp9YYHWxjBsd5N9UFTygTdZ79lQx393hvw0s0d76tldRV45s/exec";
+var API_URL="https://script.google.com/macros/s/AKfycbxlQl4zB8wNP5IapUYuqsDeig31t1qRD6D026ziztdVb-85LNu2TuuQzRv3UZoMBRV4/exec";
 /* ---- GỬI GÓP Ý / GỬI MAP KHÔNG CẦN MESSENGER (tùy chọn, rất nên điền) ----
    FORM_KEY: vào https://web3forms.com, nhập email của bạn, nhận "Access Key" (miễn phí) rồi dán vào đây.
              Khách bấm Gửi là nội dung bay thẳng về email bạn, không phải mở Messenger nữa.
@@ -943,7 +943,7 @@ var LIVES=[
 ];
 /* ---- NĂNG LƯỢNG THEO IP (xem google-apps-script-tai-khoan.gs) ----
    ACC_API = link Web App của script năng lượng (khác API_URL). Trống = tắt. Không cần đăng nhập. */
-var ACC_API="https://script.google.com/macros/s/AKfycby5ixUpfnZ2OHUnEelLPpluGrdUtggT4vOlaColFrHM719eJJ_e3rqQo2n5OdFhPZnXqQ/exec";
+var ACC_API="https://script.google.com/macros/s/AKfycbwRVzmoAyxz2oLeno1SbhWFLkMKF-WwY-2RJ2GZxlmPtdOUW2VgO88zt69ej9aN1KOGbQ/exec";
 /* ---- MAP CỘNG ĐỒNG: khách gửi qua Messenger, bạn kiểm duyệt xong thì thêm 1 dòng vào đây (giống MAPS), by = tên người tạo.
    Ảnh: bỏ vào thư mục mapkhach/ trên GitHub, tên file = đúng tên map + .jpg */
 var CMAPS=[
@@ -1480,7 +1480,7 @@ function call(op,d){d=d||{};d.op=op;d.ak=AK;if(!ACC_API)return Promise.resolve({
   return fetch(ACC_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)}).then(function(r){return r.text()}).then(function(t){try{return JSON.parse(t)}catch(x){return{ok:false,err:"Máy chủ không trả về JSON: link ACC_API sai, hoặc lúc triển khai chưa chọn «Bất kỳ ai» được truy cập, hoặc chưa cấp quyền cho script."}}},function(){return{ok:false,err:"Không gọi được ACC_API (sai link hoặc mạng/trình chặn quảng cáo chặn script.google.com)."}})},
   function(){return{ok:false,err:"Không lấy được IP của bạn (ipify/cloudflare bị chặn). Tắt trình chặn quảng cáo/VPN rồi thử lại."}})}
 function chip(){CH.hidden=!ACC_API;var nm=(U&&U.name)||BY||"",nh="";if(nm){try{nh=nmH(nm)}catch(x){nh=esc(nm)}}CH.innerHTML=(nm?'<span class="acn">👤 '+nh+"</span>":"")+"<span>⚡ <b>"+EN.n+"</b></span>";CH.classList.toggle("has",!!nm);$("accnote").textContent=ACC_API?"Bạn có ⚡"+EN.n+" năng lượng (tự nhận diện theo IP, mỗi ngày nhận ⚡"+CF.daily+"). [bản web v5]":""}
-function setE(j){if(j.user){U=j.user;if(U.name&&!BY){BY=U.name;try{localStorage.setItem("g_by",BY)}catch(x){}}}if(j.en)EN=j.en;if(j.cfg){CF=j.cfg;if(CF.myst)MYST=CF.myst}chip();try{document.dispatchEvent(new Event("accchange"))}catch(x){}}
+function setE(j){if(j.user){U=j.user;if(U.name&&BY!==U.name){BY=U.name;try{localStorage.setItem("g_by",BY)}catch(x){}}}if(j.en)EN=j.en;if(j.cfg){CF=j.cfg;if(CF.myst)MYST=CF.myst}chip();try{document.dispatchEvent(new Event("accchange"))}catch(x){}}
 window.isLiveAdmin=function(){return !!(U&&U.admin)};
 function modal(h){var o=$("amod");if(o)o.remove();o=document.createElement("div");o.id="amod";o.className="amod";o.innerHTML='<div class="abox"><button class="ax" type="button" aria-label="Đóng">✕</button>'+h+'</div>';o.onclick=function(e){if(e.target===o||e.target.classList.contains("ax"))o.remove()};document.body.appendChild(o);return o}
 function left(){var m=Math.max(0,Math.round((EN.resetAt-Date.now())/60000));return Math.floor(m/60)+"g "+m%60+"p"}
@@ -1554,9 +1554,9 @@ function pSub(){
  var f=ACC_API?'<div class="cf"><p class="mt">Map hiện ngay ở mục «Map cộng đồng» kèm tên bạn nhập. Đăng thành công +⚡'+CF.postRew+' (tối đa '+CF.postRewMax+' lần/ngày, đăng tối đa 5 map/ngày). Map sai link hoặc vi phạm sẽ bị gỡ.</p><div class="r2"><label>Tên người đóng góp<input id="sb" maxlength="40"></label><label>Tên map<input id="sn" maxlength="80"></label></div><div class="r2"><label>Số người<select id="sp">'+sel([2,3,4,5,6,7,8])+'</select></label><label>Độ khó<select id="sd">'+sel(DIFF)+'</select></label><label>Cỡ map<select id="szm">'+sel(SZ)+'</select></label></div><label>Link tải (MediaFire, Drive, Mega…)<input id="su" type="url" placeholder="https://"></label><label>Link ảnh map (nên có, dán link ảnh trực tiếp)<input id="si" type="url" placeholder="https://"></label><div class="imgtool"><a class="cb" href="https://postimages.org/" target="_blank" rel="noopener">🗜 Nén &amp; tải ảnh lên Postimages</a><small>Hướng dẫn: ① Bấm nút, chọn ảnh, ở mục <b>Resize image</b> chọn kích thước nhỏ (vd 800x600) để nén ảnh → ② bấm <b>Upload</b> → ③ ở trang kết quả, copy ô <b>Liên kết trực tiếp</b> (Direct link, dạng https://i.postimg.cc/…jpg) → ④ dán vào ô «Link ảnh map» ở trên.</small></div><div class="imgprev" id="sip"></div><div class="cr"><button class="btn" id="sg" type="button">⭐ Đăng map</button></div><p class="mt" id="sm"></p></div>':'<p class="mt">Tính năng chưa được bật (chưa điền ACC_API).</p>';
  var L=CMAPS.map(function(m){return'<div class="nw"><div class="cmrow"><div class="cmi"><b>'+esc(m.t)+'</b> <span class="by">'+(m.cid?cmBy(m):"👤 "+esc(m.by))+" · "+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+'</span>'+(m.cid?'<div class="dlx">⬇ <b>'+(m.dl||0)+'</b> lượt tải · hôm nay <b>+'+(m.dl1||0)+'</b> · 7 ngày <b>+'+(m.dl7||0)+'</b></div>'+cmAct(m)+tipBtn(m.t):'<br><a class="cb dlb" data-t="'+esc(m.t)+'" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a>')+'</div>'+cmThumb(m)+'</div></div>'}).join("");
  P.innerHTML=f+'<h3 class="sh">🌟 Map cộng đồng đã đăng ('+CMAPS.length+')</h3>'+(L||'<p class="mt">Chưa có map nào. Hãy là người đầu tiên!</p>');
- if(!ACC_API)return;$("sb").value=BY;initPrev();$("sg").onclick=function(){var by=$("sb").value.trim(),t=$("sn").value.trim(),u=$("su").value.trim(),im=$("si").value.trim();
+ if(!ACC_API)return;$("sb").value=(U&&U.name)||BY;if(U&&U.name){$("sb").readOnly=true;$("sb").title="Tên đã khóa theo IP"}initPrev();$("sg").onclick=function(){var by=$("sb").value.trim(),t=$("sn").value.trim(),u=$("su").value.trim(),im=$("si").value.trim();
   if(by.length<2||t.length<2){msg("sm","Nhập tên người đóng góp và tên map.");return}if(!http(u)){msg("sm","Link tải phải bắt đầu bằng http:// hoặc https://");return}if(im&&!http(im)){msg("sm","Link ảnh chưa đúng.");return}
-  BY=by;try{localStorage.setItem("g_by",by)}catch(x){}
+  if(!(U&&U.name)){msg("sm","Hãy đặt tên ở mục ⚡ Năng lượng trước (chỉ đặt được 1 lần).");return}by=U.name;
   msg("sm","Đang đăng…");call("submit",{by:by,t:t,p:$("sp").value,d:$("sd").value,s:$("szm").value,u:u,img:im}).then(function(j){if(!j.ok){msg("sm",j.err||"Không đăng được");return}setE(j);toast("Đã đăng map ✓"+(j.reward?" +⚡"+j.reward:""));loadC()})}}
 function cList(){var a=ST.cmt.filter(function(x){var q=String(x.noidung||"");return q.indexOf("[MEO]")!==0&&q.indexOf("[LIKE]")!==0}).sort(function(x,y){return y.ts-x.ts}).slice(0,100);
  return a.length?a.map(function(x){return'<div class="nw"><small><b>'+nmH(x.ten||"Ẩn danh")+"</b> · "+esc(x.map||"Chung")+" · "+ft(x.ts)+"</small><p>"+esc(x.noidung)+"</p>"+(U&&U.admin&&x.id?'<button type="button" class="cp cdelc" data-id="'+esc(x.id)+'">🗑 Xóa</button>':"")+"</div>"}).join(""):'<p class="mt">Chưa có bình luận nào. Hãy là người đầu tiên!</p>'}
@@ -1564,10 +1564,10 @@ function ft(t){var d=new Date(+t||0);return d.toLocaleDateString("vi-VN")+" "+("
 var PEND=[];
 function pCmt(){
  P.innerHTML='<div class="cf"><div class="r2"><label>Tên bạn<input id="cn" maxlength="30"></label><label>Bạn đã chơi map nào?<select id="cm">'+sel(["Chung (cả web)"].concat(allMaps().map(function(m){return m.t})))+'</select></label></div><label>Cảm nhận<textarea id="cc" rows="3" maxlength="400" placeholder="Chơi map này thấy thế nào?"></textarea></label><div><button class="btn" id="cs" type="button">💬 Gửi bình luận</button></div><p class="mt" id="cx"></p></div><div class="clist" id="cl">'+cList()+'</div>';
- try{var sn=localStorage.getItem("g_cname");if(sn)$("cn").value=sn}catch(x){}
+ try{var sn=localStorage.getItem("g_cname");if(sn)$("cn").value=sn}catch(x){} if(U&&U.name){$("cn").value=U.name;$("cn").readOnly=true}
  $("cs").onclick=function(){var c=$("cc").value.trim();if(c.length<3){msg("cx","Hãy viết vài chữ cảm nhận của bạn.");return}if(!cool("cmt",20000)){msg("cx","Bạn gửi hơi nhanh, đợi chút nhé.");return}
-  var nm=$("cn").value.trim().slice(0,30);try{localStorage.setItem("g_cname",nm)}catch(x){}
-  var r={id:nid(),ts:Date.now(),ten:nm,map:$("cm").value,noidung:c.slice(0,400)};ST.cmt.push(r);PEND.push(r);API.add("BinhLuan",r);render()}}
+  if(!(U&&U.name)){msg("cx","Hãy đặt tên ở mục ⚡ Năng lượng trước (chỉ đặt được 1 lần).");return}var nm=U.name.trim().slice(0,40);try{localStorage.setItem("g_cname",nm)}catch(x){}
+  var r={id:nid(),ts:Date.now(),ten:nm,map:$("cm").value,noidung:c.slice(0,400)};ST.cmt.push(r);PEND.push(r);myip().then(function(ip){return API.add("BinhLuan",Object.assign({ip:ip},r))}).catch(function(){});render()}}
 /* tự cập nhật bình luận của mọi người mỗi 12 giây khi đang xem tab Bình luận */
 setInterval(function(){if(!API.on||document.hidden||cur!=="cmt")return;
  API.load().then(function(d){if(!d||!d.cmt)return;setData(d);
@@ -1620,14 +1620,14 @@ $("ctabs").addEventListener("click",function(e){var b=e.target.closest(".ctab");
 P.addEventListener("click",function(e){var b=e.target.closest(".cb[data-v]");if(!b||b.disabled||VS.v!=="")return;
  var M=ym(),k=b.dataset.v,v=ST.vt["m"+M]||(ST.vt["m"+M]={});VS.v=k;v[k]=(v[k]||0)+1;pVote();
  API.vote(VS.ip,M,k).then(function(j){if(j&&j.dup){v[k]--;VS.v=j.v||k;toast("IP của bạn đã bình chọn tháng này rồi")}else toast("Đã ghi nhận phiếu bầu ✓");if(cur==="vote")pVote()})});
-/* ---- TÊN CỦA BẠN (gắn với IP, đổi được bất cứ lúc nào) ---- */
-function nameHtml(){var n=(U&&U.name)||BY||"";return'<div class="nmf"><p class="mt"><b>👤 Tên của bạn</b>'+(n?": "+nmH(n):"")+'</p><div class="nmr"><input id="mynm" maxlength="40" value="'+esc(n)+'" placeholder="Nhập tên của bạn" autocomplete="off"><button type="button" class="btn" id="mynb">Lưu</button></div><p class="mt" id="mynm_m"><small>Tên gắn với IP của bạn và đổi được bất cứ lúc nào. Dùng làm tên đóng góp, bình luận trên web.</small></p></div>'}
+/* ---- TÊN CỦA BẠN (gắn vĩnh viễn với IP, chỉ đặt được 1 lần) ---- */
+function nameHtml(){var lk=!!(U&&U.name),n=(U&&U.name)||"";return'<div class="nmf"><p class="mt"><b>👤 Tên của bạn</b>'+(n?": "+nmH(n):"")+'</p><div class="nmr"><input id="mynm" maxlength="40" value="'+esc(n)+'" placeholder="Nhập tên của bạn" autocomplete="off"'+(lk?" readonly disabled":"")+'>'+(lk?"":'<button type="button" class="btn" id="mynb">Lưu</button>')+'</div><p class="mt" id="mynm_m"><small>'+(lk?"🔒 Tên đã khóa vĩnh viễn với IP của bạn, không đổi được nữa.":"⚠ Chỉ đặt được 1 LẦN DUY NHẤT, sau đó gắn cố định với IP và không thể sửa. Không được trùng tên người khác.")+'</small></p></div>'}
 document.addEventListener("click",function(e){var b=e.target.closest("#mynb");if(!b)return;var i=$("mynm"),m=$("mynm_m"),n=(i.value||"").trim();
  if(n.length<2){m.textContent="Tên quá ngắn (ít nhất 2 ký tự).";return}
  if(!ACC_API||!U){m.textContent="Đang kết nối máy chủ năng lượng, thử lại sau giây lát.";return}
- var old=U.name;b.disabled=true;m.textContent="Đang lưu…";
+ if(U.name){m.textContent="Tên đã khóa, không thể đổi.";return}if(!confirm("Tên «"+n+"» sẽ gắn VĨNH VIỄN với IP của bạn và KHÔNG thể đổi lại. Xác nhận lưu?"))return;var old=U.name;b.disabled=true;m.textContent="Đang lưu…";
  call("setname",{name:n}).then(function(j){b.disabled=false;if(!j||!j.ok){m.textContent=spErr(j);return}
-  setE(j);if(!BY||BY===old||BY===n)setBy(n);m.textContent="Đã lưu tên ✓";toast("Đã lưu tên: "+n)})});
+  setE(j);setBy(U.name||n);m.textContent="Đã lưu tên ✓";var ii=$("mynm");if(ii){ii.readOnly=true;ii.disabled=true}b.remove();toast("Đã lưu tên: "+n)})});
 /* ---- NHẬP MÃ QUÀ TẶNG ⚡ (mã ghi trong sheet «Codes» của Google Sheet) ---- */
 function rdHtml(){return'<div class="rdf"><p class="mt"><b>🎟 Nhập mã quà tặng</b> <small>(⚡ từ mã được giữ lại, không bị reset 00:00)</small></p><div class="rdr"><input class="rdc" maxlength="40" placeholder="Nhập mã…" autocomplete="off" spellcheck="false"><button type="button" class="btn rdb">Nhận ⚡</button></div><p class="mt rdm"></p></div>'}
 document.addEventListener("click",function(e){var b=e.target.closest(".rdb");if(!b)return;var f=b.closest(".rdf"),i=f.querySelector(".rdc"),m=f.querySelector(".rdm"),c=i.value.trim();
@@ -2046,7 +2046,7 @@ function build(){P=document.createElement("div");P.className="vpanel";
  +'<div class="vtool"><input class="vq" type="search" placeholder="Tìm video hoặc người chia sẻ…" aria-label="Tìm video"><div class="fg" data-vsrc><button type="button" class="vf on" data-v="all">Tất cả</button><button type="button" class="vf" data-v="yt">YouTube</button><button type="button" class="vf" data-v="tt">TikTok</button></div></div>'
  +'<div class="vgrid"></div>';
  box.appendChild(P);
- try{P.querySelector(".vn").value=localStorage.getItem("g_by")||localStorage.getItem("g_cname")||""}catch(e){}
+ try{P.querySelector(".vn").value=localStorage.getItem("g_by")||localStorage.getItem("g_cname")||""}catch(e){} if(U&&U.name){P.querySelector(".vn").value=U.name;P.querySelector(".vn").readOnly=true}
  P.querySelector(".vq").addEventListener("input",function(){st.q=this.value.trim();draw()});
  P.addEventListener("error",function(e){var im=e.target;if(im.tagName==="IMG"&&im.parentNode){im.parentNode.classList.add("noimg")}},true)}
 function open(b){box=b.closest(".mapg");if(!box)return;if(!P||P.parentNode!==box){P=null;build()}

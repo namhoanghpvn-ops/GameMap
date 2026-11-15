@@ -13,6 +13,7 @@ var HEAD = {
   Dem: ["ts", "loai", "key", "val", "ip"]
 };
 var ADMIN_KEY = "250319"; // PHẢI GIỐNG mã admin trong script năng lượng; chỉ admin mới xóa được bình luận
+var ACC_URL = "https://script.google.com/macros/s/AKfycby5ixUpfnZ2OHUnEelLPpluGrdUtggT4vOlaColFrHM719eJJ_e3rqQo2n5OdFhPZnXqQ/exec"; // link /exec của script NĂNG LƯỢNG (để xác minh tên theo IP)
 var MAX_CMT = 300; // số bình luận mới nhất trả về cho web
 
 function sheet_(name) {
@@ -35,6 +36,18 @@ function rows_(name) {
 function out_(o) {
   return ContentService.createTextOutput(JSON.stringify(o))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+/* Hỏi script năng lượng: IP này đã khóa tên gì? Trả "" nếu chưa đặt tên, null nếu không hỏi được */
+function verifiedName_(ip) {
+  try {
+    var res = UrlFetchApp.fetch(ACC_URL, {
+      method: "post", contentType: "text/plain;charset=utf-8",
+      payload: JSON.stringify({ op: "uname", ip: ip }), muteHttpExceptions: true, followRedirects: true
+    });
+    var j = JSON.parse(res.getContentText());
+    return j && j.ok ? String(j.name || "") : null;
+  } catch (e) { return null; }
 }
 
 function clean_(s, n) {
@@ -79,9 +92,14 @@ function doPost(e) {
     if (d.sh === "BinhLuan") {
       var nd = clean_(r.noidung, 400);
       if (nd.length < 3) return out_({ ok: 0, err: "Bình luận quá ngắn" });
+      var ipc = clean_(r.ip, 64);
+      if (!/^[0-9a-fA-F:.]{3,45}$/.test(ipc)) return out_({ ok: 0, err: "Không xác định được IP" });
+      var vn = verifiedName_(ipc); // tên lấy từ máy chủ, KHÔNG tin tên client gửi lên
+      if (vn === null) return out_({ ok: 0, err: "Không xác minh được tên, thử lại sau" });
+      if (vn.length < 2) return out_({ ok: 0, err: "Hãy đặt tên ở mục Năng lượng trước (chỉ đặt được 1 lần)" });
       sheet_("BinhLuan").appendRow([
         clean_(r.id, 40), Number(r.ts) || Date.now(),
-        clean_(r.ten, 30), clean_(r.map, 80), nd
+        clean_(vn, 40), clean_(r.map, 80), nd
       ]);
       return out_({ ok: 1 });
     }

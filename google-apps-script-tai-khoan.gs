@@ -39,6 +39,8 @@ function J(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeT
 function sha(s){return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,s).map(function(b){return("0"+(b&255).toString(16)).slice(-2)}).join("")}
 function today(){return"d"+Utilities.formatDate(new Date(),C.TZ,"yyyyMMdd")}
 function fj(u,o){o=o||{};o.muteHttpExceptions=true;return JSON.parse(UrlFetchApp.fetch(u,o).getContentText())}
+function nk(s){return String(s||"").toLowerCase().replace(/đ/g,"d").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]/g,"")} // khóa so sánh tên: "Nam Hoàng" = "nam hoang" = "NamHoang"
+function needName(u){return String(u.name||"").length<2?"Bạn cần đặt tên trước (mục ⚡ Năng lượng). Tên chỉ đặt được 1 lần duy nhất.":""}
 function cl(s,n){return String(s||"").replace(/[\u0000-\u001f<>]/g,"").trim().slice(0,n)}
 function inl(a,v){v=String(v||"").normalize("NFC").trim();return a.some(function(x){return x.normalize("NFC")===v})}
 function err(m){return{ok:false,err:m}}
@@ -71,12 +73,12 @@ function pub(u){var dl={},t0=new Date(en({n:0}).resetAt-864e5).getTime(),now=Dat
  all("Downloads").forEach(function(r){var o=dl[r.mid]||(dl[r.mid]={a:0,b:0,c:0});o.a++;if(+r.ts>=t0)o.b++;if(+r.ts>=now-6048e5)o.c++;if(u&&r.uid===u.id)got[r.mid]=1});
  return{ok:true,maps:all("Maps").filter(function(m){return m.st==="on"}).reverse().slice(0,500).map(function(m){var o=dl[m.id]||{a:0,b:0,c:0};
   return{id:m.id,ts:new Date(+m.ts).toISOString(),by:m.by,av:m.av,t:m.t,p:+m.p,d:m.d,s:m.s,img:m.img,dl:o.a,dl1:o.b,dl7:o.c,got:!!got[m.id],own:!!u&&m.uid===u.id}})}}
-function run(d){var op=d.op;if(op==="vlist"||op==="vadd"||op==="vdel")return vidRun(d);var u=who(d.ip,op!=="maps");if(op==="maps")return pub(u);
+function run(d){var op=d.op;if(op==="vlist"||op==="vadd"||op==="vdel")return vidRun(d);if(op==="uname"){var u0=who(d.ip,false);return{ok:true,name:u0?String(u0.name||""):""}}var u=who(d.ip,op!=="maps");if(op==="maps")return pub(u);
  if(op==="cos"){var cs={};all("Equip").forEach(function(r){if(r.fr||r.co||r.ic||r.ef||r.tt)cs[String(r.by).toLowerCase()]={fr:String(r.fr||""),co:String(r.co||""),ic:String(r.ic||""),ef:String(r.ef||""),tt:String(r.tt||"")}});return{ok:true,cos:cs,own:owned(u.id),box:all("Boxes").filter(function(r){return r.uid===u.id&&r.map}).map(function(r){return String(r.map)}),mp:mcfg(),ms:smaps(isAd(d)),mb:mbOwned(u.id)}}
  roll(u);var res={ok:true},now=Date.now();
  if(op==="ping"){var dt=Math.min(90,Math.max(0,(now-(+u.lastPing||now))/1000));u.lastPing=now;u.onlSec=+u.onlSec+dt;
   var t=Math.min(C.ONL_MAX+pk(u.id).onl,Math.floor(u.onlSec/C.ONL_EVERY));if(t>+u.onlG){u.n=+u.n+t-u.onlG;u.onlG=t}}
- else if(op==="submit"){var by=cl(d.by,40);if(by.length<2)return err("Nhập tên người đóng góp");var t2=cl(d.t,80),p=+d.p,lk=String(d.u||"").trim(),im=String(d.img||"").trim(),re=/^https?:\/\/\S{4,480}$/;
+ else if(op==="submit"){var ne=needName(u);if(ne)return err(ne);var by=cl(u.name,40);var t2=cl(d.t,80),p=+d.p,lk=String(d.u||"").trim(),im=String(d.img||"").trim(),re=/^https?:\/\/\S{4,480}$/;
   if(t2.length<2)return err("Tên map quá ngắn");if(!(p>=2&&p<=8))return err("Số người không hợp lệ");
   if(!inl(DF,d.d))return err("Độ khó không hợp lệ: "+cl(d.d,20));if(!inl(SZ,d.s))return err("Cỡ map không hợp lệ: "+cl(d.s,20));
   if(!re.test(lk))return err("Link tải không hợp lệ (phải bắt đầu http/https, không chứa khoảng trắng)");if(im&&!re.test(im))return err("Link ảnh không hợp lệ");
@@ -121,10 +123,10 @@ function run(d){var op=d.op;if(op==="vlist"||op==="vadd"||op==="vdel")return vid
   if(ks.length>600)return err("Quá nhiều giá riêng");
   for(i2=0;i2<ks.length;i2++){var mv=mpp[ks[i2]];if(mv===undefined||mv===null||mv==="")continue;mv=Math.round(+mv);if(!(mv>=0&&mv<=99))return err("Giá phải từ 0 đến 99");o.map[cl(ks[i2],80)]=mv}
   var cr=all("Config").filter(function(x){return x.k==="mprices"})[0];if(cr){cr.v=JSON.stringify(o);upd("Config",cr)}else put("Config",{k:"mprices",v:JSON.stringify(o)})}
- else if(op==="equip"){var nb=cl(d.by,40);if(nb.length<2)return err("Nhập tên hiển thị trước");var ow=owned(u.id),eq=d.eq||{},nw={},sl=["fr","co","ic","ef","tt"];
+ else if(op==="equip"){var ne2=needName(u);if(ne2)return err(ne2);var nb=cl(u.name,40);var ow=owned(u.id),eq=d.eq||{},nw={},sl=["fr","co","ic","ef","tt"];
   for(var i=0;i<5;i++){var v=String(eq[sl[i]]||"");if(v&&(v.indexOf(sl[i])!==0||ow.indexOf(v)<0))return err("Bạn chưa sở hữu món «"+cl(v,10)+"»");nw[sl[i]]=v}
   var lo=nb.toLowerCase(),eqs=all("Equip");
-  if(eqs.some(function(r){return r.uid!==u.id&&String(r.by).toLowerCase()===lo&&(r.fr||r.co||r.ic||r.ef||r.tt)}))return err("Tên «"+nb+"» đang được người khác dùng cho đồ cửa hàng, hãy chọn tên khác");
+  if(eqs.some(function(r){return r.uid!==u.id&&nk(r.by)===nk(nb)&&(r.fr||r.co||r.ic||r.ef||r.tt)}))return err("Tên «"+nb+"» đang được người khác dùng cho đồ cửa hàng, hãy chọn tên khác");
   var mine=eqs.filter(function(r){return r.uid===u.id})[0];
   if(mine){mine.by=nb;mine.fr=nw.fr;mine.co=nw.co;mine.ic=nw.ic;mine.ef=nw.ef;mine.tt=nw.tt;mine.ts=now;upd("Equip",mine)}else put("Equip",{uid:u.id,by:nb,fr:nw.fr,co:nw.co,ic:nw.ic,ef:nw.ef,tt:nw.tt,ts:now})}
  else if(op==="redeem"){var cd=nrm(d.code);if(cd.length<2)return err("Nhập mã quà tặng");
@@ -139,7 +141,8 @@ function run(d){var op=d.op;if(op==="vlist"||op==="vadd"||op==="vdel")return vid
   if(String(u.ciLast)===td)return err("Hôm nay bạn đã điểm danh rồi");
   var cs=String(u.ciLast)===yd?(+u.ciStreak||0)+1:1,rw=C.CHECKIN[(cs-1)%C.CHECKIN.length]+pk(u.id).ci;
   u.ciLast=td;u.ciStreak=cs;u.n=+u.n+rw;if(C.CHECKIN_KEEP)u.bonus=(+u.bonus||0)+rw;res.checkin={streak:cs,reward:rw}}
- else if(op==="setname"){var nn=cl(d.name,40);if(nn.length<2)return err("Tên quá ngắn (ít nhất 2 ký tự)");u.name=nn}
+ else if(op==="setname"){if(String(u.name||"").length>=2)return err("Tên đã được khóa vĩnh viễn với IP của bạn, không thể đổi nữa");var nn=cl(d.name,40);if(nn.length<2)return err("Tên quá ngắn (ít nhất 2 ký tự)");var kk=nk(nn);if(kk.length<2)return err("Tên phải có chữ hoặc số");
+  if(all("Users").some(function(r){return r.id!==u.id&&nk(r.name)===kk})||all("Equip").some(function(r){return r.uid!==u.id&&nk(r.by)===kk})||all("Maps").some(function(r){return r.uid!==u.id&&nk(r.by)===kk}))return err("Tên «"+nn+"» đã có người dùng, hãy chọn tên khác");u.name=nn}
  else if(op!=="me")return err("Thao tác không hợp lệ");
  upd("Users",u);res.user=uv(u,d);res.en=en(u);res.cfg=cfg(u);return res}
 
@@ -244,12 +247,13 @@ function vidRun(d){var op=d.op;
  if(op==="vlist")return{ok:true,vids:vidList()};
  if(op==="vadd"){var v=d.v||{},p=vidParse(v.url);if(!p)return err("Link không hợp lệ (chỉ nhận YouTube hoặc TikTok)");
   var rows=all("Videos"),now=Date.now(),uid=/^[0-9a-fA-F:.]{3,45}$/.test(String(d.ip||""))?"u"+sha(d.ip+"|"+C.SALT).slice(0,12):"";
+  var vu=all("Users").filter(function(r){return r.id===uid})[0];if(!vu||String(vu.name||"").length<2)return err("Bạn cần đặt tên trước (mục ⚡ Năng lượng). Tên chỉ đặt được 1 lần duy nhất.");
   if(rows.some(function(r){return String(r.url).toLowerCase()===p.url.toLowerCase()}))return err("Video này đã có trong danh sách rồi");
   if(rows.length>=VID_MAX)return err("Danh sách video đã đầy, nhờ Admin dọn bớt");
   if(uid){var mine=rows.filter(function(r){return r.uid===uid}),t0=now-864e5;
    if(mine.some(function(r){return now-(+r.ts||0)<VID_GAP}))return err("Bạn thêm hơi nhanh, đợi vài giây nhé");
    if(mine.filter(function(r){return(+r.ts||0)>t0}).length>=VID_DAY)return err("Hôm nay bạn đã thêm đủ "+VID_DAY+" video")}
-  var th=String(v.th||""),rec={id:"v"+now.toString(36)+Math.floor(Math.random()*46656).toString(36),ts:now,src:p.src,url:p.url,t:vidTxt(v.t,140),th:/^https:\/\/[^\s"'<>]{4,580}$/.test(th)?th:"",by:vidTxt(v.by||"Ẩn danh",30)||"Ẩn danh",uid:uid};
+  var th=String(v.th||""),rec={id:"v"+now.toString(36)+Math.floor(Math.random()*46656).toString(36),ts:now,src:p.src,url:p.url,t:vidTxt(v.t,140),th:/^https:\/\/[^\s"'<>]{4,580}$/.test(th)?th:"",by:vidTxt(vu.name,30),uid:uid};
   put("Videos",rec);return{ok:true,v:{id:rec.id,ts:rec.ts,src:p.src,vid:p.vid,url:p.url,t:rec.t,th:rec.th,by:rec.by},vids:vidList()}}
  if(op==="vdel"){if(!isAd(d))return err("Chỉ Admin mới được xóa video");var id=String(d.id||""),r=all("Videos").filter(function(x){return String(x.id)===id})[0];
   if(!r)return err("Không tìm thấy video");sh("Videos").deleteRow(r._r);return{ok:true}}
