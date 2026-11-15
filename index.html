@@ -918,6 +918,38 @@ var CMAPS=[
   /* {t:"Tên map",by:"Tên người tạo",p:8,d:"Khó",s:"Vừa",u:"https://link-tai",ts:"2026-11-05"}, */
 ];
 CMAPS.forEach(function(m){if(!m.img)m.img=KHACH_DIR+encodeURIComponent(m.t)+KHACH_EXT});
+/* ---- ẢNH MAP TỰ NHẬN DIỆN ----
+   Mỗi map tự thử lần lượt (cái nào tải được thì dùng, không cần cấu hình):
+   1) Link ảnh người đăng gửi lên (tự đổi link Google Drive / Dropbox / Imgur / GitHub thành link ảnh trực tiếp)
+   2) Ảnh trong thư mục anh-map/  (tên file = tên map, đuôi .jpg .jpeg .png .webp)
+   3) Ảnh trong thư mục mapkhach/ (như trên)
+   4) Không có ảnh nào -> hiện ảnh minh họa mặc định */
+var IMG_EXTS=[".jpg",".jpeg",".png",".webp"],IMGW=Object.create(null),IMGX=Object.create(null);
+function imgFix(u){u=String(u||"").trim();if(!u)return[];if(!/^https?:\/\//i.test(u))return[u];
+ u=u.replace(/^http:\/\//i,"https://");var m;
+ if(m=u.match(/(?:drive|docs)\.google\.com\/(?:file\/d\/|[^#]*[?&]id=)([\w-]{10,})/i))return["https://drive.google.com/thumbnail?id="+m[1]+"&sz=w640","https://lh3.googleusercontent.com/d/"+m[1]+"=w640"];
+ if(/^https:\/\/(?:www\.)?dropbox\.com\//i.test(u)){var b=u.replace(/([?&])(?:dl|raw)=\d&?/g,"$1").replace(/[?&]$/,"");return[b+(b.indexOf("?")<0?"?":"&")+"raw=1"]}
+ if(m=u.match(/^https:\/\/(?:www\.|m\.)?imgur\.com\/(\w{5,8})(?:[?#].*)?$/i))return["https://i.imgur.com/"+m[1]+".jpg","https://i.imgur.com/"+m[1]+".png"];
+ if(m=u.match(/^https:\/\/github\.com\/([^\/]+\/[^\/]+)\/blob\/(.+)$/i))return["https://raw.githubusercontent.com/"+m[1]+"/"+m[2].replace(/\?.*$/,"")];
+ return[u]}
+window.imgCands=function(m){var t=String(m.t||""),k=t.toLowerCase(),a=[],seen={};
+ if(IMGW[k])return[IMGW[k]];if(IMGX[k]&&Date.now()-IMGX[k]<3e5)return[];
+ function add(u){if(u&&!seen[u]){seen[u]=1;a.push(u)}}
+ imgFix(m.img).forEach(add);imgFix(m.img2).forEach(add);
+ if(t){var n=encodeURIComponent(t);[MAP_DIR,KHACH_DIR].forEach(function(d){IMG_EXTS.forEach(function(x){add(d+n+x)})})}
+ return a};
+/* trả về thẻ <img> có sẵn danh sách ảnh dự phòng; o.ph = ảnh thay thế khi không tìm thấy ảnh nào */
+window.imgTag=function(m,o){o=o||{};var c=imgCands(m);if(!c.length&&!o.ph)return"";
+ return'<img src="'+esc(c[0]||o.ph)+'"'+(c.length>1?' data-cand="'+esc(JSON.stringify(c.slice(1)))+'"':"")+' data-k="'+esc(String(m.t||"").toLowerCase())+'" data-n="'+(c.length?1:0)+'" data-x="'+(imgFix(m.img).length||imgFix(m.img2).length?1:0)+'"'+(o.i!=null?' data-i="'+o.i+'"':"")+' alt="'+esc(o.alt||"")+'" loading="lazy" decoding="async" referrerpolicy="no-referrer">'};
+document.addEventListener("error",function(e){var im=e.target;if(!im||im.tagName!=="IMG"||!im.dataset||im.dataset.n!=="1")return;
+ var q=[];try{q=JSON.parse(im.dataset.cand||"[]")}catch(x){}
+ if(q.length){var nx=q.shift();im.dataset.cand=JSON.stringify(q);im.src=nx;return}
+ im.dataset.n="0";IMGX[im.dataset.k]=Date.now();im.dispatchEvent(new CustomEvent("imgnone",{bubbles:true}))},true);
+document.addEventListener("load",function(e){var im=e.target;if(!im||im.tagName!=="IMG"||!im.dataset||im.dataset.n!=="1")return;
+ IMGW[im.dataset.k]=im.getAttribute("src");var a=im.closest&&im.closest("a.cmth");if(a)a.href=im.getAttribute("src")},true);
+document.addEventListener("imgnone",function(e){var im=e.target,a=im.closest&&im.closest("a.cmth");
+ if(a){if(im.dataset.x==="1"){a.className="cmth no";a.removeAttribute("href");a.textContent="🖼 Không tải được ảnh"}else a.remove();return}
+ if(im.closest&&im.closest(".syt")){im.parentNode.textContent="Không ảnh"}});
 /* 10 map đề cử bình chọn trong tháng (ghi đúng tên map). Để trống = tự lấy 10 map tải nhiều nhất. */
 var MONTHLY=[];
 /* Tin tức & sự kiện: thêm tin mới lên ĐẦU danh sách */
@@ -1313,15 +1345,15 @@ window.initGallery=function(box,maps){
   ord().forEach(function(i){var m=maps[i];
    if(st.q&&m.t.toLowerCase().indexOf(st.q)<0)return;
    if(st.pl!=="all"&&bk(m.p)!==st.pl)return;if(st.df!=="all"&&m.d!==st.df)return;if(st.sz!=="all"&&m.s!==st.sz)return;
-   var K=m.cid?"c"+m.cid:mkey(m.t),id=((m.u||"").match(/file\/(\w+)/)||[])[1],img=m.img||m.img2||(MAP_DIR+encodeURIComponent(m.t)+MAP_EXT);
-   h+='<article class="mcard" data-id="'+id+'" data-t="'+esc(m.t)+'" style="animation-delay:'+Math.min(n,24)*40+'ms"><div class="mth"><img src="'+esc(img)+'" alt="Ảnh map '+esc(m.t)+'" loading="lazy" data-i="'+i+'"><span class="pn">👥 '+m.p+'</span><span class="sz">'+esc(m.s)+'</span>'+(ST.champ===K?'<span class="crown">🏆 Map Tháng</span>':'')+'</div><div class="mb"><b>'+esc(m.t)+'</b><div class="mrow"><span class="df '+(DFC[m.d]||"d1")+'">'+esc(m.d)+'</span>'+(!m.cid&&window.mapTag?window.mapTag(m):"")+(m.by?'<span class="by">'+(m.cid?cmBy(m):"👤 "+esc(m.by))+'</span>':'')+'</div><div class="mst"><span class="dlc" data-k="'+esc(K)+'" title="Số lượt tải">⬇ '+(m.cid?(m.dl||0)+" lượt tải":(ST.dl[K]||0))+'</span>'+rateHtml(K)+'</div>'+(m.cid?cmDet(m):"")+'<div class="ma">'+(m.cid?cmAct(m):(window.mapAct?window.mapAct(m,i):'<a class="btn dlb" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a><button type="button" class="cp" data-i="'+i+'">Chép link</button>'))+(window.tipBtn?window.tipBtn(m.t):"")+'</div>'+(m.cid&&window.cmProm?window.cmProm(m):"")+'</div></article>';n++});
+   var K=m.cid?"c"+m.cid:mkey(m.t),id=((m.u||"").match(/file\/(\w+)/)||[])[1];
+   h+='<article class="mcard" data-id="'+id+'" data-t="'+esc(m.t)+'" style="animation-delay:'+Math.min(n,24)*40+'ms"><div class="mth">'+imgTag(m,{alt:"Ảnh map "+m.t,i:i,ph:art(m.t,i)})+'<span class="pn">👥 '+m.p+'</span><span class="sz">'+esc(m.s)+'</span>'+(ST.champ===K?'<span class="crown">🏆 Map Tháng</span>':'')+'</div><div class="mb"><b>'+esc(m.t)+'</b><div class="mrow"><span class="df '+(DFC[m.d]||"d1")+'">'+esc(m.d)+'</span>'+(!m.cid&&window.mapTag?window.mapTag(m):"")+(m.by?'<span class="by">'+(m.cid?cmBy(m):"👤 "+esc(m.by))+'</span>':'')+'</div><div class="mst"><span class="dlc" data-k="'+esc(K)+'" title="Số lượt tải">⬇ '+(m.cid?(m.dl||0)+" lượt tải":(ST.dl[K]||0))+'</span>'+rateHtml(K)+'</div>'+(m.cid?cmDet(m):"")+'<div class="ma">'+(m.cid?cmAct(m):(window.mapAct?window.mapAct(m,i):'<a class="btn dlb" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a><button type="button" class="cp" data-i="'+i+'">Chép link</button>'))+(window.tipBtn?window.tipBtn(m.t):"")+'</div>'+(m.cid&&window.cmProm?window.cmProm(m):"")+'</div></article>';n++});
   grid.innerHTML=h||'<div class="mempty">Không có map nào khớp bộ lọc.</div>';
   if(first&&!RM){first=false;var t0=performance.now();(function c(t){var k=Math.min(1,(t-t0)/900);cnt.textContent=Math.round(n*k);if(k<1)requestAnimationFrame(c)})(t0)}else cnt.textContent=n}
  box.addEventListener("click",function(e){var c=e.target.closest(".fc");
   if(c){var g=c.parentNode;g.querySelectorAll(".fc").forEach(function(x){x.classList.toggle("on",x===c)});st[g.dataset.k]=c.dataset.v;draw();return}
   var p=e.target.closest(".cp[data-i]");if(p){var u=maps[+p.dataset.i].u,ok=function(){p.textContent="Đã chép ✓";setTimeout(function(){p.textContent="Chép link"},1400)},no=function(){window.prompt("Sao chép link:",u)};
    try{navigator.clipboard.writeText(u).then(ok,no)}catch(x){no()}}});
- grid.addEventListener("error",function(e){var im=e.target;if(im.tagName!=="IMG"||im.dataset.f)return;var i=+im.dataset.i,mm=maps[i];if(mm.img2&&!mm.t2){mm.t2=1;im.src=(im.getAttribute("src")===mm.img2)?(MAP_DIR+encodeURIComponent(mm.t)+MAP_EXT):mm.img2;return}im.dataset.f=1;im.src=art(mm.t,i)},true);
+ grid.addEventListener("imgnone",function(e){var im=e.target,i=+im.dataset.i,mm=maps[i];if(mm)im.src=art(mm.t,i)});
  box.querySelector(".mq").addEventListener("input",function(){st.q=this.value.toLowerCase().trim();draw()});
  box._draw=draw;draw()};
 })();
@@ -1472,8 +1504,8 @@ document.addEventListener("click",function(e){var b=e.target.closest(".cprom");i
  b.disabled=true;b.textContent="…";
  call("mpromote",{id:id,img:String(m.img||"").trim()}).then(function(j){if(!j||!j.ok){b.disabled=false;b.textContent="＋";toast(spErr(j));return}setE(j);b.textContent="✓";b.title="Map này đã có trong Map sinh tồn";toast("Đã thêm «"+m.t+"» vào Map sinh tồn ✓");loadCos()})});
 /* ---- ĐỒNG BỘ MAP CỘNG ĐỒNG → MAP SINH TỒN (nút ở thanh lọc, chỉ Admin) ---- */
-function syRow(m){var im=/^https?:\/\//.test(String(m.img||""))?String(m.img):"",has=cmHas(m.t);
- return'<div class="syr" data-id="'+esc(m.id)+'"><div class="syt">'+(im?'<img src="'+esc(im)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">':"Không ảnh")+'</div><div class="syi"><b>'+esc(m.t)+'</b><small>👥 '+esc(m.p)+' người · '+esc(m.d)+' · '+esc(m.s)+(m.by?' · '+esc(m.by):"")+'</small></div><button type="button" class="cp syb"'+(has?' disabled':'')+' data-id="'+esc(m.id)+'">'+(has?"✓ Đã có":"＋ Thêm")+'</button></div>'}
+function syRow(m){var has=cmHas(m.t);
+ return'<div class="syr" data-id="'+esc(m.id)+'"><div class="syt">'+(imgTag(m,{alt:m.t})||"Không ảnh")+'</div><div class="syi"><b>'+esc(m.t)+'</b><small>👥 '+esc(m.p)+' người · '+esc(m.d)+' · '+esc(m.s)+(m.by?' · '+esc(m.by):"")+'</small></div><button type="button" class="cp syb"'+(has?' disabled':'')+' data-id="'+esc(m.id)+'">'+(has?"✓ Đã có":"＋ Thêm")+'</button></div>'}
 var SYL=[];
 function syOpen(){if(!(U&&U.admin)){toast("Cần đăng nhập Admin");return}
  var o=modal('<h3>🔄 Đồng bộ map cộng đồng → Map sinh tồn</h3><p class="mt">Bấm <b>＋ Thêm</b> để chép map (kèm link tải và ảnh) sang mục Map sinh tồn. Map vẫn giữ nguyên ở mục Map cộng đồng.</p><div id="sylist"><p class="mt">⏳ Đang tải danh sách…</p></div>');
@@ -1536,13 +1568,13 @@ function toMsgr(text,id){
 function pReq(){P.innerHTML='<div class="cf"><p class="mt">Điền xong bấm gửi: nội dung sẽ được chép sẵn và Messenger của Nam Hoàng sẽ mở ra, bạn chỉ cần dán rồi bấm Gửi.</p><div class="r2"><label>Tên của bạn<input id="rn" maxlength="40" placeholder="Có thể bỏ trống"></label><label>Loại<select id="rk">'+sel(["Yêu cầu map","Yêu cầu mod","Góp ý","Báo lỗi link"])+'</select></label></div><label>Nội dung<textarea id="rc" rows="4" maxlength="600" placeholder="Ghi tên map/mod và link tham khảo nếu có..."></textarea></label><div class="cr"><button class="btn" id="rs" type="button">💡 Gửi góp ý</button></div><p class="mt" id="rm"></p><div id="rx"></div></div>';
  $("rs").onclick=function(){var c=$("rc").value.trim();if(c.length<5){msg("rm","Hãy nhập nội dung (ít nhất 5 ký tự).");return}
   msg("rm","");toMsgr("💡 GÓP Ý TỪ WEB\nLoại: "+$("rk").value+"\nTên: "+($("rn").value.trim()||"Ẩn danh")+"\nNội dung: "+c.slice(0,600),"rx");$("rc").value=""}}
-function cmThumb(m){var im=String(m.img||"").trim();if(!im)return"";return'<a class="cmth" href="'+esc(im)+'" target="_blank" rel="noopener" title="Bấm để xem ảnh lớn"><img src="'+esc(im)+'" alt="Ảnh map '+esc(m.t)+'" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.className=\'cmth no\';this.parentNode.textContent=\'🖼 Không tải được ảnh\'"></a>'}
+function cmThumb(m){var t=imgTag(m,{alt:"Ảnh map "+m.t});if(!t)return"";var c=imgCands(m);return'<a class="cmth" href="'+esc(c[0]||"#")+'" target="_blank" rel="noopener" title="Bấm để xem ảnh lớn">'+t+'</a>'}
 function initPrev(){var ip=$("si"),pv=$("sip"),tm=0;if(!ip||!pv)return;
  function run(){var v=ip.value.trim();if(!v){pv.style.display="none";pv.innerHTML="";return}pv.style.display="flex";
   if(!http(v)){pv.innerHTML="<span>⚠ Link ảnh phải bắt đầu bằng http:// hoặc https://</span>";return}
   pv.innerHTML="<span>⏳ Đang tải ảnh…</span>";var im=new Image();im.referrerPolicy="no-referrer";
   im.onload=function(){if(ip.value.trim()!==v)return;pv.innerHTML="";pv.appendChild(im);pv.insertAdjacentHTML("beforeend","<span>✓ Ảnh hợp lệ ("+im.naturalWidth+"×"+im.naturalHeight+"). Ảnh sẽ hiện bên phải dòng map sau khi đăng.</span>")};
-  im.onerror=function(){if(ip.value.trim()!==v)return;pv.innerHTML="<span>⚠ Không tải được ảnh. Hãy dùng link ảnh trực tiếp (đuôi .jpg, .png, .webp…).</span>"};im.src=v}
+  var cs=imgFix(v),ci=0;im.onerror=function(){if(ip.value.trim()!==v)return;if(++ci<cs.length){im.src=cs[ci];return}pv.innerHTML="<span>⚠ Không tải được ảnh. Hãy dùng link ảnh trực tiếp (đuôi .jpg, .png, .webp…).</span>"};im.src=cs[0]}
  ip.addEventListener("input",function(){clearTimeout(tm);tm=setTimeout(run,350)});run()}
 function pSub(){
  var f=ACC_API?'<div class="cf"><p class="mt">Map hiện ngay ở mục «Map cộng đồng» kèm tên bạn nhập. Đăng thành công +⚡'+CF.postRew+' (tối đa '+CF.postRewMax+' lần/ngày, đăng tối đa 5 map/ngày). Map sai link hoặc vi phạm sẽ bị gỡ.</p><div class="r2"><label>Tên người đóng góp<input id="sb" maxlength="40"></label><label>Tên map<input id="sn" maxlength="80"></label></div><div class="r2"><label>Số người<select id="sp">'+sel([2,3,4,5,6,7,8])+'</select></label><label>Độ khó<select id="sd">'+sel(DIFF)+'</select></label><label>Cỡ map<select id="szm">'+sel(SZ)+'</select></label></div><label>Link tải (MediaFire, Drive, Mega…)<input id="su" type="url" placeholder="https://"></label><label>Link ảnh map (nên có, dán link ảnh trực tiếp)<input id="si" type="url" placeholder="https://"></label><div class="imgtool"><a class="cb" href="https://postimages.org/" target="_blank" rel="noopener">🗜 Nén &amp; tải ảnh lên Postimages</a><small>Hướng dẫn: ① Bấm nút, chọn ảnh, ở mục <b>Resize image</b> chọn kích thước nhỏ (vd 800x600) để nén ảnh → ② bấm <b>Upload</b> → ③ ở trang kết quả, copy ô <b>Liên kết trực tiếp</b> (Direct link, dạng https://i.postimg.cc/…jpg) → ④ dán vào ô «Link ảnh map» ở trên.</small></div><div class="imgprev" id="sip"></div><div class="cr"><button class="btn" id="sg" type="button">⭐ Đăng map</button></div><p class="mt" id="sm"></p></div>':'<p class="mt">Tính năng chưa được bật (chưa điền ACC_API).</p>';
@@ -1672,8 +1704,8 @@ P.addEventListener("click",function(e){var b=e.target.closest(".shb2");if(!b)ret
 var MYST=2;
 var MBX=[];
 function mOpened(){var a=jl("g_myst",[]);if(!Array.isArray(a))a=[];var r=MBX.slice();a.forEach(function(t){if(r.indexOf(t)<0)r.push(t)});return r}
-function mapRow(m){var im=m.img||(MAP_DIR+encodeURIComponent(m.t)+MAP_EXT);
- return'<div class="nw"><div class="cmrow"><div class="cmi"><b>'+esc(m.t)+'</b> <span class="by">👥 '+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+'</span><br><button type="button" class="cb dlb mget" data-t="'+esc(m.t)+'">⬇ Tải map</button> '+tipBtn(m.t)+"</div>"+cmThumb({t:m.t,img:im})+"</div></div>"}
+function mapRow(m){
+ return'<div class="nw"><div class="cmrow"><div class="cmi"><b>'+esc(m.t)+'</b> <span class="by">👥 '+m.p+" người · "+esc(m.d)+" · "+esc(m.s)+'</span><br><button type="button" class="cb dlb mget" data-t="'+esc(m.t)+'">⬇ Tải map</button> '+tipBtn(m.t)+"</div>"+cmThumb(m)+"</div></div>"}
 function pBox(rev){var op=mOpened(),pool=MAPS.filter(function(m){return op.indexOf(m.t)<0&&!mpaid(m)});
  P.innerHTML='<div class="mbx"><div class="mbi" id="mbi">🎁</div><h3 class="sh" style="margin:6px 0">Hộp quà map bí ẩn</h3><p class="mt">Mở hộp để nhận ngẫu nhiên <b>1 map trong kho map sinh tồn</b>. Tên và ảnh được giấu cho tới khi bạn mở. Chỉ tốn <b>⚡'+MYST+"</b>, rẻ hơn tải map cộng đồng (⚡"+CF.cost+"). Mỗi hộp luôn ra map bạn chưa từng mở.</p>"
   +'<p class="mt">Còn <b>'+pool.length+"</b>/"+MAPS.length+" map chưa mở · ⚡ của bạn: <b>"+EN.n+'</b></p><button class="btn" id="mbo" type="button"'+(pool.length?"":" disabled")+">"+(pool.length?"🎁 Mở hộp (⚡"+MYST+")":"Bạn đã mở hết kho map")+'</button><div id="mbr">'
