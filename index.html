@@ -648,6 +648,12 @@ body.gmscr .bxh{display:flex}
 <style>
 /* ===== XEM VIDEO CHƠI ===== */
 .vbtn{margin-left:auto;font:700 .85rem var(--body);padding:.34rem .95rem;border-radius:99px;border:1px solid var(--c);background:linear-gradient(135deg,rgba(41,240,255,.12),rgba(139,92,255,.22));color:var(--c);cursor:pointer;white-space:nowrap;transition:box-shadow .25s,transform .2s}
+.vsync{margin-left:auto}.vsync:not([hidden])+.vbtn{margin-left:8px}
+.syr{display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:12px;margin-top:8px}
+.syr .syt{flex:0 0 72px;height:48px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--mute)}
+.syr .syt img{width:100%;height:100%;object-fit:cover;display:block}
+.syr .syi{flex:1;min-width:0}.syr .syi b{display:block;font-size:.92rem;overflow-wrap:anywhere}.syr .syi small{color:var(--mute);font-size:.78rem}
+.syr .syb{flex:0 0 auto;font-weight:800;border:1px dashed var(--c);color:var(--c);white-space:nowrap}.syr .syb:disabled{opacity:.6;cursor:default;border-style:solid}
 .vbtn:hover{box-shadow:0 6px 18px -8px var(--c);transform:translateY(-1px)}
 .mapg.vmode>.mapbar,.mapg.vmode>.mgrid{display:none}
 .vpanel{padding:14px;margin:6px 0 14px;border:1px solid var(--line);border-radius:14px;background:rgba(139,92,255,.07)}
@@ -905,7 +911,7 @@ var LIVES=[
 ];
 /* ---- NĂNG LƯỢNG THEO IP (xem google-apps-script-tai-khoan.gs) ----
    ACC_API = link Web App của script năng lượng (khác API_URL). Trống = tắt. Không cần đăng nhập. */
-var ACC_API="https://script.google.com/macros/s/AKfycbyKngqIE2LteMpHE296HaeGPxKX1mKYQEyuh5LgMoCkfkGhPi-0iaWXX4TLStv2GtNpCA/exec";
+var ACC_API="https://script.google.com/macros/s/AKfycbybJkB0aHLSvcOEX-sDJOZZ6MVz1geGGQ15mDbuPuZZocBh-5UGUZcVvudd_f0S4NyGvg/exec";
 /* ---- MAP CỘNG ĐỒNG: khách gửi qua Messenger, bạn kiểm duyệt xong thì thêm 1 dòng vào đây (giống MAPS), by = tên người tạo.
    Ảnh: bỏ vào thư mục mapkhach/ trên GitHub, tên file = đúng tên map + .jpg */
 var CMAPS=[
@@ -1296,7 +1302,7 @@ window.initGallery=function(box,maps){
   '<div class="fl"><small>Số người</small>'+chips("pl",["2-3","4-5","6","8"])+'</div>'+
   '<div class="fl"><small>Độ khó</small>'+chips("df",["Dễ","Trung Bình","Khó","Cực Khó","Siêu Cấp"])+'</div>'+
   '<div class="fl"><small>Cỡ map</small>'+chips("sz",["Nhỏ","Vừa","Rộng"])+'</div>'+
-  '<div class="fl"><small>Sắp xếp</small><div class="fg" data-k="so"><button type="button" class="fc on" data-v="def">Mặc định</button><button type="button" class="fc" data-v="new">🆕 Mới nhất</button><button type="button" class="fc" data-v="dl">🔥 Tải nhiều nhất</button></div><button type="button" class="vbtn" data-vopen>🎬 Xem video chơi</button></div></div><div class="mgrid"></div>';
+  '<div class="fl"><small>Sắp xếp</small><div class="fg" data-k="so"><button type="button" class="fc on" data-v="def">Mặc định</button><button type="button" class="fc" data-v="new">🆕 Mới nhất</button><button type="button" class="fc" data-v="dl">🔥 Tải nhiều nhất</button></div><button type="button" class="vbtn vsync" data-vsync title="Chỉ Admin thấy"'+(window.isLiveAdmin&&window.isLiveAdmin()?'':' hidden')+'>🔄 Đồng bộ map cộng đồng</button><button type="button" class="vbtn" data-vopen>🎬 Xem video chơi</button></div></div><div class="mgrid"></div>';
  var grid=box.querySelector(".mgrid"),cnt=box.querySelector(".mc"),first=true;
  /* Mới nhất: theo ts:"2026-11-05" nếu có, không thì map nằm CUỐI danh sách MAPS là mới nhất. Tải nhiều nhất: theo số lần bấm Tải map */
  function ord(){var a=maps.map(function(_,i){return i});
@@ -1307,7 +1313,7 @@ window.initGallery=function(box,maps){
   ord().forEach(function(i){var m=maps[i];
    if(st.q&&m.t.toLowerCase().indexOf(st.q)<0)return;
    if(st.pl!=="all"&&bk(m.p)!==st.pl)return;if(st.df!=="all"&&m.d!==st.df)return;if(st.sz!=="all"&&m.s!==st.sz)return;
-   var K=m.cid?"c"+m.cid:mkey(m.t),id=((m.u||"").match(/file\/(\w+)/)||[])[1],img=m.img||(MAP_DIR+encodeURIComponent(m.t)+MAP_EXT);
+   var K=m.cid?"c"+m.cid:mkey(m.t),id=((m.u||"").match(/file\/(\w+)/)||[])[1],img=m.img||m.img2||(MAP_DIR+encodeURIComponent(m.t)+MAP_EXT);
    h+='<article class="mcard" data-id="'+id+'" data-t="'+esc(m.t)+'" style="animation-delay:'+Math.min(n,24)*40+'ms"><div class="mth"><img src="'+esc(img)+'" alt="Ảnh map '+esc(m.t)+'" loading="lazy" data-i="'+i+'"><span class="pn">👥 '+m.p+'</span><span class="sz">'+esc(m.s)+'</span>'+(ST.champ===K?'<span class="crown">🏆 Map Tháng</span>':'')+'</div><div class="mb"><b>'+esc(m.t)+'</b><div class="mrow"><span class="df '+(DFC[m.d]||"d1")+'">'+esc(m.d)+'</span>'+(!m.cid&&window.mapTag?window.mapTag(m):"")+(m.by?'<span class="by">'+(m.cid?cmBy(m):"👤 "+esc(m.by))+'</span>':'')+'</div><div class="mst"><span class="dlc" data-k="'+esc(K)+'" title="Số lượt tải">⬇ '+(m.cid?(m.dl||0)+" lượt tải":(ST.dl[K]||0))+'</span>'+rateHtml(K)+'</div>'+(m.cid?cmDet(m):"")+'<div class="ma">'+(m.cid?cmAct(m):(window.mapAct?window.mapAct(m,i):'<a class="btn dlb" href="'+esc(m.u)+'" target="_blank" rel="noopener">⬇ Tải map</a><button type="button" class="cp" data-i="'+i+'">Chép link</button>'))+(window.tipBtn?window.tipBtn(m.t):"")+'</div>'+(m.cid&&window.cmProm?window.cmProm(m):"")+'</div></article>';n++});
   grid.innerHTML=h||'<div class="mempty">Không có map nào khớp bộ lọc.</div>';
   if(first&&!RM){first=false;var t0=performance.now();(function c(t){var k=Math.min(1,(t-t0)/900);cnt.textContent=Math.round(n*k);if(k<1)requestAnimationFrame(c)})(t0)}else cnt.textContent=n}
@@ -1315,7 +1321,7 @@ window.initGallery=function(box,maps){
   if(c){var g=c.parentNode;g.querySelectorAll(".fc").forEach(function(x){x.classList.toggle("on",x===c)});st[g.dataset.k]=c.dataset.v;draw();return}
   var p=e.target.closest(".cp[data-i]");if(p){var u=maps[+p.dataset.i].u,ok=function(){p.textContent="Đã chép ✓";setTimeout(function(){p.textContent="Chép link"},1400)},no=function(){window.prompt("Sao chép link:",u)};
    try{navigator.clipboard.writeText(u).then(ok,no)}catch(x){no()}}});
- grid.addEventListener("error",function(e){var im=e.target;if(im.tagName!=="IMG"||im.dataset.f)return;var i=+im.dataset.i,mm=maps[i];if(mm.img2&&!mm.t2){mm.t2=1;im.src=mm.img2;return}im.dataset.f=1;im.src=art(mm.t,i)},true);
+ grid.addEventListener("error",function(e){var im=e.target;if(im.tagName!=="IMG"||im.dataset.f)return;var i=+im.dataset.i,mm=maps[i];if(mm.img2&&!mm.t2){mm.t2=1;im.src=(im.getAttribute("src")===mm.img2)?(MAP_DIR+encodeURIComponent(mm.t)+MAP_EXT):mm.img2;return}im.dataset.f=1;im.src=art(mm.t,i)},true);
  box.querySelector(".mq").addEventListener("input",function(){st.q=this.value.toLowerCase().trim();draw()});
  box._draw=draw;draw()};
 })();
@@ -1465,6 +1471,23 @@ document.addEventListener("click",function(e){var b=e.target.closest(".cprom");i
  if(MAPS.some(function(x){return x.t.toLowerCase()===String(m.t).toLowerCase()})){toast("Map sinh tồn đã có map trùng tên «"+m.t+"»");return}
  b.disabled=true;b.textContent="…";
  call("mpromote",{id:id,img:String(m.img||"").trim()}).then(function(j){if(!j||!j.ok){b.disabled=false;b.textContent="＋";toast(spErr(j));return}setE(j);b.textContent="✓";b.title="Map này đã có trong Map sinh tồn";toast("Đã thêm «"+m.t+"» vào Map sinh tồn ✓");loadCos()})});
+/* ---- ĐỒNG BỘ MAP CỘNG ĐỒNG → MAP SINH TỒN (nút ở thanh lọc, chỉ Admin) ---- */
+function syRow(m){var im=/^https?:\/\//.test(String(m.img||""))?String(m.img):"",has=cmHas(m.t);
+ return'<div class="syr" data-id="'+esc(m.id)+'"><div class="syt">'+(im?'<img src="'+esc(im)+'" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">':"Không ảnh")+'</div><div class="syi"><b>'+esc(m.t)+'</b><small>👥 '+esc(m.p)+' người · '+esc(m.d)+' · '+esc(m.s)+(m.by?' · '+esc(m.by):"")+'</small></div><button type="button" class="cp syb"'+(has?' disabled':'')+' data-id="'+esc(m.id)+'">'+(has?"✓ Đã có":"＋ Thêm")+'</button></div>'}
+var SYL=[];
+function syOpen(){if(!(U&&U.admin)){toast("Cần đăng nhập Admin");return}
+ var o=modal('<h3>🔄 Đồng bộ map cộng đồng → Map sinh tồn</h3><p class="mt">Bấm <b>＋ Thêm</b> để chép map (kèm link tải và ảnh) sang mục Map sinh tồn. Map vẫn giữ nguyên ở mục Map cộng đồng.</p><div id="sylist"><p class="mt">⏳ Đang tải danh sách…</p></div>');
+ call("maps").then(function(j){var a=(j&&j.ok&&j.maps)?j.maps.map(function(m){return Object.assign({},m,{id:m.id||m.cid})}):CMAPS.filter(function(m){return m.cid}).map(function(m){return Object.assign({},m,{id:m.cid})});
+  SYL=a;var l=$("sylist");if(l)l.innerHTML=a.length?a.map(syRow).join(""):'<p class="mt">Chưa có map cộng đồng nào.</p>'})}
+function syAdd(b){var id=b.dataset.id,m=SYL.filter(function(x){return String(x.id)===String(id)})[0];if(!m||b.disabled)return;
+ if(!(U&&U.admin)){toast("Cần đăng nhập Admin");return}
+ if(cmHas(m.t)){b.disabled=true;b.textContent="✓ Đã có";return}
+ var im=/^https?:\/\//.test(String(m.img||""))?String(m.img):"";b.disabled=true;b.textContent="…";
+ call("mpromote",{id:id,img:im}).then(function(j){
+  if(!j||!j.ok){b.disabled=false;b.textContent="＋ Thêm";toast(spErr(j));return}
+  setE(j);b.textContent="✓ Đã thêm";toast("Đã thêm «"+m.t+"» vào Map sinh tồn ✓");loadCos()})}
+document.addEventListener("click",function(e){var b=e.target.closest("[data-vsync]");if(b){syOpen();return}b=e.target.closest(".syb");if(b)syAdd(b)});
+document.addEventListener("accchange",function(){var a=!!(U&&U.admin);document.querySelectorAll(".vsync").forEach(function(x){x.hidden=!a})});
 document.addEventListener("click",function(e){var b=e.target.closest(".cdelc");if(!b)return;var id=b.dataset.id;if(!(U&&U.admin)){toast("Cần đăng nhập Admin để xóa");return}if(!confirm("Xóa bình luận này?"))return;API.del(id).then(function(j){if(j&&j.ok){ST.cmt=ST.cmt.filter(function(x){return x.id!==id});PEND=PEND.filter(function(x){return x.id!==id});var l=$("cl");if(l)l.innerHTML=cList();toast("Đã xóa bình luận ✓")}else toast((j&&j.err)||"Không xóa được bình luận")})});
 document.addEventListener("click",function(e){var b=e.target.closest(".cdl,.cdel");if(!b)return;
  var id=b.dataset.id,m=CMAPS.filter(function(x){return x.cid===id})[0];if(!m)return;if(!U){toast("Đang kết nối, thử lại sau giây lát");return}

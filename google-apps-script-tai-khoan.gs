@@ -22,7 +22,7 @@ var H={Users:["id","prov","name","av","day","n","onlSec","onlG","posts","postRew
  Sessions:["h","uid","exp"],Maps:["id","ts","uid","by","av","t","p","d","s","u","img","st"],Downloads:["ts","uid","mid"],
  Shop:["ts","uid","item","price"],Equip:["uid","by","fr","co","ic","ts"],Boxes:["ts","uid","map"],
  Codes:["code","energy","max","exp","note"],Redeems:["ts","uid","code"],
- SLinks:["key","t","u"],Videos:["id","ts","src","url","t","th","by","uid"],Config:["k","v"],SMaps:["id","ts","t","p","d","s","u","st"],MapBuys:["ts","uid","key","title","price"]};
+ SLinks:["key","t","u"],Videos:["id","ts","src","url","t","th","by","uid"],Config:["k","v"],SMaps:["id","ts","t","p","d","s","u","st","img"],MapBuys:["ts","uid","key","title","price"]};
 var DF=["Dễ","Trung Bình","Khó","Cực Khó","Siêu Cấp"],SZ=["Nhỏ","Vừa","Rộng"];
 function sh(n){var ss=SpreadsheetApp.getActive(),s=ss.getSheetByName(n);if(!s){s=ss.insertSheet(n);s.appendRow(H[n])}else if(s.getLastColumn()<H[n].length)s.getRange(1,1,1,H[n].length).setValues([H[n]]);return s}
 function all(n){var v=sh(n).getDataRange().getValues(),h=v.shift();return v.map(function(r,i){var o={_r:i+2};h.forEach(function(k,j){o[k]=r[j]});return o})}
@@ -54,9 +54,10 @@ var MT={"Dễ":2,"Trung Bình":4,"Khó":6,"Cực Khó":8,"Siêu Cấp":10}; // g
 function mk(t){return String(t).replace(/[.#$\/\[\]\s"'<>&%?+\\]+/g,"_").slice(0,80)}
 function canon(a,v){v=String(v||"").normalize("NFC").trim();return a.filter(function(x){return x.normalize("NFC")===v})[0]||""}
 function mcfg(){var r=all("Config").filter(function(x){return x.k==="mprices"})[0],o={tier:{},map:{}};if(r){try{var j=JSON.parse(r.v);if(j&&j.tier)o.tier=j.tier;if(j&&j.map)o.map=j.map}catch(e){}}return o}
+function canonI(a,v){v=String(v||"").normalize("NFC").trim().toLowerCase();return a.filter(function(x){return x.normalize("NFC").toLowerCase()===v})[0]||""}
 function has(o,k){return Object.prototype.hasOwnProperty.call(o,k)&&o[k]!==null&&o[k]!==""}
 function mprice(t,dd){var c=mcfg(),k=mk(t),v=has(c.map,k)?c.map[k]:has(c.tier,dd)?c.tier[dd]:MT[dd];v=Math.round(+v);return isNaN(v)?2:Math.max(0,Math.min(99,v))}
-function smaps(adm){return all("SMaps").filter(function(m){return m.st==="on"}).map(function(m){return{id:m.id,ts:new Date(+m.ts).toISOString(),t:m.t,p:+m.p,d:m.d,s:m.s,u:adm?m.u:""}})} // link chỉ trả cho Admin; người chơi lấy qua op "mdl" sau khi mở khóa
+function smaps(adm){return all("SMaps").filter(function(m){return m.st==="on"}).map(function(m){return{id:m.id,ts:new Date(+m.ts).toISOString(),t:m.t,p:+m.p,d:m.d,s:m.s,u:adm?m.u:"",img:String(m.img||"")}})} // link chỉ trả cho Admin; người chơi lấy qua op "mdl" sau khi mở khóa
 function mbOwned(uid){var a=all("MapBuys").filter(function(r){return r.uid===uid}).map(function(r){return String(r.key)});all("Boxes").forEach(function(r){if(r.uid===uid&&r.map)a.push(mk(r.map))});return a}
 function doGet(){return J(pub(null))}
 function doPost(e){var l=LockService.getScriptLock();l.waitLock(25000);try{return J(run(JSON.parse(e.postData.contents)))}catch(x){return J(err(String(x.message||x)))}finally{l.releaseLock()}}
@@ -107,7 +108,17 @@ function run(d){var op=d.op;if(op==="vlist"||op==="vadd"||op==="vdel")return vid
   if(ta.length<2)return err("Tên map quá ngắn");if(!(pa>=2&&pa<=8))return err("Số người không hợp lệ");if(!da)return err("Độ khó không hợp lệ");if(!sa)return err("Cỡ map không hợp lệ");
   if(!/^https?:\/\/\S{4,480}$/.test(la))return err("Link tải không hợp lệ");
   if(all("SMaps").some(function(m){return m.st==="on"&&String(m.t).toLowerCase()===ta.toLowerCase()}))return err("Đã có map trùng tên");
-  put("SMaps",{id:"s"+now.toString(36)+Math.random().toString(36).slice(2,5),ts:now,t:ta,p:pa,d:da,s:sa,u:la,st:"on"})}
+  var ia=String(d.img||"").trim();if(!/^https?:\/\/\S{4,480}$/.test(ia))ia="";
+   put("SMaps",{id:"s"+now.toString(36)+Math.random().toString(36).slice(2,5),ts:now,t:ta,p:pa,d:da,s:sa,u:la,st:"on",img:ia})}
+  else if(op==="mpromote"){if(!isAd(d))return err("Chỉ admin mới được thêm map vào Map sinh tồn");
+   var src=all("Maps").filter(function(x){return String(x.id)===String(d.id)&&x.st==="on"})[0];if(!src)return err("Map cộng đồng không còn tồn tại");
+   var tp=cl(src.t,80),pp=+src.p,lp=String(src.u||"").trim(),dp=canonI(DF,src.d),sp=canonI(SZ,src.s),rx=/^https?:\/\/\S{4,480}$/,ip=String(src.img||"").trim();
+   if(!rx.test(ip)){ip=String(d.img||"").trim();if(!rx.test(ip))ip=""}
+   if(tp.length<2)return err("Tên map quá ngắn");if(!(pp>=2&&pp<=8))return err("Số người của map không hợp lệ");
+   if(!dp)return err("Độ khó «"+cl(src.d,20)+"» của map không hợp lệ");if(!sp)return err("Cỡ map «"+cl(src.s,20)+"» không hợp lệ");
+   if(!rx.test(lp))return err("Map này chưa có link tải hợp lệ");
+   if(all("SMaps").some(function(m){return m.st==="on"&&String(m.t).toLowerCase()===tp.toLowerCase()}))return err("Map sinh tồn đã có map trùng tên «"+tp+"»");
+   put("SMaps",{id:"s"+now.toString(36)+Math.random().toString(36).slice(2,5),ts:now,t:tp,p:pp,d:dp,s:sp,u:lp,st:"on",img:ip});res.promoted={t:tp,img:ip}}
  else if(op==="mdel"){if(!isAd(d))return err("Chỉ admin mới được xóa map");var sd=all("SMaps").filter(function(x){return x.id===d.id})[0];if(!sd)return err("Map không tồn tại");sd.st="del";upd("SMaps",sd)}
  else if(op==="mset"){if(!isAd(d))return err("Chỉ admin mới được sửa giá");var tr=d.tier||{},mpp=d.map||{},o={tier:{},map:{}},ks=Object.keys(mpp),i2;
   for(i2=0;i2<DF.length;i2++){var tv=tr[DF[i2]];if(tv===undefined||tv===null||tv==="")continue;tv=Math.round(+tv);if(!(tv>=0&&tv<=99))return err("Giá phải từ 0 đến 99");o.tier[DF[i2]]=tv}
