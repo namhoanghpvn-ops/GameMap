@@ -648,7 +648,7 @@ body.gmscr .bxh{display:flex}
 <style>
 /* ===== XEM VIDEO CHƠI ===== */
 .vbtn{margin-left:auto;font:700 .85rem var(--body);padding:.34rem .95rem;border-radius:99px;border:1px solid var(--c);background:linear-gradient(135deg,rgba(41,240,255,.12),rgba(139,92,255,.22));color:var(--c);cursor:pointer;white-space:nowrap;transition:box-shadow .25s,transform .2s}
-.vsync{margin-left:auto}.vsync:not([hidden])+.vbtn{margin-left:8px}
+.vcol{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px}.vcol .vbtn{margin-left:0}.vcol .vsync[hidden]{display:none}
 .syr{display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:12px;margin-top:8px}
 .syr .syt{flex:0 0 72px;height:48px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--mute)}
 .syr .syt img{width:100%;height:100%;object-fit:cover;display:block}
@@ -911,7 +911,7 @@ var LIVES=[
 ];
 /* ---- NĂNG LƯỢNG THEO IP (xem google-apps-script-tai-khoan.gs) ----
    ACC_API = link Web App của script năng lượng (khác API_URL). Trống = tắt. Không cần đăng nhập. */
-var ACC_API="https://script.google.com/macros/s/AKfycbybJkB0aHLSvcOEX-sDJOZZ6MVz1geGGQ15mDbuPuZZocBh-5UGUZcVvudd_f0S4NyGvg/exec";
+var ACC_API="https://script.google.com/macros/s/AKfycbyKngqIE2LteMpHE296HaeGPxKX1mKYQEyuh5LgMoCkfkGhPi-0iaWXX4TLStv2GtNpCA/exec";
 /* ---- MAP CỘNG ĐỒNG: khách gửi qua Messenger, bạn kiểm duyệt xong thì thêm 1 dòng vào đây (giống MAPS), by = tên người tạo.
    Ảnh: bỏ vào thư mục mapkhach/ trên GitHub, tên file = đúng tên map + .jpg */
 var CMAPS=[
@@ -1302,7 +1302,7 @@ window.initGallery=function(box,maps){
   '<div class="fl"><small>Số người</small>'+chips("pl",["2-3","4-5","6","8"])+'</div>'+
   '<div class="fl"><small>Độ khó</small>'+chips("df",["Dễ","Trung Bình","Khó","Cực Khó","Siêu Cấp"])+'</div>'+
   '<div class="fl"><small>Cỡ map</small>'+chips("sz",["Nhỏ","Vừa","Rộng"])+'</div>'+
-  '<div class="fl"><small>Sắp xếp</small><div class="fg" data-k="so"><button type="button" class="fc on" data-v="def">Mặc định</button><button type="button" class="fc" data-v="new">🆕 Mới nhất</button><button type="button" class="fc" data-v="dl">🔥 Tải nhiều nhất</button></div><button type="button" class="vbtn vsync" data-vsync title="Chỉ Admin thấy"'+(window.isLiveAdmin&&window.isLiveAdmin()?'':' hidden')+'>🔄 Đồng bộ map cộng đồng</button><button type="button" class="vbtn" data-vopen>🎬 Xem video chơi</button></div></div><div class="mgrid"></div>';
+  '<div class="fl"><small>Sắp xếp</small><div class="fg" data-k="so"><button type="button" class="fc on" data-v="def">Mặc định</button><button type="button" class="fc" data-v="new">🆕 Mới nhất</button><button type="button" class="fc" data-v="dl">🔥 Tải nhiều nhất</button></div><div class="vcol"><button type="button" class="vbtn vsync" data-vsync title="Chỉ Admin thấy"'+(window.isLiveAdmin&&window.isLiveAdmin()?'':' hidden')+'>🔄 Đồng bộ map cộng đồng</button><button type="button" class="vbtn" data-vopen>🎬 Xem video chơi</button></div></div></div><div class="mgrid"></div>';
  var grid=box.querySelector(".mgrid"),cnt=box.querySelector(".mc"),first=true;
  /* Mới nhất: theo ts:"2026-11-05" nếu có, không thì map nằm CUỐI danh sách MAPS là mới nhất. Tải nhiều nhất: theo số lần bấm Tải map */
  function ord(){var a=maps.map(function(_,i){return i});
@@ -1447,7 +1447,7 @@ function call(op,d){d=d||{};d.op=op;d.ak=AK;if(!ACC_API)return Promise.resolve({
  return myip().then(function(ip){d.ip=ip;
   return fetch(ACC_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)}).then(function(r){return r.text()}).then(function(t){try{return JSON.parse(t)}catch(x){return{ok:false,err:"Máy chủ không trả về JSON: link ACC_API sai, hoặc lúc triển khai chưa chọn «Bất kỳ ai» được truy cập, hoặc chưa cấp quyền cho script."}}},function(){return{ok:false,err:"Không gọi được ACC_API (sai link hoặc mạng/trình chặn quảng cáo chặn script.google.com)."}})},
   function(){return{ok:false,err:"Không lấy được IP của bạn (ipify/cloudflare bị chặn). Tắt trình chặn quảng cáo/VPN rồi thử lại."}})}
-function chip(){CH.hidden=!ACC_API;var nm=(U&&U.name)||BY||"",nh="";if(nm){try{nh=nmH(nm)}catch(x){nh=esc(nm)}}CH.innerHTML=(nm?'<span class="acn">👤 '+nh+"</span>":"")+"<span>⚡ <b>"+EN.n+"</b></span>";CH.classList.toggle("has",!!nm);$("accnote").textContent=ACC_API?"Bạn có ⚡"+EN.n+" năng lượng (tự nhận diện theo IP, mỗi ngày nhận ⚡"+CF.daily+"). [bản web v5]":""}
+function chip(){CH.hidden=!ACC_API;var nm=(U&&U.name)||BY||"",nh="";if(nm){try{nh=nmH(nm)}catch(x){nh=esc(nm)}}CH.innerHTML=(nm?'<span class="acn">👤 '+nh+"</span>":"")+"<span>⚡ <b>"+EN.n+"</b></span>";CH.classList.toggle("has",!!nm);$("accnote").textContent=ACC_API?"Bạn có ⚡"+EN.n+" năng lượng (tự nhận diện theo IP, mỗi ngày nhận ⚡"+CF.daily+"). [bản web v6 · có nút Đồng bộ]":""}
 function setE(j){if(j.user){U=j.user;if(U.name&&!BY){BY=U.name;try{localStorage.setItem("g_by",BY)}catch(x){}}}if(j.en)EN=j.en;if(j.cfg)CF=j.cfg;chip();try{document.dispatchEvent(new Event("accchange"))}catch(x){}}
 window.isLiveAdmin=function(){return !!(U&&U.admin)};
 function modal(h){var o=$("amod");if(o)o.remove();o=document.createElement("div");o.id="amod";o.className="amod";o.innerHTML='<div class="abox"><button class="ax" type="button" aria-label="Đóng">✕</button>'+h+'</div>';o.onclick=function(e){if(e.target===o||e.target.classList.contains("ax"))o.remove()};document.body.appendChild(o);return o}
