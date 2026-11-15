@@ -648,7 +648,7 @@ body.gmscr .bxh{display:flex}
 <style>
 /* ===== XEM VIDEO CHƠI ===== */
 .vbtn{margin-left:auto;font:700 .85rem var(--body);padding:.34rem .95rem;border-radius:99px;border:1px solid var(--c);background:linear-gradient(135deg,rgba(41,240,255,.12),rgba(139,92,255,.22));color:var(--c);cursor:pointer;white-space:nowrap;transition:box-shadow .25s,transform .2s}
-.vcol{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px}.vcol .vbtn{margin-left:0}.vcol .vsync[hidden]{display:none}
+.syc{margin:0 0 14px;padding-bottom:12px;border-bottom:1px dashed var(--line)}.syc .btn{width:100%;justify-content:center}
 .syr{display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:12px;margin-top:8px}
 .syr .syt{flex:0 0 72px;height:48px;border-radius:8px;overflow:hidden;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--mute)}
 .syr .syt img{width:100%;height:100%;object-fit:cover;display:block}
@@ -1302,7 +1302,7 @@ window.initGallery=function(box,maps){
   '<div class="fl"><small>Số người</small>'+chips("pl",["2-3","4-5","6","8"])+'</div>'+
   '<div class="fl"><small>Độ khó</small>'+chips("df",["Dễ","Trung Bình","Khó","Cực Khó","Siêu Cấp"])+'</div>'+
   '<div class="fl"><small>Cỡ map</small>'+chips("sz",["Nhỏ","Vừa","Rộng"])+'</div>'+
-  '<div class="fl"><small>Sắp xếp</small><div class="fg" data-k="so"><button type="button" class="fc on" data-v="def">Mặc định</button><button type="button" class="fc" data-v="new">🆕 Mới nhất</button><button type="button" class="fc" data-v="dl">🔥 Tải nhiều nhất</button></div><div class="vcol"><button type="button" class="vbtn vsync" data-vsync title="Chỉ Admin thấy"'+(window.isLiveAdmin&&window.isLiveAdmin()?'':' hidden')+'>🔄 Đồng bộ map cộng đồng</button><button type="button" class="vbtn" data-vopen>🎬 Xem video chơi</button></div></div></div><div class="mgrid"></div>';
+  '<div class="fl"><small>Sắp xếp</small><div class="fg" data-k="so"><button type="button" class="fc on" data-v="def">Mặc định</button><button type="button" class="fc" data-v="new">🆕 Mới nhất</button><button type="button" class="fc" data-v="dl">🔥 Tải nhiều nhất</button></div><button type="button" class="vbtn" data-vopen>🎬 Xem video chơi</button></div></div><div class="mgrid"></div>';
  var grid=box.querySelector(".mgrid"),cnt=box.querySelector(".mc"),first=true;
  /* Mới nhất: theo ts:"2026-11-05" nếu có, không thì map nằm CUỐI danh sách MAPS là mới nhất. Tải nhiều nhất: theo số lần bấm Tải map */
  function ord(){var a=maps.map(function(_,i){return i});
@@ -1447,7 +1447,7 @@ function call(op,d){d=d||{};d.op=op;d.ak=AK;if(!ACC_API)return Promise.resolve({
  return myip().then(function(ip){d.ip=ip;
   return fetch(ACC_API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(d)}).then(function(r){return r.text()}).then(function(t){try{return JSON.parse(t)}catch(x){return{ok:false,err:"Máy chủ không trả về JSON: link ACC_API sai, hoặc lúc triển khai chưa chọn «Bất kỳ ai» được truy cập, hoặc chưa cấp quyền cho script."}}},function(){return{ok:false,err:"Không gọi được ACC_API (sai link hoặc mạng/trình chặn quảng cáo chặn script.google.com)."}})},
   function(){return{ok:false,err:"Không lấy được IP của bạn (ipify/cloudflare bị chặn). Tắt trình chặn quảng cáo/VPN rồi thử lại."}})}
-function chip(){CH.hidden=!ACC_API;var nm=(U&&U.name)||BY||"",nh="";if(nm){try{nh=nmH(nm)}catch(x){nh=esc(nm)}}CH.innerHTML=(nm?'<span class="acn">👤 '+nh+"</span>":"")+"<span>⚡ <b>"+EN.n+"</b></span>";CH.classList.toggle("has",!!nm);$("accnote").textContent=ACC_API?"Bạn có ⚡"+EN.n+" năng lượng (tự nhận diện theo IP, mỗi ngày nhận ⚡"+CF.daily+"). [bản web v6 · có nút Đồng bộ]":""}
+function chip(){CH.hidden=!ACC_API;var nm=(U&&U.name)||BY||"",nh="";if(nm){try{nh=nmH(nm)}catch(x){nh=esc(nm)}}CH.innerHTML=(nm?'<span class="acn">👤 '+nh+"</span>":"")+"<span>⚡ <b>"+EN.n+"</b></span>";CH.classList.toggle("has",!!nm);$("accnote").textContent=ACC_API?"Bạn có ⚡"+EN.n+" năng lượng (tự nhận diện theo IP, mỗi ngày nhận ⚡"+CF.daily+"). [bản web v7 · nút Đồng bộ nằm ở «Đăng map mới (Admin)»]":""}
 function setE(j){if(j.user){U=j.user;if(U.name&&!BY){BY=U.name;try{localStorage.setItem("g_by",BY)}catch(x){}}}if(j.en)EN=j.en;if(j.cfg)CF=j.cfg;chip();try{document.dispatchEvent(new Event("accchange"))}catch(x){}}
 window.isLiveAdmin=function(){return !!(U&&U.admin)};
 function modal(h){var o=$("amod");if(o)o.remove();o=document.createElement("div");o.id="amod";o.className="amod";o.innerHTML='<div class="abox"><button class="ax" type="button" aria-label="Đóng">✕</button>'+h+'</div>';o.onclick=function(e){if(e.target===o||e.target.classList.contains("ax"))o.remove()};document.body.appendChild(o);return o}
@@ -1487,7 +1487,6 @@ function syAdd(b){var id=b.dataset.id,m=SYL.filter(function(x){return String(x.i
   if(!j||!j.ok){b.disabled=false;b.textContent="＋ Thêm";toast(spErr(j));return}
   setE(j);b.textContent="✓ Đã thêm";toast("Đã thêm «"+m.t+"» vào Map sinh tồn ✓");loadCos()})}
 document.addEventListener("click",function(e){var b=e.target.closest("[data-vsync]");if(b){syOpen();return}b=e.target.closest(".syb");if(b)syAdd(b)});
-document.addEventListener("accchange",function(){var a=!!(U&&U.admin);document.querySelectorAll(".vsync").forEach(function(x){x.hidden=!a})});
 document.addEventListener("click",function(e){var b=e.target.closest(".cdelc");if(!b)return;var id=b.dataset.id;if(!(U&&U.admin)){toast("Cần đăng nhập Admin để xóa");return}if(!confirm("Xóa bình luận này?"))return;API.del(id).then(function(j){if(j&&j.ok){ST.cmt=ST.cmt.filter(function(x){return x.id!==id});PEND=PEND.filter(function(x){return x.id!==id});var l=$("cl");if(l)l.innerHTML=cList();toast("Đã xóa bình luận ✓")}else toast((j&&j.err)||"Không xóa được bình luận")})});
 document.addEventListener("click",function(e){var b=e.target.closest(".cdl,.cdel");if(!b)return;
  var id=b.dataset.id,m=CMAPS.filter(function(x){return x.cid===id})[0];if(!m)return;if(!U){toast("Đang kết nối, thử lại sau giây lát");return}
@@ -1778,7 +1777,7 @@ function editPrice(m){var k=mkey(m.t),has=PCFG.map[k]!=null,dv=PCFG.tier[m.d]!=n
  savePrice("Đã cập nhật giá ✓")}
 /* giao diện mục «Đăng map mới (Admin)» */
 function admRender(b){var done=MAPS.filter(function(m){return m.rid});
- b.innerHTML='<div class="cf admf"><p class="mt">Đăng map vào mục «Map sinh tồn». <b>Ảnh:</b> bỏ file vào thư mục <b>anh-map</b>, tên file = đúng tên map + <b>.jpg</b> (ví dụ map «Route 99» → <b>anh-map/Route 99.jpg</b>). Giá mở khóa tự tính theo độ khó, sửa ở bên dưới.</p>'
+ b.innerHTML='<div class="cf admf"><div class="syc"><button class="btn" id="apsync" type="button" data-vsync>🔄 Đồng bộ map cộng đồng → Map sinh tồn</button><p class="mt">Bấm để xem danh sách map cộng đồng, rồi bấm «＋ Thêm» ở map nào muốn chép sang Map sinh tồn (tự kèm link tải và ảnh).</p></div><p class="mt">Đăng map vào mục «Map sinh tồn». <b>Ảnh:</b> bỏ file vào thư mục <b>anh-map</b>, tên file = đúng tên map + <b>.jpg</b> (ví dụ map «Route 99» → <b>anh-map/Route 99.jpg</b>). Giá mở khóa tự tính theo độ khó, sửa ở bên dưới.</p>'
   +'<div class="r2"><label>Tên map<input id="apn" maxlength="80" autocomplete="off"></label><label>Link tải (MediaFire, Drive, Mega…)<input id="apu" type="url" placeholder="https://"></label></div>'
   +'<div class="r2"><label>Số người<select id="app">'+sel([2,3,4,5,6,7,8])+'</select></label><label>Độ khó<select id="apd">'+sel(DIFF)+'</select></label><label>Cỡ map<select id="apsz">'+sel(SZ)+'</select></label></div>'
   +'<div class="imgprev" id="api"></div><div class="cr"><button class="btn" id="apg" type="button">📮 Đăng map</button></div><p class="mt" id="apm"></p>'
